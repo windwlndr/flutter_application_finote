@@ -4,7 +4,6 @@ import 'package:flutter_application_finote/models/user_model.dart';
 import 'package:flutter_application_finote/views/login_page.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-
 class RegisterFormPage extends StatefulWidget {
   const RegisterFormPage({super.key});
 
@@ -100,7 +99,7 @@ class _Tugas10State extends State<RegisterFormPage> {
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return "Password harus diisi";
-                    } 
+                    }
                     return null;
                   },
                 ),
@@ -116,10 +115,8 @@ class _Tugas10State extends State<RegisterFormPage> {
                       return "Password harus diisi";
                     } else if (value != passwordController.text) {
                       return "Password tidak sama";
-                    } 
-                      return null;
-              
-                    
+                    }
+                    return null;
                   },
                 ),
 
@@ -151,7 +148,9 @@ class _Tugas10State extends State<RegisterFormPage> {
                           builder: (context) {
                             return AlertDialog(
                               title: Text("Form belum dilengkapi"),
-                              content: Text("Mohon isi Nama Lengkap, Email, dan Password"),
+                              content: Text(
+                                "Mohon isi Nama Lengkap, Email, dan Password",
+                              ),
                               actions: [
                                 TextButton(
                                   child: Text("Yes"),
@@ -170,19 +169,21 @@ class _Tugas10State extends State<RegisterFormPage> {
                           },
                         );
                       }
-                    final UserModel dataStudent = UserModel(
-                   name: nameController.text,
-                    email: emailController.text,
-                    password: passwordController.text,
-                  );
-                  DbHelper.registerUser(dataStudent).then((value) {
-                    // emailC.clear();
-                    // ageC.clear();
-                    // //classC.clear();
-                    // nameC.clear();
-                    // getData();
-                    Fluttertoast.showToast(msg: "Data berhasil ditambahkan");
-                  });
+                      final UserModel dataStudent = UserModel(
+                        name: nameController.text,
+                        email: emailController.text,
+                        password: passwordController.text,
+                      );
+                      DbHelper.registerUser(dataStudent).then((value) {
+                        // emailC.clear();
+                        // ageC.clear();
+                        // //classC.clear();
+                        // nameC.clear();
+                        // getData();
+                        Fluttertoast.showToast(
+                          msg: "Data berhasil ditambahkan",
+                        );
+                      });
                     },
                     child: Text(
                       "Daftar",
