@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:flutter_application_finote/views/daily_plan.dart';
+import 'package:flutter_application_finote/views/monthly_plan.dart';
 import 'package:flutter_application_finote/views/register_page.dart';
+import 'package:flutter_application_finote/views/yearly_plan.dart';
 
 class HomePageFinote extends StatefulWidget {
   const HomePageFinote({super.key});
@@ -11,7 +14,6 @@ class HomePageFinote extends StatefulWidget {
 
 class _HomePageFinoteState extends State<HomePageFinote> {
   String selectedPeriod = 'Harian';
-
 
   // Dummy data
   final Map<String, List<FlSpot>> lineData = {
@@ -70,9 +72,8 @@ class _HomePageFinoteState extends State<HomePageFinote> {
         ),
         backgroundColor: Color(0x75074799),
       ),
-      
-      body: 
-      Container(
+
+      body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [Color(0x75074799), Color(0xffE1FFBB)],
@@ -115,7 +116,14 @@ class _HomePageFinoteState extends State<HomePageFinote> {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => RencanaHarianPage(),
+                        ),
+                      );
+                    },
                     style: ElevatedButton.styleFrom(
                       fixedSize: Size(110, 75),
                       backgroundColor: Color(0xff9ECAD6),
@@ -134,7 +142,14 @@ class _HomePageFinoteState extends State<HomePageFinote> {
                     ),
                   ),
                   ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => RencanaBulananPage(),
+                        ),
+                      );
+                    },
                     style: ElevatedButton.styleFrom(
                       fixedSize: Size(110, 75),
                       backgroundColor: Color(0xff9ECAD6),
@@ -153,7 +168,14 @@ class _HomePageFinoteState extends State<HomePageFinote> {
                     ),
                   ),
                   ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => RencanaTahunanPage(),
+                        ),
+                      );
+                    },
                     style: ElevatedButton.styleFrom(
                       fixedSize: Size(110, 75),
                       backgroundColor: Color(0xff9ECAD6),
@@ -367,26 +389,6 @@ class _HomePageFinoteState extends State<HomePageFinote> {
                 ),
               ),
 
-              // ListTile(
-              //   leading: Image.asset(
-              //     "assets/images/uv_shield_tone_up_sunscreen-min.png",
-              //   ),
-              //   title: Text(
-              //     "Wardah UV Shield Tone Up",
-              //     style: TextStyle(fontSize: 16),
-              //   ),
-              //   subtitle: Text("Rp. 72.500", style: TextStyle(fontSize: 12)),
-              //   trailing: Row(
-              //     mainAxisSize: MainAxisSize.min,
-              //     children: [
-              //       Icon(Icons.favorite),
-              //       SizedBox(width: 8),
-              //       Icon(Icons.trolley),
-              //       SizedBox(width: 8),
-              //       Icon(Icons.share),
-              //     ],
-              //   ),
-              // ),
               Container(
                 margin: const EdgeInsets.all(6),
                 padding: const EdgeInsets.all(12),
@@ -458,7 +460,7 @@ class _HomePageFinoteState extends State<HomePageFinote> {
                     ),
                   ],
                 ),
-              ), 
+              ),
             ],
           ),
         ),

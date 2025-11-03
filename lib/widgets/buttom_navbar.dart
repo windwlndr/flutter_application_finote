@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_finote/views/date_tracking_page.dart';
 import 'package:flutter_application_finote/views/home_page.dart';
+import 'package:flutter_application_finote/views/profile_page.dart';
 import 'package:flutter_application_finote/views/recent_page.dart';
 
 class ButtomNavbarWidgets extends StatefulWidget {
@@ -13,7 +15,9 @@ class _ButtomNavbarWidgetsState extends State<ButtomNavbarWidgets> {
   int _selectedIndex = 0;
   static const List<Widget> _widgetOptions = [
     HomePageFinote(),
-    HistoryPage()
+    HistoryPage(),
+    CalendarPage(),
+    ProfilUserPage(),
   ];
 
   @override
@@ -62,5 +66,3 @@ class _ButtomNavbarWidgetsState extends State<ButtomNavbarWidgets> {
     );
   }
 }
-
-
