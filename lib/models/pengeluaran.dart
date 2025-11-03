@@ -1,4 +1,5 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'dart:convert'; // ignore_for_file: public_member_api_docs, sort_constructors_first
+
 class PengeluaranModel {
   final int? id;
   final String notesPengeluaran;
@@ -18,7 +19,7 @@ class PengeluaranModel {
   Map<String, dynamic> toMap() {
     return {
       'id': id,
-      'notesPengeluaran' : notesPengeluaran,
+      'notesPengeluaran': notesPengeluaran,
       'tanggalKeluar': tanggalKeluar,
       'jumlahPengeluaran': jumlahPengeluaran,
       'kategoriPengeluaran': kategoriPengeluaran,
@@ -31,7 +32,7 @@ class PengeluaranModel {
       id: map['id'] as int?,
       notesPengeluaran: map['notesPengeluaran'] as String,
       tanggalKeluar: (map['tanggalKeluar'] as String),
-      jumlahPengeluaran: (map['jumlahPengeluaran']as int),
+      jumlahPengeluaran: (map['jumlahPengeluaran'] as int),
       kategoriPengeluaran: map['kategoriPengeluaran'] as String,
     );
   }

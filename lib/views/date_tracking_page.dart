@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_finote/database/db_helper.dart';
 import 'package:flutter_application_finote/models/pengeluaran.dart';
+import 'package:flutter_application_finote/views/register_page.dart';
 import 'package:flutter_application_finote/widgets/list_item_widget.dart';
 import 'package:flutter_application_finote/widgets/login_button.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -23,7 +24,9 @@ class _CalendarPageState extends State<CalendarPage> {
   DateTime _focusedDay = DateTime.now();
   DateTime? selectedPicked;
   String? dropDownValue;
-  final List<String> listKategori = ["Pengeluaran", "Pemasukan"];
+  final List<String> listKategori = ["Makan & Minum", "Transportasi", "Hiburan", "Tagihan", "Lain-lain"];
+  final List<String> listTransaksi = ["Pengeluaran", "Pemasukan"];
+
 
   getDataPengeluaran() {
     _listPengeluaran = DbHelper.getAllPengeluaran();
@@ -288,6 +291,33 @@ class _CalendarPageState extends State<CalendarPage> {
                                     ),
                                   ),
                                   value: dropDownValue,
+                                  items: listTransaksi.map((String val) {
+                                    return DropdownMenuItem(
+                                      value: val,
+                                      child: Text(
+                                        val,
+                                        style: const TextStyle(
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                                    );
+                                  }).toList(),
+                                  onChanged: (value) {
+                                    setState(() {
+                                      dropDownValue = value;
+                                    });
+                                  },
+                                ),
+                                //Dropdown Kategori
+                                DropdownButton<String>(
+                                  hint: const Text(
+                                    "Pilih Kategori",
+                                    style: TextStyle(
+                                      color: Color(0xff2E5077),
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  value: dropDownValue,
                                   items: listKategori.map((String val) {
                                     return DropdownMenuItem(
                                       value: val,
@@ -390,23 +420,31 @@ class _CalendarPageState extends State<CalendarPage> {
                   );
                 },
               ),
-              SizedBox(
-                height: 150,
-                child: FutureBuilder(
-                  future: _listPengeluaran,
-                  builder: (BuildContext context, AsyncSnapshot snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return CircularProgressIndicator();
-                    } else if (snapshot.data == null || snapshot.data.isEmpty) {
-                      return Column(
-                        children: [
-                          //Image.asset("assets/images/empty.png", height: 150),
-                          Text("Data belum ada"),
-                        ],
-                      );
-                    } else {
-                      final data = snapshot.data as List<PengeluaranModel>;
-                      return Expanded(
+              height(8),
+              FutureBuilder(
+                future: _listPengeluaran,
+                builder: (BuildContext context, AsyncSnapshot snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return CircularProgressIndicator();
+                  } else if (snapshot.data == null || snapshot.data.isEmpty) {
+                    return Column(
+                      children: [
+                        Image.asset(
+                          "assets/images/EmptyNotes.png",
+                          height: 150,
+                        ),
+                        Text("Catatan belum ada"),
+                      ],
+                    );
+                  } else {
+                    final data = snapshot.data as List<PengeluaranModel>;
+                    return Expanded(
+                      child: Container(
+                        height: 75,
+                        decoration: BoxDecoration(
+                          color: Color(0xff9ECAD6),
+                          borderRadius: BorderRadius.circular(16),
+                        ),
                         child: ListView.builder(
                           itemCount: data.length,
                           itemBuilder: (BuildContext context, int index) {
@@ -414,6 +452,30 @@ class _CalendarPageState extends State<CalendarPage> {
                             return Column(
                               children: [
                                 ListTile(
+                                  leading: Icon( items.kategoriPengeluaran ==
+                                          "Makan & Minum" ||
+                                      items.kategoriPengeluaran ==
+                                          "Transportasi" ||
+                                      items.kategoriPengeluaran ==
+                                          "Hiburan" ||
+                                      items.kategoriPengeluaran ==
+                                          "Tagihan" ||
+                                      items.kategoriPengeluaran ==
+                                          "Lain-lain" 
+                                      ? Icons.fastfood
+                                      ? Icons.emoji_transportation
+                                      ? Icons.movie
+                                      ? Icons.receipt
+                                      : Icons.category,
+                                    // items.kategoriPengeluaran == "Pengeluaran"
+                                    //     ? Icons.arrow_upward
+                                    //     : Icons.arrow_downward,
+                                    // color:
+                                    //     items.kategoriPengeluaran ==
+                                    //         "Pengeluaran"
+                                    //     ? Colors.red
+                                    //     : Colors.green,
+                                  ),
                                   title: Text(items.notesPengeluaran),
                                   subtitle: Text(
                                     "Rp ${items.jumlahPengeluaran.toStringAsFixed(0)} • ${items.tanggalKeluar}",
@@ -439,15 +501,15 @@ class _CalendarPageState extends State<CalendarPage> {
                                     ],
                                   ),
                                 ),
-                                SizedBox(height: 20),
+                                height(8),
                               ],
                             );
                           },
                         ),
-                      );
-                    }
-                  },
-                ),
+                      ),
+                    );
+                  }
+                },
               ),
             ],
           ),
