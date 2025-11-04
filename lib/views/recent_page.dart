@@ -110,15 +110,6 @@ class _HistoryPageState extends State<HistoryPage> {
                   ],
                 ),
                 SizedBox(height: 8),
-
-                // Text(
-                //   "Bulan Ini",
-                //   style: TextStyle(
-                //     fontSize: 16,
-                //     color: Color(0xff2E5077),
-                //     fontWeight: FontWeight.bold,
-                //   ),
-                // ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [

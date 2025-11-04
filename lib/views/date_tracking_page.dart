@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_finote/database/db_helper.dart';
 import 'package:flutter_application_finote/models/pengeluaran.dart';
 import 'package:flutter_application_finote/views/register_page.dart';
-import 'package:flutter_application_finote/widgets/list_item_widget.dart';
 import 'package:flutter_application_finote/widgets/login_button.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
@@ -59,25 +58,15 @@ class _CalendarPageState extends State<CalendarPage> {
     final editJumlahPengeluaranC = TextEditingController(
       text: Pengeluaran.jumlahPengeluaran.toString(),
     );
+    String? dropDownJenis;
+    DateTime selectedDate = selectedPicked ?? DateTime.now();
 
-    DateTime selectedDate;
-    try {
-      selectedDate = DateFormat(
-        'dd MMMM yyyy',
-        'id_ID',
-      ).parse(Pengeluaran.tanggalKeluar);
-    } catch (e) {
-      selectedDate = DateTime.now();
-    }
+    String formattedDate = DateFormat(
+      'dd MMMM yyyy',
+      'id_ID',
+    ).format(selectedDate);
 
     String selectedKategori = Pengeluaran.kategoriPengeluaran;
-
-    final editTanggalPengeluaranC = TextEditingController(
-      text: Pengeluaran.tanggalKeluar.toString(),
-    );
-    // final editKategoriPengeluaranC = TextEditingController(
-    //   text: Pengeluaran.kategoriPengeluaran,
-    // );
 
     final res = await showDialog(
       context: context,
@@ -99,15 +88,36 @@ class _CalendarPageState extends State<CalendarPage> {
                     hintText: "Catatan",
                     controller: editNotesPengeluaranC,
                   ),
-                  buildTextField(
-                    hintText: "Jumlah Pengeluaran (Rp.)",
-                    controller: editJumlahPengeluaranC,
+
+                  DropdownButton<String>(
+                    hint: const Text(
+                      "Pilih Jenis Catatan",
+                      style: TextStyle(
+                        color: Color(0xff2E5077),
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    value: dropDownJenis,
+                    isExpanded: true,
+                    items: listTransaksi.map((String val) {
+                      return DropdownMenuItem(
+                        value: val,
+                        child: Text(
+                          val,
+                          style: const TextStyle(color: Colors.black),
+                        ),
+                      );
+                    }).toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        dropDownJenis = value;
+                        dropDownKategori = null;
+                      });
+                    },
                   ),
-                  buildTextField(
-                    hintText: "Tanggal",
-                    controller: editTanggalPengeluaranC,
-                  ),
+
                   DropdownButton(
+                    isExpanded: true,
                     hint: const Text(
                       "Pilih Kategori",
                       style: TextStyle(
@@ -131,10 +141,26 @@ class _CalendarPageState extends State<CalendarPage> {
                       });
                     },
                   ),
-                  // buildTextField(
-                  //   hintText: "Kategori Pengeluaran",
-                  //   controller: editKategoriPengeluaranC,
-                  // ),
+
+                  buildTextField(
+                    hintText: "Jumlah Pengeluaran (Rp.)",
+                    controller: editJumlahPengeluaranC,
+                  ),
+
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Text(
+                        formatedDate,
+                        style: TextStyle(
+                          fontSize: 16,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        maxLines: 2,
+                        softWrap: true,
+                      ),
+                    ],
+                  ),
                 ],
               ),
               actions: [
@@ -168,7 +194,7 @@ class _CalendarPageState extends State<CalendarPage> {
         id: Pengeluaran.id,
         notesPengeluaran: editNotesPengeluaranC.text,
         jumlahPengeluaran: jumlah,
-        tanggalKeluar: editTanggalPengeluaranC.text,
+        tanggalKeluar: selectedDate.toIso8601String(),
         kategoriPengeluaran: dropDownKategori ?? selectedKategori,
       );
       await DbHelper.updatePengeluaran(updated);
@@ -298,23 +324,6 @@ class _CalendarPageState extends State<CalendarPage> {
                 ),
                 SizedBox(height: 20),
 
-                // ElevatedButton(
-                //   onPressed: () async {
-                //     DateTime? pickedDate = await showDatePicker(
-                //       context: context,
-                //       locale: const Locale("id", "ID"),
-                //       initialDate: DateTime.now(),
-                //       firstDate: DateTime(2000),
-                //       lastDate: DateTime(2100),
-                //     );
-                //     if (pickedDate != null) {
-                //       setState(() {
-                //         selectedPicked = pickedDate;
-                //       });
-                //     }
-                //   },
-                //   child: Text(dateText),
-                // ),
                 LoginButton(
                   text: "Tambah Catatan",
                   onPressed: () async {
@@ -322,7 +331,7 @@ class _CalendarPageState extends State<CalendarPage> {
                     String? dropDownKategori;
                     TextEditingController catatanC = TextEditingController();
                     TextEditingController jumlahC = TextEditingController();
-                    DateTime selectedDate = DateTime.now();
+                    DateTime selectedDate = selectedPicked ?? DateTime.now();
                     String formattedDate = DateFormat(
                       'dd MMMM yyyy',
                       'id_ID',
@@ -354,32 +363,6 @@ class _CalendarPageState extends State<CalendarPage> {
                                       labelText: "Catatan",
                                     ),
                                   ),
-                                  // DropdownButton<String>(
-                                  //   hint: const Text(
-                                  //     "Pilih Jenis Catatan",
-                                  //     style: TextStyle(
-                                  //       color: Color(0xff2E5077),
-                                  //       fontWeight: FontWeight.bold,
-                                  //     ),
-                                  //   ),
-                                  //   value: dropDownKategori,
-                                  //   items: listTransaksi.map((String val) {
-                                  //     return DropdownMenuItem(
-                                  //       value: val,
-                                  //       child: Text(
-                                  //         val,
-                                  //         style: const TextStyle(
-                                  //           color: Colors.black,
-                                  //         ),
-                                  //       ),
-                                  //     );
-                                  //   }).toList(),
-                                  //   onChanged: (value) {
-                                  //     setState(() {
-                                  //       dropDownKategori = value;
-                                  //     });
-                                  //   },
-                                  // ),
 
                                   //Dropdown Kategori
                                   DropdownButton<String>(
@@ -392,7 +375,7 @@ class _CalendarPageState extends State<CalendarPage> {
                                     ),
                                     value: dropDownJenis,
                                     isExpanded: true,
-                                    items: listKategori.map((String val) {
+                                    items: listTransaksi.map((String val) {
                                       return DropdownMenuItem(
                                         value: val,
                                         child: Text(
@@ -413,6 +396,7 @@ class _CalendarPageState extends State<CalendarPage> {
 
                                   //Dropdown Kategori
                                   DropdownButton<String>(
+                                    isExpanded: true,
                                     hint: const Text(
                                       "Pilih Kategori",
                                       style: TextStyle(
@@ -445,36 +429,15 @@ class _CalendarPageState extends State<CalendarPage> {
                                     ),
                                     keyboardType: TextInputType.number,
                                   ),
-                                  GestureDetector(
-                                    onTap: () async {
-                                      final pickedDate = await showDatePicker(
-                                        context: context,
-                                        locale: const Locale('id', 'ID'),
-                                        initialDate: selectedDate,
-                                        firstDate: DateTime(2000),
-                                        lastDate: DateTime(2100),
-                                      );
-                                      if (pickedDate != null) {
-                                        setState(() {
-                                          selectedDate = pickedDate;
-                                          formattedDate = DateFormat(
-                                            'dd MMMM yyyy',
-                                            'id_ID',
-                                          ).format(pickedDate);
-                                        });
-                                      }
-                                    },
-                                    child: AbsorbPointer(
-                                      child: TextField(
-                                        decoration: InputDecoration(
-                                          labelText: "Tanggal",
-                                          hintText: formattedDate,
-                                        ),
-                                        controller: TextEditingController(
-                                          text: formattedDate,
-                                        ),
+                                  height(8),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        formattedDate,
+                                        style: TextStyle(fontSize: 16),
                                       ),
-                                    ),
+                                    ],
                                   ),
                                 ],
                               ),
