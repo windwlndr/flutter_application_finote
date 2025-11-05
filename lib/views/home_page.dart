@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:flutter_application_finote/views/daily_plan.dart';
+import 'package:flutter_application_finote/database/db_helper.dart';
+import 'package:flutter_application_finote/views/weekly_plan.dart';
 import 'package:flutter_application_finote/views/monthly_plan.dart';
 import 'package:flutter_application_finote/views/register_page.dart';
 import 'package:flutter_application_finote/views/yearly_plan.dart';
@@ -13,40 +14,87 @@ class HomePageFinote extends StatefulWidget {
 }
 
 class _HomePageFinoteState extends State<HomePageFinote> {
+  Map<String, List<FlSpot>> lineData = {};
+  List<Map<String, dynamic>> pieData = [];
   String selectedPeriod = 'Harian';
 
-  // Dummy data
-  final Map<String, List<FlSpot>> lineData = {
-    'Harian': [
-      FlSpot(0, 50),
-      FlSpot(1, 70),
-      FlSpot(2, 40),
-      FlSpot(3, 90),
-      FlSpot(4, 60),
-      FlSpot(5, 100),
-      FlSpot(6, 80),
-    ],
-    'Bulanan': [
-      FlSpot(0, 400),
-      FlSpot(1, 600),
-      FlSpot(2, 550),
-      FlSpot(3, 700),
-      FlSpot(4, 800),
-    ],
-    'Tahunan': [
-      FlSpot(0, 5500),
-      FlSpot(1, 6300),
-      FlSpot(2, 7200),
-      FlSpot(3, 8100),
-    ],
-  };
+  @override
+  void initState() {
+    super.initState();
+    _loadChartData();
+  }
 
-  final List<Map<String, dynamic>> pieData = [
-    {'kategori': 'Makanan', 'persen': 40, 'color': Colors.orange},
-    {'kategori': 'Transportasi', 'persen': 25, 'color': Colors.blue},
-    {'kategori': 'Hiburan', 'persen': 15, 'color': Colors.purple},
-    {'kategori': 'Lainnya', 'persen': 20, 'color': Colors.green},
-  ];
+  Future<void> _loadChartData() async {
+    // Ambil total pengeluaran per tanggal dari database
+    final totalPerTanggal = await DbHelper.getTotalPengeluaranPerTanggal();
+    final totalPerKategori = await DbHelper.getTotalPengeluaranPerKategori();
+
+    // Ubah data tanggal -> FlSpot
+    int index = 0;
+    final dailySpots = totalPerTanggal.entries.map((e) {
+      final spot = FlSpot(index.toDouble(), e.value);
+      index++;
+      return spot;
+    }).toList();
+
+    // Simpan ke lineData (sementara hanya 'Harian')
+    setState(() {
+      lineData = {'Harian': dailySpots};
+
+      // Konversi total kategori ke format pieData
+      pieData = totalPerKategori.entries.map((e) {
+        return {
+          'kategori': e.key,
+          'persen': e.value, // nanti diubah ke persen
+          'color': Colors.primaries[pieData.length % Colors.primaries.length],
+        };
+      }).toList();
+
+      // Normalisasi persentase
+      final totalAll = pieData.fold<double>(
+        0,
+        (sum, item) => sum + item['persen'],
+      );
+      for (var item in pieData) {
+        item['persen'] = (item['persen'] / totalAll * 100).roundToDouble();
+      }
+    });
+  }
+
+  // String selectedPeriod = 'Mingguan';
+
+  // // Dummy data
+  // final Map<String, List<FlSpot>> lineData = {
+  //   'Mingguan': [
+  //     FlSpot(0, 50),
+  //     FlSpot(1, 70),
+  //     FlSpot(2, 40),
+  //     FlSpot(3, 90),
+  //     FlSpot(4, 60),
+  //     FlSpot(5, 100),
+  //     FlSpot(6, 80),
+  //   ],
+  //   'Bulanan': [
+  //     FlSpot(0, 400),
+  //     FlSpot(1, 600),
+  //     FlSpot(2, 550),
+  //     FlSpot(3, 700),
+  //     FlSpot(4, 800),
+  //   ],
+  //   'Tahunan': [
+  //     FlSpot(0, 5500),
+  //     FlSpot(1, 6300),
+  //     FlSpot(2, 7200),
+  //     FlSpot(3, 8100),
+  //   ],
+  // };
+
+  // final List<Map<String, dynamic>> pieData = [
+  //   {'kategori': 'Makanan', 'persen': 40, 'color': Colors.orange},
+  //   {'kategori': 'Transportasi', 'persen': 25, 'color': Colors.blue},
+  //   {'kategori': 'Hiburan', 'persen': 15, 'color': Colors.purple},
+  //   {'kategori': 'Lainnya', 'persen': 20, 'color': Colors.green},
+  // ];
   @override
   Widget build(BuildContext context) {
     String kategori = "Makan";
@@ -120,7 +168,7 @@ class _HomePageFinoteState extends State<HomePageFinote> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => RencanaHarianPage(),
+                          builder: (context) => RencanaMingguanPage(),
                         ),
                       );
                     },
@@ -132,10 +180,10 @@ class _HomePageFinoteState extends State<HomePageFinote> {
                       ),
                     ),
                     child: Text(
-                      "Rencana Harian",
+                      "Rencana Mingguan",
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        fontSize: 14,
+                        fontSize: 13,
                         color: Color(0xff2E5077),
                       ),
                       textAlign: TextAlign.center,
@@ -219,6 +267,7 @@ class _HomePageFinoteState extends State<HomePageFinote> {
 
               // 📈 Line Chart
               Card(
+                color: Color(0xffE1FFBB),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
                 ),
@@ -227,25 +276,17 @@ class _HomePageFinoteState extends State<HomePageFinote> {
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
                     children: [
+                      Text(
+                        'Grafik Keuangan',
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text(
-                            'Grafik\nKeuangan',
-                            style: const TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          RotatedBox(
-                            quarterTurns: 1,
-                            child: Divider(
-                              color: Colors.black,
-                              thickness: 2,
-                              height: 20,
-                            ),
-                          ),
-                          for (var period in ['Harian', 'Bulanan', 'Tahunan'])
+                          for (var period in ['Mingguan', 'Bulanan', 'Tahunan'])
                             Padding(
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 4,
@@ -253,11 +294,11 @@ class _HomePageFinoteState extends State<HomePageFinote> {
                               child: ChoiceChip(
                                 label: Text(period),
                                 selected: selectedPeriod == period,
-                                selectedColor: Colors.teal,
+                                selectedColor: Color(0xff9ECAD6),
                                 labelStyle: TextStyle(
-                                  fontSize: 10,
+                                  fontSize: 14,
                                   color: selectedPeriod == period
-                                      ? Colors.white
+                                      ? Color(0xff2E5077)
                                       : Colors.black,
                                 ),
                                 onSelected: (_) {
@@ -271,52 +312,72 @@ class _HomePageFinoteState extends State<HomePageFinote> {
                       ),
 
                       const SizedBox(height: 16),
+
                       SizedBox(
                         height: 200,
-                        child: LineChart(
-                          LineChartData(
-                            gridData: FlGridData(show: true),
-                            titlesData: FlTitlesData(
-                              bottomTitles: AxisTitles(
-                                sideTitles: SideTitles(
-                                  showTitles: true,
-                                  getTitlesWidget: (value, meta) {
-                                    return Text(value.toInt().toString());
-                                  },
+                        child: lineData.isEmpty
+                            ? const Center(child: CircularProgressIndicator())
+                            : LineChart(
+                                LineChartData(
+                                  gridData: FlGridData(show: true),
+                                  titlesData: FlTitlesData(
+                                    bottomTitles: AxisTitles(
+                                      sideTitles: SideTitles(
+                                        showTitles: true,
+                                        getTitlesWidget: (value, meta) {
+                                          return Text(value.toInt().toString());
+                                        },
+                                      ),
+                                    ),
+                                    leftTitles: AxisTitles(
+                                      sideTitles: SideTitles(showTitles: true),
+                                    ),
+                                  ),
+                                  borderData: FlBorderData(show: true),
+                                  lineBarsData: [
+                                    LineChartBarData(
+                                      spots: lineData[selectedPeriod] ?? [],
+                                      isCurved: true,
+                                      color: Colors.teal,
+                                      barWidth: 3,
+                                      dotData: FlDotData(show: true),
+                                    ),
+                                  ],
                                 ),
                               ),
-                              leftTitles: AxisTitles(
-                                sideTitles: SideTitles(showTitles: true),
-                              ),
-                            ),
-                            borderData: FlBorderData(show: true),
-                            lineBarsData: [
-                              LineChartBarData(
-                                spots: lineData[selectedPeriod]!,
-                                isCurved: true,
-                                color: Colors.teal,
-                                barWidth: 3,
-                                dotData: FlDotData(show: true),
-                              ),
-                            ],
-                            // lineTouchData: LineTouchData(
-                            //   enabled: true,
-                            //   touchTooltipData: LineTouchTooltipData(
-                            //     tooltipBgColor: Colors.white,
-                            //     getTooltipItems: (touchedSpots) {
-                            //       return touchedSpots.map((spot) {
-                            //         return LineTooltipItem(
-                            //           'Rp ${spot.y.toStringAsFixed(0)}',
-                            //           const TextStyle(
-                            //               color: Colors.black, fontSize: 12),
-                            //         );
-                            //       }).toList();
-                            //     },
-                            //   ),
-                            // ),
-                          ),
-                        ),
                       ),
+
+                      // SizedBox(
+                      //   height: 200,
+                      //   child: LineChart(
+                      //     LineChartData(
+                      //       gridData: FlGridData(show: true),
+                      //       titlesData: FlTitlesData(
+                      //         bottomTitles: AxisTitles(
+                      //           sideTitles: SideTitles(
+                      //             showTitles: true,
+                      //             getTitlesWidget: (value, meta) {
+                      //               return Text(value.toInt().toString());
+                      //             },
+                      //           ),
+                      //         ),
+                      //         leftTitles: AxisTitles(
+                      //           sideTitles: SideTitles(showTitles: true),
+                      //         ),
+                      //       ),
+                      //       borderData: FlBorderData(show: true),
+                      //       lineBarsData: [
+                      //         LineChartBarData(
+                      //           spots: lineData[selectedPeriod]!,
+                      //           isCurved: true,
+                      //           color: Colors.teal,
+                      //           barWidth: 3,
+                      //           dotData: FlDotData(show: true),
+                      //         ),
+                      //       ],
+                      //     ),
+                      //   ),
+                      // ),
                     ],
                   ),
                 ),
@@ -326,6 +387,7 @@ class _HomePageFinoteState extends State<HomePageFinote> {
 
               // 🥧 Pie Chart
               Card(
+                color: Color(0xff9ECAD6),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
                 ),
@@ -344,25 +406,49 @@ class _HomePageFinoteState extends State<HomePageFinote> {
                       const SizedBox(height: 16),
                       SizedBox(
                         height: 200,
-                        child: PieChart(
-                          PieChartData(
-                            sections: pieData.map((data) {
-                              return PieChartSectionData(
-                                value: data['persen'].toDouble(),
-                                color: data['color'],
-                                title:
-                                    '${data['kategori']}\n${data['persen']}%',
-                                radius: 60,
-                                titleStyle: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.bold,
+                        child: pieData.isEmpty
+                            ? const Center(child: CircularProgressIndicator())
+                            : PieChart(
+                                PieChartData(
+                                  sections: pieData.map((data) {
+                                    return PieChartSectionData(
+                                      value: data['persen'].toDouble(),
+                                      color: data['color'],
+                                      title:
+                                          '${data['kategori']}\n${data['persen']}%',
+                                      radius: 60,
+                                      titleStyle: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    );
+                                  }).toList(),
                                 ),
-                              );
-                            }).toList(),
-                          ),
-                        ),
+                              ),
                       ),
+
+                      // SizedBox(
+                      //   height: 200,
+                      //   child: PieChart(
+                      //     PieChartData(
+                      //       sections: pieData.map((data) {
+                      //         return PieChartSectionData(
+                      //           value: data['persen'].toDouble(),
+                      //           color: data['color'],
+                      //           title:
+                      //               '${data['kategori']}\n${data['persen']}%',
+                      //           radius: 60,
+                      //           titleStyle: const TextStyle(
+                      //             color: Colors.white,
+                      //             fontSize: 12,
+                      //             fontWeight: FontWeight.bold,
+                      //           ),
+                      //         );
+                      //       }).toList(),
+                      //     ),
+                      //   ),
+                      // ),
                     ],
                   ),
                 ),

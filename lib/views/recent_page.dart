@@ -172,75 +172,71 @@ class _HistoryPageState extends State<HistoryPage> {
                             } else {
                               final data =
                                   snapshot.data as List<PengeluaranModel>;
-                              return Expanded(
-                                child: Container(
-                                  height: 75,
-                                  decoration: BoxDecoration(
-                                    color: Color(0xff9ECAD6),
-                                    borderRadius: BorderRadius.circular(16),
-                                  ),
-                                  child: ListView.builder(
-                                    itemCount: data.length,
-                                    itemBuilder: (BuildContext context, int index) {
-                                      String? dropDownJenis;
-                                      String? dropDownKategori;
-                                      final items = data[index];
-                                      return Column(
-                                        children: [
-                                          ListTile(
-                                            leading: Icon(
-                                              items.kategoriPengeluaran ==
-                                                      "Makan & Minum"
-                                                  ? Icons.fastfood
-                                                  : items.kategoriPengeluaran ==
-                                                        "Transportasi"
-                                                  ? Icons.motorcycle
-                                                  : items.kategoriPengeluaran ==
-                                                        "Hiburan"
-                                                  ? Icons.sports_esports
-                                                  : items.kategoriPengeluaran ==
-                                                        "Tagihan"
-                                                  ? Icons.receipt_long
-                                                  : items.kategoriPengeluaran ==
-                                                        "Belanja"
-                                                  ? Icons.trolley
-                                                  : Icons.menu,
+                              return Container(
+                                height: 75,
+                                decoration: BoxDecoration(
+                                  color: Color(0xff9ECAD6),
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                                child: ListView.builder(
+                                  itemCount: data.length,
+                                  itemBuilder: (BuildContext context, int index) {
+                                    String? dropDownJenis;
+                                    String? dropDownKategori;
+                                    final items = data[index];
+                                    return Column(
+                                      children: [
+                                        ListTile(
+                                          leading: Icon(
+                                            items.kategoriPengeluaran ==
+                                                    "Makan & Minum"
+                                                ? Icons.fastfood
+                                                : items.kategoriPengeluaran ==
+                                                      "Transportasi"
+                                                ? Icons.motorcycle
+                                                : items.kategoriPengeluaran ==
+                                                      "Hiburan"
+                                                ? Icons.sports_esports
+                                                : items.kategoriPengeluaran ==
+                                                      "Tagihan"
+                                                ? Icons.receipt_long
+                                                : items.kategoriPengeluaran ==
+                                                      "Belanja"
+                                                ? Icons.trolley
+                                                : Icons.menu,
+                                          ),
+                                          title: Text(
+                                            items.notesPengeluaran,
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: Color(0xff2E5077),
                                             ),
-                                            title: Text(
-                                              items.notesPengeluaran,
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                color: Color(0xff2E5077),
+                                          ),
+                                          subtitle: Row(
+                                            children: [
+                                              Text(
+                                                "Rp ${items.jumlahPengeluaran.toStringAsFixed(0)}",
+                                                style: TextStyle(
+                                                  color: Colors.red,
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
                                               ),
-                                            ),
-                                            subtitle: Row(
-                                              children: [
-                                                Text(
-                                                  "Rp ${items.jumlahPengeluaran.toStringAsFixed(0)}",
-                                                  style: TextStyle(
-                                                    color: Colors.red,
-                                                    fontSize: 12,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
-                                                width(8),
-                                                Text(
-                                                  items.tanggalKeluar,
-                                                  style: TextStyle(
-                                                    fontSize: 12,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
+                                              width(8),
+                                              Text(
+                                                items.tanggalKeluar,
+                                                style: TextStyle(fontSize: 12),
+                                              ),
+                                            ],
                                           ),
-                                          Divider(
-                                            thickness: 0.1,
-                                            color: Colors.black,
-                                          ),
-                                        ],
-                                      );
-                                    },
-                                  ),
+                                        ),
+                                        Divider(
+                                          thickness: 0.1,
+                                          color: Colors.black,
+                                        ),
+                                      ],
+                                    );
+                                  },
                                 ),
                               );
                             }
@@ -268,66 +264,62 @@ class _HistoryPageState extends State<HistoryPage> {
                             } else {
                               final data =
                                   snapshot.data as List<PemasukanModel>;
-                              return Expanded(
-                                child: Container(
-                                  height: 75,
-                                  decoration: BoxDecoration(
-                                    color: Color(0xff9ECAD6),
-                                    borderRadius: BorderRadius.circular(16),
-                                  ),
-                                  child: ListView.builder(
-                                    itemCount: data.length,
-                                    itemBuilder: (BuildContext context, int index) {
-                                      final items = data[index];
-                                      return Column(
-                                        children: [
-                                          ListTile(
-                                            leading: Icon(
-                                              items.kategoriPemasukan == "Gaji"
-                                                  ? Icons.attach_money
-                                                  : items.kategoriPemasukan ==
-                                                        "Bonus"
-                                                  ? Icons.money_rounded
-                                                  : items.kategoriPemasukan ==
-                                                        "Hadiah"
-                                                  ? Icons.card_giftcard_rounded
-                                                  : Icons.more_horiz,
+                              return Container(
+                                height: 75,
+                                decoration: BoxDecoration(
+                                  color: Color(0xff9ECAD6),
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                                child: ListView.builder(
+                                  itemCount: data.length,
+                                  itemBuilder: (BuildContext context, int index) {
+                                    final items = data[index];
+                                    return Column(
+                                      children: [
+                                        ListTile(
+                                          leading: Icon(
+                                            items.kategoriPemasukan == "Gaji"
+                                                ? Icons.attach_money
+                                                : items.kategoriPemasukan ==
+                                                      "Bonus"
+                                                ? Icons.money_rounded
+                                                : items.kategoriPemasukan ==
+                                                      "Hadiah"
+                                                ? Icons.card_giftcard_rounded
+                                                : Icons.more_horiz,
+                                          ),
+                                          title: Text(
+                                            items.notesPemasukan,
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: Color(0xff2E5077),
                                             ),
-                                            title: Text(
-                                              items.notesPemasukan,
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                color: Color(0xff2E5077),
+                                          ),
+                                          subtitle: Row(
+                                            children: [
+                                              Text(
+                                                "Rp ${items.jumlahPemasukan.toStringAsFixed(0)}",
+                                                style: TextStyle(
+                                                  color: Colors.green,
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
                                               ),
-                                            ),
-                                            subtitle: Row(
-                                              children: [
-                                                Text(
-                                                  "Rp ${items.jumlahPemasukan.toStringAsFixed(0)}",
-                                                  style: TextStyle(
-                                                    color: Colors.green,
-                                                    fontSize: 12,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
-                                                width(8),
-                                                Text(
-                                                  items.tanggalMasuk,
-                                                  style: TextStyle(
-                                                    fontSize: 12,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
+                                              width(8),
+                                              Text(
+                                                items.tanggalMasuk,
+                                                style: TextStyle(fontSize: 12),
+                                              ),
+                                            ],
                                           ),
-                                          Divider(
-                                            thickness: 0.1,
-                                            color: Colors.black,
-                                          ),
-                                        ],
-                                      );
-                                    },
-                                  ),
+                                        ),
+                                        Divider(
+                                          thickness: 0.1,
+                                          color: Colors.black,
+                                        ),
+                                      ],
+                                    );
+                                  },
                                 ),
                               );
                             }

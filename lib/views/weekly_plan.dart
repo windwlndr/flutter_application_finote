@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_finote/widgets/list_item_widget.dart';
 
-class RencanaHarianPage extends StatefulWidget {
-  const RencanaHarianPage({super.key});
+class RencanaMingguanPage extends StatefulWidget {
+  const RencanaMingguanPage({super.key});
 
   @override
-  State<RencanaHarianPage> createState() => _RencanaHarianPageState();
+  State<RencanaMingguanPage> createState() => _RencanaMingguanPageState();
 }
 
-class _RencanaHarianPageState extends State<RencanaHarianPage> {
+class _RencanaMingguanPageState extends State<RencanaMingguanPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,7 +45,7 @@ class _RencanaHarianPageState extends State<RencanaHarianPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                "Daftar Rencana Harian",
+                "Daftar Rencana Mingguan",
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
@@ -64,7 +64,7 @@ class _RencanaHarianPageState extends State<RencanaHarianPage> {
             context: context,
             builder: (context) {
               return AlertDialog(
-                title: Text("Tambah Rencana Harian"),
+                title: Text("Tambah Rencana Mingguan"),
                 content: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -89,7 +89,7 @@ class _RencanaHarianPageState extends State<RencanaHarianPage> {
                         itemPrice: "08:00 AM",
                         itemDateTime: "Hari Ini",
                       );
-                      // Simpan rencana harian
+                      // Simpan rencana Mingguan
                       Navigator.pop(context);
                     },
                     child: Text("Simpan"),

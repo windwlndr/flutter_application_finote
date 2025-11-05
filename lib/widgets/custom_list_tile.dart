@@ -21,26 +21,34 @@ class ListTileWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      contentPadding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 2.0),
-      leading: Icon(leadingIcon, color: iconColor ?? Color(0xff2E5077)),
-      title: Text(
-        title,
-        style: TextStyle(
-          color: textColor ?? Color(0xff2E5077),
-          decoration: TextDecoration.underline,
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        ListTile(
+          contentPadding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 2.0),
+          leading: Icon(leadingIcon, color: iconColor ?? Color(0xff2E5077)),
+          title: TextButton(
+            onPressed: onTap,
+            child: Text(
+              title,
+              style: TextStyle(
+                color: textColor ?? Color(0xff2E5077),
+                decoration: TextDecoration.underline,
+              ),
+            ),
+          ),
+          subtitle: Text(
+            subtitle,
+            style: TextStyle(color: textColor ?? Color(0xff2E5077)),
+            overflow: TextOverflow.ellipsis,
+            maxLines: 1,
+            softWrap: true,
+          ),
+          onTap: () {
+            print("berhasil");
+          },
         ),
-      ),
-      subtitle: Text(
-        subtitle,
-        style: TextStyle(color: textColor ?? Color(0xff2E5077)),
-        overflow: TextOverflow.ellipsis,
-        maxLines: 1,
-        softWrap: true,
-      ),
-      onTap: () {
-        print("berhasil");
-      },
+      ],
     );
   }
 }

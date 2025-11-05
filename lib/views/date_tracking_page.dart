@@ -49,13 +49,23 @@ class _CalendarPageState extends State<CalendarPage> {
 
   final List<String> listTransaksi = ["Pengeluaran", "Pemasukan"];
 
-  getDataPengeluaran() {
+  getDataPengeluaran() async {
     _listPengeluaran = DbHelper.getAllPengeluaran();
+    final data = await _listPengeluaran;
+    print("DEBUG: Jumlah pengeluaran: ${data.length}");
+    for (var d in data) {
+      print("Pengeluaran: ${d.notesPengeluaran} - ${d.kategoriPengeluaran}");
+    }
     setState(() {});
   }
 
-  getDataPemasukan() {
+  getDataPemasukan() async {
     _listPemasukan = DbHelper.getAllPemasukan();
+    final data = await _listPemasukan;
+    print("DEBUG: Jumlah pemasukan: ${data.length}");
+    for (var d in data) {
+      print("Pemasukan: ${d.notesPemasukan} - ${d.kategoriPemasukan}");
+    }
     setState(() {});
   }
 
@@ -684,7 +694,7 @@ class _CalendarPageState extends State<CalendarPage> {
                                     child: const Text("Batal"),
                                   ),
                                   TextButton(
-                                    onPressed: () {
+                                    onPressed: () async {
                                       if (dropDownJenis == null ||
                                           dropDownKategori == null ||
                                           jumlahC.text.isEmpty) {
@@ -704,47 +714,50 @@ class _CalendarPageState extends State<CalendarPage> {
                                           ),
                                         ),
                                       );
-                                      final PengeluaranModel dataPengeluaran =
-                                          PengeluaranModel(
-                                            notesPengeluaran: catatanC.text,
-                                            tanggalKeluar: formattedDate,
-                                            jumlahPengeluaran: int.parse(
-                                              jumlahC.text,
-                                            ),
-                                            kategoriCatatan: dropDownJenis!,
 
-                                            kategoriPengeluaran:
-                                                dropDownKategori!,
+                                      if (dropDownJenis == "Pengeluaran") {
+                                        final PengeluaranModel dataPengeluaran =
+                                            PengeluaranModel(
+                                              notesPengeluaran: catatanC.text,
+                                              tanggalKeluar: formattedDate,
+                                              jumlahPengeluaran: int.parse(
+                                                jumlahC.text,
+                                              ),
+                                              kategoriCatatan: dropDownJenis!,
+
+                                              kategoriPengeluaran:
+                                                  dropDownKategori!,
+                                            );
+
+                                        await DbHelper.insertPengeluaran(
+                                          dataPengeluaran,
+                                        ).then((value) {
+                                          Fluttertoast.showToast(
+                                            msg: "Data berhasil ditambahkan",
                                           );
+                                        });
+                                      } else if (dropDownJenis == "Pemasukan") {
+                                        final PemasukanModel dataPemasukan =
+                                            PemasukanModel(
+                                              notesPemasukan: catatanC.text,
+                                              tanggalMasuk: formattedDate,
+                                              jumlahPemasukan: int.parse(
+                                                jumlahC.text,
+                                              ),
+                                              kategoriCatatan: dropDownJenis!,
 
-                                      DbHelper.insertPengeluaran(
-                                        dataPengeluaran,
-                                      ).then((value) {
-                                        Fluttertoast.showToast(
-                                          msg: "Data berhasil ditambahkan",
-                                        );
-                                      });
+                                              kategoriPemasukan:
+                                                  dropDownKategori!,
+                                            );
 
-                                      final PemasukanModel dataPemasukan =
-                                          PemasukanModel(
-                                            notesPemasukan: catatanC.text,
-                                            tanggalMasuk: formattedDate,
-                                            jumlahPemasukan: int.parse(
-                                              jumlahC.text,
-                                            ),
-                                            kategoriCatatan: dropDownJenis!,
-
-                                            kategoriPemasukan:
-                                                dropDownKategori!,
+                                        await DbHelper.insertPemasukan(
+                                          dataPemasukan,
+                                        ).then((value) {
+                                          Fluttertoast.showToast(
+                                            msg: "Data berhasil ditambahkan",
                                           );
-
-                                      DbHelper.insertPemasukan(
-                                        dataPemasukan,
-                                      ).then((value) {
-                                        Fluttertoast.showToast(
-                                          msg: "Data berhasil ditambahkan",
-                                        );
-                                      });
+                                        });
+                                      }
 
                                       Navigator.pop(context, true);
                                     },
@@ -818,95 +831,91 @@ class _CalendarPageState extends State<CalendarPage> {
                             } else {
                               final data =
                                   snapshot.data as List<PengeluaranModel>;
-                              return Expanded(
-                                child: Container(
-                                  height: 75,
-                                  decoration: BoxDecoration(
-                                    color: Color(0xff9ECAD6),
-                                    borderRadius: BorderRadius.circular(16),
-                                  ),
-                                  child: ListView.builder(
-                                    itemCount: data.length,
-                                    itemBuilder: (BuildContext context, int index) {
-                                      String? dropDownJenis;
-                                      String? dropDownKategori;
-                                      final items = data[index];
-                                      return Column(
-                                        children: [
-                                          ListTile(
-                                            leading: Icon(
-                                              items.kategoriPengeluaran ==
-                                                      "Makan & Minum"
-                                                  ? Icons.fastfood
-                                                  : items.kategoriPengeluaran ==
-                                                        "Transportasi"
-                                                  ? Icons.motorcycle
-                                                  : items.kategoriPengeluaran ==
-                                                        "Hiburan"
-                                                  ? Icons.sports_esports
-                                                  : items.kategoriPengeluaran ==
-                                                        "Tagihan"
-                                                  ? Icons.receipt_long
-                                                  : items.kategoriPengeluaran ==
-                                                        "Belanja"
-                                                  ? Icons.trolley
-                                                  : Icons.menu,
+                              return Container(
+                                height: 75,
+                                decoration: BoxDecoration(
+                                  color: Color(0xff9ECAD6),
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                                child: ListView.builder(
+                                  itemCount: data.length,
+                                  itemBuilder: (BuildContext context, int index) {
+                                    String? dropDownJenis;
+                                    String? dropDownKategori;
+                                    final items = data[index];
+                                    return Column(
+                                      children: [
+                                        ListTile(
+                                          leading: Icon(
+                                            items.kategoriPengeluaran ==
+                                                    "Makan & Minum"
+                                                ? Icons.fastfood
+                                                : items.kategoriPengeluaran ==
+                                                      "Transportasi"
+                                                ? Icons.motorcycle
+                                                : items.kategoriPengeluaran ==
+                                                      "Hiburan"
+                                                ? Icons.sports_esports
+                                                : items.kategoriPengeluaran ==
+                                                      "Tagihan"
+                                                ? Icons.receipt_long
+                                                : items.kategoriPengeluaran ==
+                                                      "Belanja"
+                                                ? Icons.trolley
+                                                : Icons.menu,
+                                          ),
+                                          title: Text(
+                                            items.notesPengeluaran,
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: Color(0xff2E5077),
                                             ),
-                                            title: Text(
-                                              items.notesPengeluaran,
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                color: Color(0xff2E5077),
+                                          ),
+                                          subtitle: Row(
+                                            children: [
+                                              Text(
+                                                "Rp ${items.jumlahPengeluaran.toStringAsFixed(0)}",
+                                                style: TextStyle(
+                                                  color: Colors.red,
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
                                               ),
-                                            ),
-                                            subtitle: Row(
-                                              children: [
-                                                Text(
-                                                  "Rp ${items.jumlahPengeluaran.toStringAsFixed(0)}",
-                                                  style: TextStyle(
-                                                    color: Colors.red,
-                                                    fontSize: 12,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
-                                                width(8),
-                                                Text(
-                                                  items.tanggalKeluar,
-                                                  style: TextStyle(
-                                                    fontSize: 12,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            trailing: Row(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                IconButton(
-                                                  onPressed: () {
-                                                    _onEdit(items);
-                                                  },
-                                                  icon: Icon(Icons.edit),
-                                                ),
-                                                IconButton(
-                                                  onPressed: () {
-                                                    _onDelete(items);
-                                                  },
-                                                  icon: Icon(
-                                                    Icons.delete,
-                                                    color: Colors.red,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
+                                              width(8),
+                                              Text(
+                                                items.tanggalKeluar,
+                                                style: TextStyle(fontSize: 12),
+                                              ),
+                                            ],
                                           ),
-                                          Divider(
-                                            thickness: 0.1,
-                                            color: Colors.black,
+                                          trailing: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              IconButton(
+                                                onPressed: () {
+                                                  _onEdit(items);
+                                                },
+                                                icon: Icon(Icons.edit),
+                                              ),
+                                              IconButton(
+                                                onPressed: () {
+                                                  _onDelete(items);
+                                                },
+                                                icon: Icon(
+                                                  Icons.delete,
+                                                  color: Colors.red,
+                                                ),
+                                              ),
+                                            ],
                                           ),
-                                        ],
-                                      );
-                                    },
-                                  ),
+                                        ),
+                                        Divider(
+                                          thickness: 0.1,
+                                          color: Colors.black,
+                                        ),
+                                      ],
+                                    );
+                                  },
                                 ),
                               );
                             }
@@ -934,86 +943,82 @@ class _CalendarPageState extends State<CalendarPage> {
                             } else {
                               final data =
                                   snapshot.data as List<PemasukanModel>;
-                              return Expanded(
-                                child: Container(
-                                  height: 75,
-                                  decoration: BoxDecoration(
-                                    color: Color(0xff9ECAD6),
-                                    borderRadius: BorderRadius.circular(16),
-                                  ),
-                                  child: ListView.builder(
-                                    itemCount: data.length,
-                                    itemBuilder: (BuildContext context, int index) {
-                                      final items = data[index];
-                                      return Column(
-                                        children: [
-                                          ListTile(
-                                            leading: Icon(
-                                              items.kategoriPemasukan == "Gaji"
-                                                  ? Icons.attach_money
-                                                  : items.kategoriPemasukan ==
-                                                        "Bonus"
-                                                  ? Icons.money_rounded
-                                                  : items.kategoriPemasukan ==
-                                                        "Hadiah"
-                                                  ? Icons.card_giftcard_rounded
-                                                  : Icons.more_horiz,
+                              return Container(
+                                height: 75,
+                                decoration: BoxDecoration(
+                                  color: Color(0xff9ECAD6),
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                                child: ListView.builder(
+                                  itemCount: data.length,
+                                  itemBuilder: (BuildContext context, int index) {
+                                    final items = data[index];
+                                    return Column(
+                                      children: [
+                                        ListTile(
+                                          leading: Icon(
+                                            items.kategoriPemasukan == "Gaji"
+                                                ? Icons.attach_money
+                                                : items.kategoriPemasukan ==
+                                                      "Bonus"
+                                                ? Icons.money_rounded
+                                                : items.kategoriPemasukan ==
+                                                      "Hadiah"
+                                                ? Icons.card_giftcard_rounded
+                                                : Icons.more_horiz,
+                                          ),
+                                          title: Text(
+                                            items.notesPemasukan,
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: Color(0xff2E5077),
                                             ),
-                                            title: Text(
-                                              items.notesPemasukan,
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                color: Color(0xff2E5077),
+                                          ),
+                                          subtitle: Row(
+                                            children: [
+                                              Text(
+                                                "Rp ${items.jumlahPemasukan.toStringAsFixed(0)}",
+                                                style: TextStyle(
+                                                  color: Colors.green,
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
                                               ),
-                                            ),
-                                            subtitle: Row(
-                                              children: [
-                                                Text(
-                                                  "Rp ${items.jumlahPemasukan.toStringAsFixed(0)}",
-                                                  style: TextStyle(
-                                                    color: Colors.green,
-                                                    fontSize: 12,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
-                                                width(8),
-                                                Text(
-                                                  items.tanggalMasuk,
-                                                  style: TextStyle(
-                                                    fontSize: 12,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            trailing: Row(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                IconButton(
-                                                  onPressed: () {
-                                                    _onEditPemasukan(items);
-                                                  },
-                                                  icon: Icon(Icons.edit),
-                                                ),
-                                                IconButton(
-                                                  onPressed: () {
-                                                    _onDeletePemasukan(items);
-                                                  },
-                                                  icon: Icon(
-                                                    Icons.delete,
-                                                    color: Colors.red,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
+                                              width(8),
+                                              Text(
+                                                items.tanggalMasuk,
+                                                style: TextStyle(fontSize: 12),
+                                              ),
+                                            ],
                                           ),
-                                          Divider(
-                                            thickness: 0.1,
-                                            color: Colors.black,
+                                          trailing: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              IconButton(
+                                                onPressed: () {
+                                                  _onEditPemasukan(items);
+                                                },
+                                                icon: Icon(Icons.edit),
+                                              ),
+                                              IconButton(
+                                                onPressed: () {
+                                                  _onDeletePemasukan(items);
+                                                },
+                                                icon: Icon(
+                                                  Icons.delete,
+                                                  color: Colors.red,
+                                                ),
+                                              ),
+                                            ],
                                           ),
-                                        ],
-                                      );
-                                    },
-                                  ),
+                                        ),
+                                        Divider(
+                                          thickness: 0.1,
+                                          color: Colors.black,
+                                        ),
+                                      ],
+                                    );
+                                  },
                                 ),
                               );
                             }

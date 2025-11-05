@@ -23,9 +23,9 @@ class _Tugas10State extends State<RegisterFormPage> {
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color(0xff9ECAD6), Color(0xffF5CBCB)],
-            begin: AlignmentGeometry.topLeft,
-            end: AlignmentGeometry.bottomRight,
+            colors: [Color(0x75074799), Color(0xffE1FFBB)],
+            begin: AlignmentGeometry.topCenter,
+            end: AlignmentGeometry.center,
           ),
         ),
         child: Stack(children: [buildLayer()]),

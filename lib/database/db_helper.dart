@@ -26,14 +26,7 @@ class DbHelper {
         );
       },
 
-      // onUpgrade: (db, oldVersion, newVersion) async {
-      //   if (newVersion == 2) {
-      //     await db.execute(
-      //       "CREATE TABLE $tableStudent(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, email TEXT, class TEXT, age int)",
-      //     );
-      //   }
-      // },
-      version: 4,
+      version: 7,
     );
   }
 
@@ -59,6 +52,20 @@ class DbHelper {
       tableUser,
       where: 'email = ? AND password = ?',
       whereArgs: [email, password],
+    );
+    if (results.isNotEmpty) {
+      return UserModel.fromMap(results.first);
+    }
+    return null;
+  }
+
+  // GET USER BY ID
+  static Future<UserModel?> getUserById(int id) async {
+    final dbs = await db();
+    final List<Map<String, dynamic>> results = await dbs.query(
+      tableUser,
+      where: 'id = ?',
+      whereArgs: [id],
     );
     if (results.isNotEmpty) {
       return UserModel.fromMap(results.first);
@@ -184,6 +191,70 @@ class DbHelper {
 
   static Future<void> deletePemasukan(int id) async {
     final dbs = await db();
-    await dbs.delete(tablePengeluaran, where: 'id = ?', whereArgs: [id]);
+    await dbs.delete(tablePemasukan, where: 'id = ?', whereArgs: [id]);
+  }
+
+  static Future<Map<String, double>> getTotalPengeluaranPerKategori() async {
+    final dbs = await db();
+    final List<Map<String, dynamic>> result = await dbs.rawQuery('''
+    SELECT kategoriPengeluaran, SUM(jumlahPengeluaran) as total
+    FROM $tablePengeluaran
+    GROUP BY kategoriPengeluaran
+  ''');
+
+    Map<String, double> data = {};
+    for (var row in result) {
+      data[row['kategoriPengeluaran']] = (row['total'] as num).toDouble();
+    }
+    return data;
+  }
+
+  static Future<Map<String, double>> getTotalPengeluaranPerTanggal() async {
+    final dbs = await db();
+    final List<Map<String, dynamic>> result = await dbs.rawQuery('''
+    SELECT tanggalKeluar, SUM(jumlahPengeluaran) as total
+    FROM $tablePengeluaran
+    GROUP BY tanggalKeluar
+    ORDER BY tanggalKeluar ASC
+  ''');
+
+    Map<String, double> data = {};
+    for (var row in result) {
+      data[row['tanggalKeluar']] = (row['total'] as num).toDouble();
+    }
+    return data;
+  }
+
+  static Future<Map<String, double>> getTotalPemasukanPerKategori() async {
+    final dbs = await db();
+    final List<Map<String, dynamic>> result = await dbs.rawQuery('''
+    SELECT kategoriPemasukan, SUM(jumlahPemasukan) as total
+    FROM $tablePemasukan
+    GROUP BY kategoriPemasukan
+  ''');
+
+    Map<String, double> data = {};
+    for (var row in result) {
+      data[row['kategoriPemasukan']] = (row['total'] == null)
+          ? 0.0
+          : (row['total'] as num).toDouble();
+    }
+    return data;
+  }
+
+  static Future<Map<String, double>> getTotalPemasukanPerTanggal() async {
+    final dbs = await db();
+    final List<Map<String, dynamic>> result = await dbs.rawQuery('''
+    SELECT tanggalMasuk, SUM(jumlahPemasukan) as total
+    FROM $tablePemasukan
+    GROUP BY tanggalMasuk
+    ORDER BY tanggalMasuk ASC
+  ''');
+
+    Map<String, double> data = {};
+    for (var row in result) {
+      data[row['tanggalMasuk']] = (row['total'] as num).toDouble();
+    }
+    return data;
   }
 }
