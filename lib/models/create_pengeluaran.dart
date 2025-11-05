@@ -35,6 +35,8 @@ class _CreatePengeluaranModelsState extends State<CreatePengeluaranModels> {
     final editJumlahPengeluaranC = TextEditingController(text: Pengeluaran.jumlahPengeluaran.toString());
     final editTanggalPengeluaranC = TextEditingController(text: Pengeluaran.tanggalKeluar);
     final editKategoriPengeluaranC = TextEditingController(text: Pengeluaran.kategoriPengeluaran);
+    final editKategoriCatatanC = TextEditingController(text: Pengeluaran.kategoriCatatan);
+
     final res = await showDialog(
       context: context,
       builder: (context) {
@@ -81,6 +83,8 @@ class _CreatePengeluaranModelsState extends State<CreatePengeluaranModels> {
         notesPengeluaran: editNotesPengeluaranC.text,
         jumlahPengeluaran: jumlah,
         tanggalKeluar: editKategoriPengeluaranC.text,
+        kategoriCatatan: editKategoriCatatanC.text,
+
         kategoriPengeluaran: editKategoriPengeluaranC.text
       );
       await DbHelper.updatePengeluaran(updated);

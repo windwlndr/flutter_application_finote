@@ -5,6 +5,7 @@ class PengeluaranModel {
   final String notesPengeluaran;
   final String tanggalKeluar;
   final int jumlahPengeluaran;
+  final String kategoriCatatan;
   final String kategoriPengeluaran;
 
   PengeluaranModel({
@@ -12,6 +13,7 @@ class PengeluaranModel {
     required this.notesPengeluaran,
     required this.tanggalKeluar,
     required this.jumlahPengeluaran,
+    required this.kategoriCatatan,
     required this.kategoriPengeluaran,
   });
 
@@ -22,6 +24,7 @@ class PengeluaranModel {
       'notesPengeluaran': notesPengeluaran,
       'tanggalKeluar': tanggalKeluar,
       'jumlahPengeluaran': jumlahPengeluaran,
+      'kategoriCatatan': kategoriCatatan,
       'kategoriPengeluaran': kategoriPengeluaran,
     };
   }
@@ -33,6 +36,7 @@ class PengeluaranModel {
       notesPengeluaran: map['notesPengeluaran'] as String,
       tanggalKeluar: (map['tanggalKeluar'] as String),
       jumlahPengeluaran: (map['jumlahPengeluaran'] as int),
+      kategoriCatatan: map['kategoriCatatan'] as String,
       kategoriPengeluaran: map['kategoriPengeluaran'] as String,
     );
   }

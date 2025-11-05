@@ -1,3 +1,4 @@
+import 'package:flutter_application_finote/models/pemasukan_model.dart';
 import 'package:flutter_application_finote/models/pengeluaran.dart';
 import 'package:flutter_application_finote/models/user_model.dart';
 import 'package:path/path.dart';
@@ -6,6 +7,7 @@ import 'package:sqflite/sqflite.dart';
 class DbHelper {
   static const tableUser = 'users';
   static const tablePengeluaran = 'pengeluaran';
+  static const tablePemasukan = 'pemasukan';
 
   static Future<Database> db() async {
     final dbPath = await getDatabasesPath();
@@ -15,8 +17,15 @@ class DbHelper {
         await db.execute(
           "CREATE TABLE $tableUser(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, email TEXT, password TEXT)",
         );
-        await db.execute("CREATE TABLE $tablePengeluaran(id INTEGER PRIMARY KEY AUTOINCREMENT, notesPengeluaran TEXT, tanggalKeluar TEXT, jumlahPengeluaran INTEGER, kategoriPengeluaran TEXT)");
+        await db.execute(
+          "CREATE TABLE $tablePengeluaran(id INTEGER PRIMARY KEY AUTOINCREMENT, notesPengeluaran TEXT, tanggalKeluar TEXT, jumlahPengeluaran INTEGER, kategoriCatatan TEXT, kategoriPengeluaran TEXT)",
+        );
+
+        await db.execute(
+          "CREATE TABLE $tablePemasukan(id INTEGER PRIMARY KEY AUTOINCREMENT, notesPemasukan TEXT, tanggalMasuk TEXT, jumlahPemasukan INTEGER, kategoriCatatan TEXT, kategoriPemasukan TEXT)",
+        );
       },
+
       // onUpgrade: (db, oldVersion, newVersion) async {
       //   if (newVersion == 2) {
       //     await db.execute(
@@ -24,8 +33,7 @@ class DbHelper {
       //     );
       //   }
       // },
-
-      version: 2,
+      version: 4,
     );
   }
 
@@ -84,11 +92,7 @@ class DbHelper {
   static Future<void> deleteUser(int id) async {
     final dbs = await db();
     //Insert adalah fungsi untuk menambahkan data (CREATE)
-    await dbs.delete(
-      tableUser,
-      where: "id = ?",
-      whereArgs: [id]
-    );
+    await dbs.delete(tableUser, where: "id = ?", whereArgs: [id]);
   }
 
   static Future<void> insertPengeluaran(PengeluaranModel pengeluaran) async {
@@ -104,12 +108,16 @@ class DbHelper {
 
   static Future<List<PengeluaranModel>> getAllPengeluaran() async {
     final dbs = await db();
-    final List<Map<String, dynamic>> results = await dbs.query(tablePengeluaran);
+    final List<Map<String, dynamic>> results = await dbs.query(
+      tablePengeluaran,
+    );
     print(results.map((e) => PengeluaranModel.fromMap(e)).toList());
     return results.map((e) => PengeluaranModel.fromMap(e)).toList();
-  }  
+  }
 
-  static Future<List<PengeluaranModel>> getPengeluaranByKategori(String kategori) async {
+  static Future<List<PengeluaranModel>> getPengeluaranByKategori(
+    String kategori,
+  ) async {
     final dbs = await db();
     final List<Map<String, dynamic>> results = await dbs.query(
       tablePengeluaran,
@@ -117,7 +125,7 @@ class DbHelper {
       whereArgs: [kategori],
     );
     return results.map((e) => PengeluaranModel.fromMap(e)).toList();
-  }  
+  }
 
   static Future<void> updatePengeluaran(PengeluaranModel pengeluaran) async {
     final dbs = await db();
@@ -131,10 +139,51 @@ class DbHelper {
 
   static Future<void> deletePengeluaran(int id) async {
     final dbs = await db();
-    await dbs.delete(
-      tablePengeluaran,
-      where: 'id = ?',
-      whereArgs: [id],
+    await dbs.delete(tablePengeluaran, where: 'id = ?', whereArgs: [id]);
+  }
+
+  static Future<void> insertPemasukan(PemasukanModel pemasukan) async {
+    final dbs = await db();
+    //Insert adalah fungsi untuk menambahkan data (CREATE)
+    await dbs.insert(
+      tablePemasukan,
+      pemasukan.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
     );
+    print(pemasukan.toMap());
+  }
+
+  static Future<List<PemasukanModel>> getAllPemasukan() async {
+    final dbs = await db();
+    final List<Map<String, dynamic>> results = await dbs.query(tablePemasukan);
+    print(results.map((e) => PemasukanModel.fromMap(e)).toList());
+    return results.map((e) => PemasukanModel.fromMap(e)).toList();
+  }
+
+  static Future<List<PemasukanModel>> getPemasukanByKategori(
+    String kategori,
+  ) async {
+    final dbs = await db();
+    final List<Map<String, dynamic>> results = await dbs.query(
+      tablePemasukan,
+      where: 'kategoriPemasukan = ?',
+      whereArgs: [kategori],
+    );
+    return results.map((e) => PemasukanModel.fromMap(e)).toList();
+  }
+
+  static Future<void> updatePemasukan(PemasukanModel pemasukan) async {
+    final dbs = await db();
+    await dbs.update(
+      tablePemasukan,
+      pemasukan.toMap(),
+      where: 'id = ?',
+      whereArgs: [pemasukan.id],
+    );
+  }
+
+  static Future<void> deletePemasukan(int id) async {
+    final dbs = await db();
+    await dbs.delete(tablePengeluaran, where: 'id = ?', whereArgs: [id]);
   }
 }
