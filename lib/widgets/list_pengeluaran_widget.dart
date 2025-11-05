@@ -7,8 +7,7 @@ import '../database/db_helper.dart';
 class ListPengeluaranWidget extends StatefulWidget {
   final bool showOnlyPengeluaran; // kalau kamu mau filter jenis transaksi
 
-  const ListPengeluaranWidget({Key? key, this.showOnlyPengeluaran = true})
-    : super(key: key);
+  const ListPengeluaranWidget({super.key, this.showOnlyPengeluaran = true});
 
   @override
   State<ListPengeluaranWidget> createState() => _ListPengeluaranWidgetState();
@@ -97,7 +96,7 @@ class _ListPengeluaranWidgetState extends State<ListPengeluaranWidget> {
                           // : Colors.green,
                         ),
                         title: Text(
-                          "${items.notesPengeluaran}",
+                          items.notesPengeluaran,
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             color: Color(0xff2E5077),
@@ -115,7 +114,7 @@ class _ListPengeluaranWidgetState extends State<ListPengeluaranWidget> {
                             ),
                             width(8),
                             Text(
-                              "${items.tanggalKeluar}",
+                              items.tanggalKeluar,
                               style: TextStyle(fontSize: 12),
                             ),
                           ],

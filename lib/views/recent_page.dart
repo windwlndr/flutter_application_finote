@@ -207,7 +207,7 @@ class _HistoryPageState extends State<HistoryPage> {
                                                   : Icons.menu,
                                             ),
                                             title: Text(
-                                              "${items.notesPengeluaran}",
+                                              items.notesPengeluaran,
                                               style: TextStyle(
                                                 fontWeight: FontWeight.bold,
                                                 color: Color(0xff2E5077),
@@ -225,7 +225,7 @@ class _HistoryPageState extends State<HistoryPage> {
                                                 ),
                                                 width(8),
                                                 Text(
-                                                  "${items.tanggalKeluar}",
+                                                  items.tanggalKeluar,
                                                   style: TextStyle(
                                                     fontSize: 12,
                                                   ),
@@ -294,7 +294,7 @@ class _HistoryPageState extends State<HistoryPage> {
                                                   : Icons.more_horiz,
                                             ),
                                             title: Text(
-                                              "${items.notesPemasukan}",
+                                              items.notesPemasukan,
                                               style: TextStyle(
                                                 fontWeight: FontWeight.bold,
                                                 color: Color(0xff2E5077),
@@ -312,7 +312,7 @@ class _HistoryPageState extends State<HistoryPage> {
                                                 ),
                                                 width(8),
                                                 Text(
-                                                  "${items.tanggalMasuk}",
+                                                  items.tanggalMasuk,
                                                   style: TextStyle(
                                                     fontSize: 12,
                                                   ),
