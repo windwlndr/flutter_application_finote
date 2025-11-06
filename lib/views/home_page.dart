@@ -15,8 +15,15 @@ class HomePageFinote extends StatefulWidget {
 
 class _HomePageFinoteState extends State<HomePageFinote> {
   Map<String, List<FlSpot>> lineData = {};
-  List<Map<String, dynamic>> pieData = [];
-  String selectedPeriod = 'Harian';
+  List<Map<String, dynamic>> pieData = [
+    {'listKategori': 'Makan&Minum', 'color': Colors.orange},
+    {'listKategori': 'Transportasi', 'color': Colors.blue},
+    {'listKategori': 'Hiburan', 'color': Colors.purple},
+    {'listKategori': 'Tagihan', 'color': Colors.yellow},
+    {'listKategori': 'Belanja', 'color': Colors.red},
+    {'listKategori': 'Lainnya', 'color': Colors.green},
+  ];
+  String selectedPeriod = 'Mingguan';
 
   @override
   void initState() {
@@ -28,6 +35,14 @@ class _HomePageFinoteState extends State<HomePageFinote> {
     // Ambil total pengeluaran per tanggal dari database
     final totalPerTanggal = await DbHelper.getTotalPengeluaranPerTanggal();
     final totalPerKategori = await DbHelper.getTotalPengeluaranPerKategori();
+    final Map<String, Color> warnaKategori = {
+      'Makan & Minum': Colors.orange,
+      'Transportasi': Colors.blue,
+      'Hiburan': Colors.purple,
+      'Tagihan': Colors.yellow,
+      'Belanja': Colors.red,
+      'Lainnya': Colors.green,
+    };
 
     // Ubah data tanggal -> FlSpot
     int index = 0;
@@ -37,64 +52,38 @@ class _HomePageFinoteState extends State<HomePageFinote> {
       return spot;
     }).toList();
 
-    // Simpan ke lineData (sementara hanya 'Harian')
     setState(() {
-      lineData = {'Harian': dailySpots};
+      lineData = {'Mingguan': dailySpots};
 
       // Konversi total kategori ke format pieData
       pieData = totalPerKategori.entries.map((e) {
         return {
           'kategori': e.key,
-          'persen': e.value, // nanti diubah ke persen
-          'color': Colors.primaries[pieData.length % Colors.primaries.length],
+          'persen': e.value,
+          'color':
+              warnaKategori[e.key] ??
+              Colors.grey, // default abu-abu jika kategori baru
         };
       }).toList();
 
       // Normalisasi persentase
       final totalAll = pieData.fold<double>(
         0,
-        (sum, item) => sum + item['persen'],
+        (sum, item) => sum + (item['persen'] ?? 0),
       );
-      for (var item in pieData) {
-        item['persen'] = (item['persen'] / totalAll * 100).roundToDouble();
+      if (totalAll > 0) {
+        for (var item in pieData) {
+          final persen = (item['persen'] ?? 0);
+          item['persen'] = ((persen / totalAll) * 100).roundToDouble();
+        }
+      } else {
+        for (var item in pieData) {
+          item['persen'] = 0.0;
+        }
       }
     });
   }
 
-  // String selectedPeriod = 'Mingguan';
-
-  // // Dummy data
-  // final Map<String, List<FlSpot>> lineData = {
-  //   'Mingguan': [
-  //     FlSpot(0, 50),
-  //     FlSpot(1, 70),
-  //     FlSpot(2, 40),
-  //     FlSpot(3, 90),
-  //     FlSpot(4, 60),
-  //     FlSpot(5, 100),
-  //     FlSpot(6, 80),
-  //   ],
-  //   'Bulanan': [
-  //     FlSpot(0, 400),
-  //     FlSpot(1, 600),
-  //     FlSpot(2, 550),
-  //     FlSpot(3, 700),
-  //     FlSpot(4, 800),
-  //   ],
-  //   'Tahunan': [
-  //     FlSpot(0, 5500),
-  //     FlSpot(1, 6300),
-  //     FlSpot(2, 7200),
-  //     FlSpot(3, 8100),
-  //   ],
-  // };
-
-  // final List<Map<String, dynamic>> pieData = [
-  //   {'kategori': 'Makanan', 'persen': 40, 'color': Colors.orange},
-  //   {'kategori': 'Transportasi', 'persen': 25, 'color': Colors.blue},
-  //   {'kategori': 'Hiburan', 'persen': 15, 'color': Colors.purple},
-  //   {'kategori': 'Lainnya', 'persen': 20, 'color': Colors.green},
-  // ];
   @override
   Widget build(BuildContext context) {
     String kategori = "Makan";
@@ -329,9 +318,6 @@ class _HomePageFinoteState extends State<HomePageFinote> {
                                         },
                                       ),
                                     ),
-                                    leftTitles: AxisTitles(
-                                      sideTitles: SideTitles(showTitles: true),
-                                    ),
                                   ),
                                   borderData: FlBorderData(show: true),
                                   lineBarsData: [
@@ -346,38 +332,6 @@ class _HomePageFinoteState extends State<HomePageFinote> {
                                 ),
                               ),
                       ),
-
-                      // SizedBox(
-                      //   height: 200,
-                      //   child: LineChart(
-                      //     LineChartData(
-                      //       gridData: FlGridData(show: true),
-                      //       titlesData: FlTitlesData(
-                      //         bottomTitles: AxisTitles(
-                      //           sideTitles: SideTitles(
-                      //             showTitles: true,
-                      //             getTitlesWidget: (value, meta) {
-                      //               return Text(value.toInt().toString());
-                      //             },
-                      //           ),
-                      //         ),
-                      //         leftTitles: AxisTitles(
-                      //           sideTitles: SideTitles(showTitles: true),
-                      //         ),
-                      //       ),
-                      //       borderData: FlBorderData(show: true),
-                      //       lineBarsData: [
-                      //         LineChartBarData(
-                      //           spots: lineData[selectedPeriod]!,
-                      //           isCurved: true,
-                      //           color: Colors.teal,
-                      //           barWidth: 3,
-                      //           dotData: FlDotData(show: true),
-                      //         ),
-                      //       ],
-                      //     ),
-                      //   ),
-                      // ),
                     ],
                   ),
                 ),
@@ -412,7 +366,7 @@ class _HomePageFinoteState extends State<HomePageFinote> {
                                 PieChartData(
                                   sections: pieData.map((data) {
                                     return PieChartSectionData(
-                                      value: data['persen'].toDouble(),
+                                      value: (data['persen'] ?? 0).toDouble(),
                                       color: data['color'],
                                       title:
                                           '${data['kategori']}\n${data['persen']}%',
@@ -427,28 +381,6 @@ class _HomePageFinoteState extends State<HomePageFinote> {
                                 ),
                               ),
                       ),
-
-                      // SizedBox(
-                      //   height: 200,
-                      //   child: PieChart(
-                      //     PieChartData(
-                      //       sections: pieData.map((data) {
-                      //         return PieChartSectionData(
-                      //           value: data['persen'].toDouble(),
-                      //           color: data['color'],
-                      //           title:
-                      //               '${data['kategori']}\n${data['persen']}%',
-                      //           radius: 60,
-                      //           titleStyle: const TextStyle(
-                      //             color: Colors.white,
-                      //             fontSize: 12,
-                      //             fontWeight: FontWeight.bold,
-                      //           ),
-                      //         );
-                      //       }).toList(),
-                      //     ),
-                      //   ),
-                      // ),
                     ],
                   ),
                 ),

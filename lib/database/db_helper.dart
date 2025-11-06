@@ -257,4 +257,72 @@ class DbHelper {
     }
     return data;
   }
+
+  // GET BY EMAIL
+  static Future<UserModel?> getUserByEmail(String email) async {
+    final db = await DbHelper.db();
+    final List<Map<String, dynamic>> maps = await db.query(
+      tableUser,
+      where: 'email = ?',
+      whereArgs: [email],
+    );
+
+    if (maps.isNotEmpty) {
+      return UserModel.fromMap(maps.first);
+    } else {
+      return null;
+    }
+  }
+
+  static Future<Map<String, double>> getTotalPengeluaranPerPeriode(
+    String mode,
+  ) async {
+    final dbs = await db();
+    String query = '';
+
+    if (mode == 'Mingguan') {
+      // Total pengeluaran per hari selama 7 hari terakhir
+      query =
+          '''
+      SELECT strftime('%w', tanggalKeluar) AS hari, SUM(jumlahPengeluaran) AS total
+      FROM $tablePengeluaran
+      WHERE date(tanggalKeluar) >= date('now', '-6 days')
+      GROUP BY hari
+      ORDER BY hari;
+    ''';
+    } else if (mode == 'Bulanan') {
+      // Total pengeluaran per minggu (4 minggu terakhir)
+      query =
+          '''
+      SELECT strftime('%W', tanggalKeluar) AS minggu, SUM(jumlahPengeluaran) AS total
+      FROM $tablePengeluaran
+      WHERE date(tanggalKeluar) >= date('now', '-30 days')
+      GROUP BY minggu
+      ORDER BY minggu;
+    ''';
+    } else if (mode == 'Tahunan') {
+      // Total pengeluaran per bulan (12 bulan terakhir)
+      query =
+          '''
+      SELECT strftime('%m', tanggalKeluar) AS bulan, SUM(jumlahPengeluaran) AS total
+      FROM $tablePengeluaran
+      WHERE date(tanggalKeluar) >= date('now', '-12 months')
+      GROUP BY bulan
+      ORDER BY bulan;
+    ''';
+    }
+
+    final result = await dbs.rawQuery(query);
+
+    Map<String, double> data = {};
+    for (var row in result) {
+      final key = row.values.first.toString();
+      final val = (row['total'] == null)
+          ? 0.0
+          : (row['total'] as num).toDouble();
+      data[key] = val;
+    }
+
+    return data;
+  }
 }

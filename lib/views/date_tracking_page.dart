@@ -290,10 +290,7 @@ class _CalendarPageState extends State<CalendarPage> {
     String? dropDownJenis;
     DateTime selectedDate = selectedPicked ?? DateTime.now();
 
-    String formatedDate = DateFormat(
-      'dd MMMM yyyy',
-      'id_ID',
-    ).format(selectedDate);
+    String formatedDate = DateFormat('dd', 'id_ID').format(selectedDate);
 
     String selectedKategori = pemasukan.kategoriPemasukan;
     String selectedCatatan = pemasukan.kategoriCatatan;

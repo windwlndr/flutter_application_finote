@@ -25,10 +25,14 @@ class ListTileWidget extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         ListTile(
-          contentPadding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 2.0),
+          contentPadding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 1.0),
           leading: Icon(leadingIcon, color: iconColor ?? Color(0xff2E5077)),
           title: TextButton(
             onPressed: onTap,
+            style: TextButton.styleFrom(
+              padding: EdgeInsets.zero,
+              alignment: Alignment.centerLeft,
+            ),
             child: Text(
               title,
               style: TextStyle(

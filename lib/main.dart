@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_finote/views/splash_screen.dart';
-import 'package:flutter_application_finote/widgets/buttom_navbar.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
 void main() async {

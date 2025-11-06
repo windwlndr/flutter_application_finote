@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_finote/preferences/preferences_handler.dart';
-import 'package:flutter_application_finote/views/home_page.dart';
 import 'package:flutter_application_finote/views/login_page.dart';
 import 'package:flutter_application_finote/widgets/buttom_navbar.dart';
 

@@ -27,10 +27,10 @@ class _ProfilUserPageState extends State<ProfilUserPage> {
 
   Future<void> loadUser() async {
     final prefs = await SharedPreferences.getInstance();
-    final userId = prefs.getInt('user_id');
+    final userEmail = prefs.getString('user_email');
 
-    if (userId != null) {
-      final userData = await DbHelper.getUserById(userId);
+    if (userEmail != null) {
+      final userData = await DbHelper.getUserByEmail(userEmail);
       setState(() {
         user = userData;
       });
@@ -172,64 +172,11 @@ class _ProfilUserPageState extends State<ProfilUserPage> {
               ),
               SizedBox(height: 16),
 
-              // FutureBuilder(
-              //   future: DbHelper.getAllUser(),
-              //   builder: (BuildContext context, AsyncSnapshot snapshot) {
-              //     if (snapshot.connectionState == ConnectionState.waiting) {
-              //       return CircularProgressIndicator();
-              //     } else if (snapshot.data == null || snapshot.data.isEmpty) {
-              //       return Column(
-              //         children: [
-              //           //Image.asset("assets/images/empty.png", height: 150),
-              //           Text("Data belum ada"),
-              //         ],
-              //       );
-              //     } else {
-              //       final data = snapshot.data as List<UserModel>;
-              //       return Expanded(
-              //         child: ListView.builder(
-              //           itemCount: data.length,
-              //           itemBuilder: (BuildContext context, int index) {
-              //             final items = data[index];
-              //             return Column(
-              //               children: [
-              //                 ListTile(
-              //                   title: Text(items.name ?? ''),
-              //                   subtitle: Text(items.email ?? ''),
-              //                   trailing: Row(
-              //                     mainAxisSize: MainAxisSize.min,
-              //                     children: [
-              //                       IconButton(
-              //                         onPressed: () {
-              //                           _onEdit(items);
-              //                         },
-              //                         icon: Icon(Icons.edit),
-              //                       ),
-              //                       IconButton(
-              //                         onPressed: () {
-              //                           _onDelete(items);
-              //                         },
-              //                         icon: Icon(
-              //                           Icons.delete,
-              //                           color: Colors.red,
-              //                         ),
-              //                       ),
-              //                     ],
-              //                   ),
-              //                 ),
-              //               ],
-              //             );
-              //           },
-              //         ),
-              //       );
-              //     }
-              //   },
-              // ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    "Windu Wulandari",
+                    user?.name ?? "-",
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
@@ -237,7 +184,9 @@ class _ProfilUserPageState extends State<ProfilUserPage> {
                     ),
                   ),
                   IconButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      _onEdit(user!);
+                    },
                     icon: Icon(Icons.edit, size: 20, color: Color(0xff2E5077)),
                   ),
                 ],

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_finote/database/db_helper.dart';
 import 'package:flutter_application_finote/preferences/preferences_handler.dart';
-import 'package:flutter_application_finote/views/home_page.dart';
 import 'package:flutter_application_finote/views/register_page.dart';
 import 'package:flutter_application_finote/widgets/buttom_navbar.dart';
 import 'package:flutter_application_finote/widgets/login_button.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 //Bahas Shared Preference
 class LoginScreenDay18 extends StatefulWidget {
@@ -107,6 +107,9 @@ class _LoginScreenDay18State extends State<LoginScreenDay18> {
                         email: emailController.text,
                         password: passwordController.text,
                       );
+                      final prefs = await SharedPreferences.getInstance();
+                      await prefs.setString('user_email', emailController.text);
+
                       if (data != null) {
                         Navigator.push(
                           context,
