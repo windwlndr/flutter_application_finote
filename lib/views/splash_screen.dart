@@ -43,9 +43,9 @@ class _SplashScreenDay18State extends State<SplashScreenDay18> {
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color(0x75074799), Color(0xffE1FFBB)],
+            colors: [Color(0xff09887f), Color(0x3509887f)],
             begin: AlignmentGeometry.topCenter,
-            end: AlignmentGeometry.center,
+            end: AlignmentGeometry.bottomCenter,
           ),
         ),
         child: Column(

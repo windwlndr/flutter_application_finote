@@ -48,7 +48,7 @@ class _ButtomNavbarWidgetsState extends State<ButtomNavbarWidgets> {
             _selectedIndex = index;
           });
         },
-        selectedItemColor: Colors.blue,
+        selectedItemColor: Color(0xff0E4170),
         unselectedItemColor: Colors.grey,
         items: [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home Page"),

@@ -325,4 +325,56 @@ class DbHelper {
 
     return data;
   }
+
+  static Future<Map<String, double>> getTotalPemasukanPerPeriode(
+    String mode,
+  ) async {
+    final dbs = await db();
+    String query = '';
+
+    if (mode == 'Mingguan') {
+      // Total pengeluaran per hari selama 7 hari terakhir
+      query =
+          '''
+      SELECT strftime('%w', tanggalMasuk) AS hari, SUM(jumlahPemasukan) AS total
+      FROM $tablePemasukan
+      WHERE date(tanggalMasuk) >= date('now', '-6 days')
+      GROUP BY hari
+      ORDER BY hari;
+    ''';
+    } else if (mode == 'Bulanan') {
+      // Total pengeluaran per minggu (4 minggu terakhir)
+      query =
+          '''
+      SELECT strftime('%W', tanggalMasuk) AS minggu, SUM(jumlahPemasukan) AS total
+      FROM $tablePemasukan
+      WHERE date(tanggalMasuk) >= date('now', '-30 days')
+      GROUP BY minggu
+      ORDER BY minggu;
+    ''';
+    } else if (mode == 'Tahunan') {
+      // Total pengeluaran per bulan (12 bulan terakhir)
+      query =
+          '''
+      SELECT strftime('%m', tanggalMasuk) AS bulan, SUM(jumlahPemasukan) AS total
+      FROM $tablePemasukan
+      WHERE date(tanggalMasuk) >= date('now', '-12 months')
+      GROUP BY bulan
+      ORDER BY bulan;
+    ''';
+    }
+
+    final result = await dbs.rawQuery(query);
+
+    Map<String, double> data = {};
+    for (var row in result) {
+      final key = row.values.first.toString();
+      final val = (row['total'] == null)
+          ? 0.0
+          : (row['total'] as num).toDouble();
+      data[key] = val;
+    }
+
+    return data;
+  }
 }
