@@ -102,6 +102,7 @@ class _CalendarPageState extends State<CalendarPage> {
         return StatefulBuilder(
           builder: (context, setState) {
             return AlertDialog(
+              backgroundColor: Color.fromARGB(255, 218, 235, 255),
               title: Text("Edit data Pengeluaran"),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -196,13 +197,13 @@ class _CalendarPageState extends State<CalendarPage> {
                   onPressed: () {
                     Navigator.pop(context);
                   },
-                  child: Text("Batal"),
+                  child: Text("Batal", style: TextStyle(color: Colors.red)),
                 ),
                 TextButton(
                   onPressed: () {
                     Navigator.pop(context, true);
                   },
-                  child: Text("Simpan"),
+                  child: Text("Simpan", style: TextStyle(color: Colors.green)),
                 ),
               ],
             );
@@ -260,13 +261,16 @@ class _CalendarPageState extends State<CalendarPage> {
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: Text("Jangan"),
+              child: Text("Jangan", style: TextStyle(color: Colors.green)),
             ),
             TextButton(
               onPressed: () {
                 Navigator.pop(context, true);
               },
-              child: Text("Ya, hapus data"),
+              child: Text(
+                "Ya, hapus data",
+                style: TextStyle(color: Colors.red),
+              ),
             ),
           ],
         );
@@ -396,13 +400,13 @@ class _CalendarPageState extends State<CalendarPage> {
                   onPressed: () {
                     Navigator.pop(context);
                   },
-                  child: Text("Batal"),
+                  child: Text("Batal", style: TextStyle(color: Colors.red)),
                 ),
                 TextButton(
                   onPressed: () {
                     Navigator.pop(context, true);
                   },
-                  child: Text("Simpan"),
+                  child: Text("Simpan", style: TextStyle(color: Colors.green)),
                 ),
               ],
             );
@@ -460,13 +464,16 @@ class _CalendarPageState extends State<CalendarPage> {
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: Text("Jangan"),
+              child: Text("Jangan", style: TextStyle(color: Colors.green)),
             ),
             TextButton(
               onPressed: () {
                 Navigator.pop(context, true);
               },
-              child: Text("Ya, hapus data"),
+              child: Text(
+                "Ya, hapus data",
+                style: TextStyle(color: Colors.red),
+              ),
             ),
           ],
         );
@@ -579,6 +586,12 @@ class _CalendarPageState extends State<CalendarPage> {
                                   : Colors.black;
 
                               return AlertDialog(
+                                backgroundColor: Color.fromARGB(
+                                  255,
+                                  218,
+                                  235,
+                                  255,
+                                ),
                                 title: const Text("Tambah Catatan"),
                                 content: Column(
                                   mainAxisSize: MainAxisSize.min,
@@ -678,7 +691,10 @@ class _CalendarPageState extends State<CalendarPage> {
                                 actions: [
                                   TextButton(
                                     onPressed: () => Navigator.pop(context),
-                                    child: const Text("Batal"),
+                                    child: const Text(
+                                      "Batal",
+                                      style: TextStyle(color: Colors.red),
+                                    ),
                                   ),
                                   TextButton(
                                     onPressed: () async {
@@ -748,7 +764,10 @@ class _CalendarPageState extends State<CalendarPage> {
 
                                       Navigator.pop(context, true);
                                     },
-                                    child: const Text("Simpan"),
+                                    child: const Text(
+                                      "Simpan",
+                                      style: TextStyle(color: Colors.green),
+                                    ),
                                   ),
                                 ],
                               );

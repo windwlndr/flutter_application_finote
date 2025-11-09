@@ -206,7 +206,7 @@ class _HomePageFinoteState extends State<HomePageFinote> {
                             ),
                             title: Text(
                               "Halo " +
-                                  (user?.name ?? "User") +
+                                  (user?.name ?? "Windu") +
                                   "!" +
                                   " Sisa saldo kamu saat ini:",
                               style: TextStyle(fontSize: 12),
