@@ -18,7 +18,7 @@ class _SplashScreenDay18State extends State<SplashScreenDay18> {
   }
 
   isLoginFunction() async {
-    Future.delayed(Duration(seconds: 3)).then((value) async {
+    Future.delayed(Duration(seconds: 15)).then((value) async {
       var isLogin = await PreferenceHandler.getLogin();
       print(isLogin);
       if (isLogin != null && isLogin == true) {
@@ -43,7 +43,7 @@ class _SplashScreenDay18State extends State<SplashScreenDay18> {
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color(0xff09887f), Color(0x3509887f)],
+            colors: [Color(0x752f59ab), Color(0x102f59ab)],
             begin: AlignmentGeometry.topCenter,
             end: AlignmentGeometry.bottomCenter,
           ),
@@ -52,7 +52,29 @@ class _SplashScreenDay18State extends State<SplashScreenDay18> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Center(child: Image.asset("assets/images/Finote.png", scale: 3)),
+            Center(
+              child: Image.asset("assets/images/Finote Logo.png", scale: 3),
+            ),
+
+            SizedBox(height: 20),
+            Text(
+              "Finote",
+              style: TextStyle(
+                fontSize: 32,
+                fontWeight: FontWeight.bold,
+                color: Color(0xff2f59ab),
+              ),
+            ),
+
+            SizedBox(height: 10),
+            Text(
+              "Your Financial Notes App",
+              style: TextStyle(
+                fontSize: 16,
+                fontStyle: FontStyle.italic,
+                color: Color(0xff2f59ab),
+              ),
+            ),
           ],
         ),
       ),

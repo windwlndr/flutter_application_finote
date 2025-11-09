@@ -3,6 +3,7 @@ import 'package:flutter_application_finote/database/db_helper.dart';
 import 'package:flutter_application_finote/models/pemasukan_model.dart';
 import 'package:flutter_application_finote/models/pengeluaran.dart';
 import 'package:flutter_application_finote/views/register_page.dart';
+import 'package:flutter_application_finote/widgets/app_bar.dart';
 import 'package:flutter_application_finote/widgets/login_button.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
@@ -485,30 +486,19 @@ class _CalendarPageState extends State<CalendarPage> {
       length: 2,
 
       child: Scaffold(
-        appBar: AppBar(
-          actions: [
-            IconButton(onPressed: () {}, icon: Icon(Icons.search, size: 30)),
-            IconButton(
-              onPressed: () {},
-              icon: Icon(Icons.notifications, size: 30),
-            ),
-          ],
-          title: const Text(
-            'Finote',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              color: Color.fromARGB(255, 16, 62, 100),
-            ),
-          ),
-          backgroundColor: Color(0x75074799),
+        appBar: CustomAppBar(
+          title: 'Finote',
+          onSearchTap: () {
+            print('Search tapped');
+          },
+          onNotificationTap: () {
+            print('Notification tapped');
+          },
         ),
-
         body: Container(
-          width: double.infinity,
-          height: double.infinity,
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             gradient: LinearGradient(
-              colors: [Color(0x75074799), Color(0xffE1FFBB)],
+              colors: [Color(0x352F59AB), Color(0x102F59AB)],
               begin: AlignmentGeometry.topCenter,
               end: AlignmentGeometry.center,
             ),
@@ -831,7 +821,7 @@ class _CalendarPageState extends State<CalendarPage> {
                               return Container(
                                 height: 75,
                                 decoration: BoxDecoration(
-                                  color: Color(0xff9ECAD6),
+                                  color: Colors.transparent,
                                   borderRadius: BorderRadius.circular(16),
                                 ),
                                 child: ListView.builder(
@@ -874,14 +864,14 @@ class _CalendarPageState extends State<CalendarPage> {
                                                 "Rp ${items.jumlahPengeluaran.toStringAsFixed(0)}",
                                                 style: TextStyle(
                                                   color: Colors.red,
-                                                  fontSize: 12,
+                                                  fontSize: 9,
                                                   fontWeight: FontWeight.bold,
                                                 ),
                                               ),
                                               width(8),
                                               Text(
                                                 items.tanggalKeluar,
-                                                style: TextStyle(fontSize: 12),
+                                                style: TextStyle(fontSize: 9),
                                               ),
                                             ],
                                           ),
@@ -943,7 +933,7 @@ class _CalendarPageState extends State<CalendarPage> {
                               return Container(
                                 height: 75,
                                 decoration: BoxDecoration(
-                                  color: Color(0xff9ECAD6),
+                                  color: Colors.transparent,
                                   borderRadius: BorderRadius.circular(16),
                                 ),
                                 child: ListView.builder(
@@ -977,14 +967,14 @@ class _CalendarPageState extends State<CalendarPage> {
                                                 "Rp ${items.jumlahPemasukan.toStringAsFixed(0)}",
                                                 style: TextStyle(
                                                   color: Colors.green,
-                                                  fontSize: 12,
+                                                  fontSize: 9,
                                                   fontWeight: FontWeight.bold,
                                                 ),
                                               ),
                                               width(8),
                                               Text(
                                                 items.tanggalMasuk,
-                                                style: TextStyle(fontSize: 12),
+                                                style: TextStyle(fontSize: 9),
                                               ),
                                             ],
                                           ),

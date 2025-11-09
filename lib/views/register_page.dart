@@ -21,9 +21,9 @@ class _Tugas10State extends State<RegisterFormPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color(0x75074799), Color(0xffE1FFBB)],
+            colors: [Color(0x352F59AB), Color(0x102F59AB)],
             begin: AlignmentGeometry.topCenter,
             end: AlignmentGeometry.center,
           ),

@@ -59,7 +59,12 @@ class ChartSection extends StatelessWidget {
                           child: ChoiceChip(
                             label: Text(period),
                             selected: selectedPeriod == period,
-                            selectedColor: const Color(0xFF418FCE),
+                            selectedColor: const Color.fromARGB(
+                              255,
+                              120,
+                              174,
+                              224,
+                            ),
                             labelStyle: TextStyle(
                               fontSize: 14,
                               color: selectedPeriod == period
@@ -150,7 +155,9 @@ class ChartSection extends StatelessWidget {
                                       return PieChartSectionData(
                                         value: (data['persen'] ?? 0).toDouble(),
                                         color: data['color'],
-                                        title: '${data['persen']}%',
+                                        title:
+                                            '${(data['persen'] ?? 0).toString()}%',
+
                                         titleStyle: const TextStyle(
                                           color: Colors.white,
                                           fontSize: 12,
@@ -185,7 +192,8 @@ class ChartSection extends StatelessWidget {
                                   const SizedBox(width: 8),
                                   Flexible(
                                     child: Text(
-                                      data['kategori'],
+                                      (data['kategori'] ?? 'Tidak diketahui')
+                                          .toString(),
                                       style: const TextStyle(fontSize: 12),
                                       overflow: TextOverflow.ellipsis,
                                     ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_finote/widgets/app_bar.dart';
 import 'package:flutter_application_finote/widgets/list_item_widget.dart';
 
 class RencanaBulananPage extends StatefulWidget {
@@ -12,29 +13,19 @@ class _RencanaBulananPageState extends State<RencanaBulananPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        actions: [
-          IconButton(onPressed: () {}, icon: Icon(Icons.search, size: 30)),
-          IconButton(
-            onPressed: () {},
-            icon: Icon(Icons.notifications, size: 30),
-          ),
-        ],
-        title: const Text(
-          'Finote',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            color: Color.fromARGB(255, 16, 62, 100),
-          ),
-        ),
-        backgroundColor: Color(0x75074799),
+      appBar: CustomAppBar(
+        title: 'Finote',
+        onSearchTap: () {
+          print('Search tapped');
+        },
+        onNotificationTap: () {
+          print('Notification tapped');
+        },
       ),
       body: Container(
-        width: double.infinity,
-        height: double.infinity,
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color(0x75074799), Color(0xffE1FFBB)],
+            colors: [Color(0x352F59AB), Color(0x102F59AB)],
             begin: AlignmentGeometry.topCenter,
             end: AlignmentGeometry.center,
           ),

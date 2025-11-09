@@ -3,6 +3,7 @@ import 'package:flutter_application_finote/database/db_helper.dart';
 import 'package:flutter_application_finote/models/user_model.dart';
 import 'package:flutter_application_finote/views/date_tracking_page.dart';
 import 'package:flutter_application_finote/views/login_page.dart';
+import 'package:flutter_application_finote/widgets/app_bar.dart';
 import 'package:flutter_application_finote/widgets/custom_list_tile.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -132,30 +133,19 @@ class _ProfilUserPageState extends State<ProfilUserPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        actions: [
-          IconButton(onPressed: () {}, icon: Icon(Icons.search, size: 30)),
-          IconButton(
-            onPressed: () {},
-            icon: Icon(Icons.notifications, size: 30),
-          ),
-        ],
-        title: const Text(
-          'Finote',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            color: Color.fromARGB(255, 16, 62, 100),
-          ),
-        ),
-        backgroundColor: Color(0x75074799),
+      appBar: CustomAppBar(
+        title: 'Finote',
+        onSearchTap: () {
+          print('Search tapped');
+        },
+        onNotificationTap: () {
+          print('Notification tapped');
+        },
       ),
-
       body: Container(
-        width: double.infinity,
-        height: double.infinity,
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color(0x75074799), Color(0xffE1FFBB)],
+            colors: [Color(0x352F59AB), Color(0x102F59AB)],
             begin: AlignmentGeometry.topCenter,
             end: AlignmentGeometry.center,
           ),
@@ -185,7 +175,11 @@ class _ProfilUserPageState extends State<ProfilUserPage> {
                   ),
                   IconButton(
                     onPressed: () {
-                      _onEdit(user!);
+                      if (user == null) {
+                        Fluttertoast.showToast(msg: "Data user belum dimuat");
+                      } else {
+                        _onEdit(user!);
+                      }
                     },
                     icon: Icon(Icons.edit, size: 20, color: Color(0xff2E5077)),
                   ),

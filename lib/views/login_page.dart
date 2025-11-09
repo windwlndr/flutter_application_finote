@@ -5,7 +5,6 @@ import 'package:flutter_application_finote/views/register_page.dart';
 import 'package:flutter_application_finote/widgets/buttom_navbar.dart';
 import 'package:flutter_application_finote/widgets/login_button.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 //Bahas Shared Preference
 class LoginScreenDay18 extends StatefulWidget {
@@ -107,9 +106,6 @@ class _LoginScreenDay18State extends State<LoginScreenDay18> {
                         email: emailController.text,
                         password: passwordController.text,
                       );
-                      final prefs = await SharedPreferences.getInstance();
-                      await prefs.setString('user_email', emailController.text);
-
                       if (data != null) {
                         Navigator.push(
                           context,
@@ -237,9 +233,9 @@ class _LoginScreenDay18State extends State<LoginScreenDay18> {
     return Container(
       height: double.infinity,
       width: double.infinity,
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         gradient: LinearGradient(
-          colors: [Color(0x75074799), Color(0xffE1FFBB)],
+          colors: [Color(0x352F59AB), Color(0x102F59AB)],
           begin: AlignmentGeometry.topCenter,
           end: AlignmentGeometry.center,
         ),
