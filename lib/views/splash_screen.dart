@@ -18,7 +18,7 @@ class _SplashScreenDay18State extends State<SplashScreenDay18> {
   }
 
   isLoginFunction() async {
-    Future.delayed(Duration(seconds: 15)).then((value) async {
+    Future.delayed(Duration(seconds: 3)).then((value) async {
       var isLogin = await PreferenceHandler.getLogin();
       print(isLogin);
       if (isLogin != null && isLogin == true) {

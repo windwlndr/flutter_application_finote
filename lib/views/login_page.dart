@@ -5,6 +5,7 @@ import 'package:flutter_application_finote/views/register_page.dart';
 import 'package:flutter_application_finote/widgets/buttom_navbar.dart';
 import 'package:flutter_application_finote/widgets/login_button.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 //Bahas Shared Preference
 class LoginScreenDay18 extends StatefulWidget {
@@ -17,6 +18,7 @@ class _LoginScreenDay18State extends State<LoginScreenDay18> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   bool isVisibility = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(body: Stack(children: [buildBackground(), buildLayer()]));
@@ -107,6 +109,8 @@ class _LoginScreenDay18State extends State<LoginScreenDay18> {
                         password: passwordController.text,
                       );
                       if (data != null) {
+                        PreferenceHandler.saveEmail(data.email!);
+                        // PreferenceHandler.saveUserData(data.id!, data.name!);
                         Navigator.push(
                           context,
                           MaterialPageRoute(

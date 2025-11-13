@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_finote/database/db_helper.dart';
 import 'package:flutter_application_finote/models/user_model.dart';
+import 'package:flutter_application_finote/preferences/preferences_handler.dart';
 import 'package:flutter_application_finote/views/date_tracking_page.dart';
 import 'package:flutter_application_finote/views/login_page.dart';
+import 'package:flutter_application_finote/views/register_page.dart';
 import 'package:flutter_application_finote/widgets/app_bar.dart';
 import 'package:flutter_application_finote/widgets/custom_list_tile.dart';
+import 'package:flutter_application_finote/widgets/login_button.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -27,8 +30,8 @@ class _ProfilUserPageState extends State<ProfilUserPage> {
   }
 
   Future<void> loadUser() async {
-    final prefs = await SharedPreferences.getInstance();
-    final userEmail = prefs.getString('user_email');
+    final userEmail = await PreferenceHandler.getEmail();
+    print(userEmail);
 
     if (userEmail != null) {
       final userData = await DbHelper.getUserByEmail(userEmail);
@@ -76,9 +79,10 @@ class _ProfilUserPageState extends State<ProfilUserPage> {
         id: user.id,
         name: editNameC.text,
         email: editEmailC.text,
+        password: user.password,
       );
-      DbHelper.updateUser(updated);
-      loadUser();
+      await DbHelper.updateUser(updated);
+      await loadUser();
       Fluttertoast.showToast(msg: "Data berhasil di update");
     }
   }
@@ -132,6 +136,9 @@ class _ProfilUserPageState extends State<ProfilUserPage> {
 
   @override
   Widget build(BuildContext context) {
+    // if (user == null) {
+    //   return const Center(child: CircularProgressIndicator());
+    // }
     return Scaffold(
       appBar: CustomAppBar(
         title: 'Finote',
@@ -166,7 +173,7 @@ class _ProfilUserPageState extends State<ProfilUserPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    user?.name ?? "Windu",
+                    user?.name ?? "User",
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
@@ -174,13 +181,7 @@ class _ProfilUserPageState extends State<ProfilUserPage> {
                     ),
                   ),
                   IconButton(
-                    onPressed: () {
-                      if (user == null) {
-                        Fluttertoast.showToast(msg: "Data user belum dimuat");
-                      } else {
-                        _onEdit(user!);
-                      }
-                    },
+                    onPressed: user != null ? () => _onEdit(user!) : null,
                     icon: Icon(Icons.edit, size: 20, color: Color(0xff2E5077)),
                   ),
                 ],
@@ -236,14 +237,12 @@ class _ProfilUserPageState extends State<ProfilUserPage> {
                     textColor: Color(0xff2E5077),
                     onTap: () {},
                   ),
-                  ListTileWidget(
-                    title: "Logout",
-                    subtitle: "Keluar dari akun Finote Anda.",
-                    leadingIcon: Icons.logout,
-                    iconColor: Colors.red,
-                    textColor: Colors.red,
+                  height(20),
+                  LoginButton(
+                    text: 'Keluar',
+                    onPressed: () {
+                      PreferenceHandler.removeLogin();
 
-                    onTap: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -254,6 +253,24 @@ class _ProfilUserPageState extends State<ProfilUserPage> {
                       );
                     },
                   ),
+                  // ListTileWidget(
+                  //   title: "Logout",
+                  //   subtitle: "Keluar dari akun Finote Anda.",
+                  //   leadingIcon: Icons.logout,
+                  //   iconColor: Colors.red,
+                  //   textColor: Colors.red,
+
+                  //   onTap: () {
+                  //     Navigator.push(
+                  //       context,
+                  //       MaterialPageRoute(
+                  //         builder: (context) {
+                  //           return LoginScreenDay18();
+                  //         },
+                  //       ),
+                  //     );
+                  //   },
+                  // ),
                 ],
               ),
             ],

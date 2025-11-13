@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_finote/database/db_helper.dart';
 import 'package:flutter_application_finote/models/pemasukan_model.dart';
 import 'package:flutter_application_finote/models/pengeluaran.dart';
-import 'package:flutter_application_finote/views/register_page.dart';
 import 'package:flutter_application_finote/widgets/app_bar.dart';
 
 class HistoryPage extends StatefulWidget {

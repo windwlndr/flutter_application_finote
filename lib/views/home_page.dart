@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter_application_finote/database/db_helper.dart';
 import 'package:flutter_application_finote/models/user_model.dart';
+import 'package:flutter_application_finote/preferences/preferences_handler.dart';
 import 'package:flutter_application_finote/views/weekly_plan.dart';
 import 'package:flutter_application_finote/views/monthly_plan.dart';
 import 'package:flutter_application_finote/views/register_page.dart';
@@ -55,6 +56,19 @@ class _HomePageFinoteState extends State<HomePageFinote> {
   void initState() {
     super.initState();
     _loadChartData();
+    loadUser();
+  }
+
+  Future<void> loadUser() async {
+    final userEmail = await PreferenceHandler.getEmail();
+    // print(userEmail);
+
+    if (userEmail != null) {
+      final userData = await DbHelper.getUserByEmail(userEmail);
+      setState(() {
+        user = userData;
+      });
+    }
   }
 
   Future<void> _loadChartData() async {
@@ -205,10 +219,7 @@ class _HomePageFinoteState extends State<HomePageFinote> {
                               "assets/images/ProfPicture.png",
                             ),
                             title: Text(
-                              "Halo " +
-                                  (user?.name ?? "Windu") +
-                                  "!" +
-                                  " Sisa saldo kamu saat ini:",
+                              "Halo ${user?.name ?? "Windu"}! Sisa saldo kamu saat ini:",
                               style: TextStyle(fontSize: 12),
                             ),
                             subtitle: Text(
