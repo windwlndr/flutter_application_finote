@@ -205,10 +205,7 @@ class _HomePageFinoteState extends State<HomePageFinote> {
                               "assets/images/ProfPicture.png",
                             ),
                             title: Text(
-                              "Halo " +
-                                  (user?.name ?? "Windu") +
-                                  "!" +
-                                  " Sisa saldo kamu saat ini:",
+                              "Halo ${user?.name ?? "Windu"}! Sisa saldo kamu saat ini:",
                               style: TextStyle(fontSize: 12),
                             ),
                             subtitle: Text(

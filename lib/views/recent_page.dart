@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_finote/database/db_helper.dart';
 import 'package:flutter_application_finote/models/pemasukan_model.dart';
 import 'package:flutter_application_finote/models/pengeluaran.dart';
-import 'package:flutter_application_finote/views/register_page.dart';
 import 'package:flutter_application_finote/widgets/app_bar.dart';
 
 class HistoryPage extends StatefulWidget {
@@ -43,274 +42,224 @@ class _HistoryPageState extends State<HistoryPage> {
       child: Scaffold(
         appBar: CustomAppBar(
           title: 'Finote',
-          onSearchTap: () {
-            print('Search tapped');
-          },
-          onNotificationTap: () {
-            print('Notification tapped');
-          },
+          onSearchTap: () {},
+          onNotificationTap: () {},
         ),
         body: Container(
+          padding: const EdgeInsets.all(16),
           decoration: const BoxDecoration(
             gradient: LinearGradient(
               colors: [Color(0x352F59AB), Color(0x102F59AB)],
-              begin: AlignmentGeometry.topCenter,
-              end: AlignmentGeometry.center,
+              begin: Alignment.topCenter,
+              end: Alignment.center,
             ),
           ),
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(12),
-            child: SizedBox(
-              height: 3000,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    "Transaksi Terkini",
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xff2E5077),
-                    ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // JUDUL
+              Center(
+                child: Text(
+                  "Transaksi Terkini",
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xff2E5077),
                   ),
-                  SizedBox(height: 16),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      SizedBox(width: 12),
-                      DropdownButton(
-                        hint: Text(
-                          "Pilih Periode",
-                          style: TextStyle(
-                            color: Color(0xff2E5077),
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        value: dropDownValue,
-                        items: listKategori.map((String val) {
-                          return DropdownMenuItem(
-                            value: val,
-                            child: Text(
-                              val,
-                              style: TextStyle(color: Colors.black),
-                            ),
-                          );
-                        }).toList(),
-                        onChanged: (value) {
-                          setState(() {
-                            dropDownValue = value;
-                          });
-                          print(dropDownValue);
-                        },
-                      ),
-                    ],
+                ),
+              ),
+
+              SizedBox(height: 16),
+
+              // DROPDOWN
+              DropdownButton(
+                hint: Text(
+                  "Pilih Periode",
+                  style: TextStyle(
+                    color: Color(0xff2E5077),
+                    fontWeight: FontWeight.bold,
                   ),
+                ),
+                value: dropDownValue,
+                items: listKategori.map((String val) {
+                  return DropdownMenuItem(value: val, child: Text(val));
+                }).toList(),
+                onChanged: (value) {
+                  setState(() {
+                    dropDownValue = value;
+                  });
+                },
+              ),
 
-                  SizedBox(height: 8),
+              SizedBox(height: 8),
 
-                  TabBar(
-                    labelColor: Color(0xff2E5077),
-                    indicatorColor: Color(0xff2E5077),
-                    tabs: [
-                      Tab(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.arrow_upward),
-
-                            Text("Pengeluaran"),
-                          ],
-                        ),
-                      ),
-                      Tab(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-
-                          children: [
-                            Icon(Icons.arrow_downward),
-
-                            Text("Pemasukan"),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  Expanded(
-                    child: TabBarView(
-                      children: [
-                        //Pengeluaran
-                        FutureBuilder(
-                          future: _listPengeluaran,
-                          builder: (BuildContext context, AsyncSnapshot snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.waiting) {
-                              return CircularProgressIndicator();
-                            } else if (snapshot.data == null ||
-                                snapshot.data.isEmpty) {
-                              return Column(
-                                children: [
-                                  Image.asset(
-                                    "assets/images/EmptyNotes.png",
-                                    height: 150,
-                                  ),
-                                  Text("Catatan belum ada"),
-                                ],
-                              );
-                            } else {
-                              final data =
-                                  snapshot.data as List<PengeluaranModel>;
-                              return Container(
-                                height: 75,
-                                decoration: BoxDecoration(
-                                  color: Colors.transparent,
-                                  borderRadius: BorderRadius.circular(16),
-                                ),
-                                child: ListView.builder(
-                                  itemCount: data.length,
-                                  itemBuilder: (BuildContext context, int index) {
-                                    String? dropDownJenis;
-                                    String? dropDownKategori;
-                                    final items = data[index];
-                                    return Column(
-                                      children: [
-                                        ListTile(
-                                          leading: Icon(
-                                            items.kategoriPengeluaran ==
-                                                    "Makan & Minum"
-                                                ? Icons.fastfood
-                                                : items.kategoriPengeluaran ==
-                                                      "Transportasi"
-                                                ? Icons.motorcycle
-                                                : items.kategoriPengeluaran ==
-                                                      "Hiburan"
-                                                ? Icons.sports_esports
-                                                : items.kategoriPengeluaran ==
-                                                      "Tagihan"
-                                                ? Icons.receipt_long
-                                                : items.kategoriPengeluaran ==
-                                                      "Belanja"
-                                                ? Icons.trolley
-                                                : Icons.menu,
-                                          ),
-                                          title: Text(
-                                            items.notesPengeluaran,
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              color: Color(0xff2E5077),
-                                            ),
-                                          ),
-                                          subtitle: Text(
-                                            items.tanggalKeluar,
-                                            style: TextStyle(fontSize: 12),
-                                          ),
-                                          trailing: Text(
-                                            "Rp ${items.jumlahPengeluaran.toStringAsFixed(0)}",
-                                            style: TextStyle(
-                                              color: Colors.red,
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        ),
-                                        Divider(
-                                          thickness: 0.1,
-                                          color: Colors.black,
-                                        ),
-                                      ],
-                                    );
-                                  },
-                                ),
-                              );
-                            }
-                          },
-                        ),
-
-                        //Pemasukan
-                        FutureBuilder(
-                          future: _listPemasukan,
-                          builder: (BuildContext context, AsyncSnapshot snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.waiting) {
-                              return CircularProgressIndicator();
-                            } else if (snapshot.data == null ||
-                                snapshot.data.isEmpty) {
-                              return Column(
-                                children: [
-                                  Image.asset(
-                                    "assets/images/EmptyNotes.png",
-                                    height: 150,
-                                  ),
-                                  Text("Catatan belum ada"),
-                                ],
-                              );
-                            } else {
-                              final data =
-                                  snapshot.data as List<PemasukanModel>;
-                              return Container(
-                                height: 75,
-                                decoration: BoxDecoration(
-                                  color: Colors.transparent,
-                                  borderRadius: BorderRadius.circular(16),
-                                ),
-                                child: ListView.builder(
-                                  itemCount: data.length,
-                                  itemBuilder: (BuildContext context, int index) {
-                                    final items = data[index];
-                                    return Column(
-                                      children: [
-                                        ListTile(
-                                          leading: Icon(
-                                            items.kategoriPemasukan == "Gaji"
-                                                ? Icons.attach_money
-                                                : items.kategoriPemasukan ==
-                                                      "Bonus"
-                                                ? Icons.money_rounded
-                                                : items.kategoriPemasukan ==
-                                                      "Hadiah"
-                                                ? Icons.card_giftcard_rounded
-                                                : Icons.more_horiz,
-                                          ),
-                                          title: Text(
-                                            items.notesPemasukan,
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              color: Color(0xff2E5077),
-                                            ),
-                                          ),
-                                          subtitle: Text(
-                                            items.tanggalMasuk,
-                                            style: TextStyle(fontSize: 12),
-                                          ),
-                                          trailing: Text(
-                                            "Rp ${items.jumlahPemasukan.toStringAsFixed(0)}",
-                                            style: TextStyle(
-                                              color: Colors.green,
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        ),
-                                        Divider(
-                                          thickness: 0.1,
-                                          color: Colors.black,
-                                        ),
-                                      ],
-                                    );
-                                  },
-                                ),
-                              );
-                            }
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
+              // TAB BAR
+              TabBar(
+                labelColor: Color(0xff2E5077),
+                indicatorColor: Color(0xff2E5077),
+                tabs: [
+                  Tab(icon: Icon(Icons.arrow_upward), text: "Pengeluaran"),
+                  Tab(icon: Icon(Icons.arrow_downward), text: "Pemasukan"),
                 ],
               ),
-            ),
+
+              // TAB VIEW (HARUS FLEXIBLE HEIGHT)
+              Expanded(
+                child: TabBarView(
+                  children: [
+                    // ================== PENGELUARAN ===================
+                    FutureBuilder<List<PengeluaranModel>>(
+                      future: _listPengeluaran,
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return Center(child: CircularProgressIndicator());
+                        }
+                        if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                          return _emptyState();
+                        }
+
+                        return ListView.builder(
+                          padding: const EdgeInsets.only(top: 12),
+                          itemCount: snapshot.data!.length,
+                          itemBuilder: (context, index) {
+                            final item = snapshot.data![index];
+                            return Column(
+                              children: [
+                                ListTile(
+                                  leading: Icon(
+                                    _iconPengeluaran(item.kategoriPengeluaran),
+                                  ),
+                                  title: Text(
+                                    item.notesPengeluaran,
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Color(0xff2E5077),
+                                    ),
+                                  ),
+                                  subtitle: Text(
+                                    item.tanggalKeluar,
+                                    style: TextStyle(fontSize: 12),
+                                  ),
+                                  trailing: Text(
+                                    "Rp ${item.jumlahPengeluaran.toStringAsFixed(0)}",
+                                    style: TextStyle(
+                                      color: Colors.red,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                                Divider(thickness: 0.3),
+                              ],
+                            );
+                          },
+                        );
+                      },
+                    ),
+
+                    // ================== PEMASUKAN ===================
+                    FutureBuilder<List<PemasukanModel>>(
+                      future: _listPemasukan,
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return Center(child: CircularProgressIndicator());
+                        }
+                        if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                          return _emptyState();
+                        }
+
+                        return ListView.builder(
+                          padding: const EdgeInsets.only(top: 12),
+                          itemCount: snapshot.data!.length,
+                          itemBuilder: (context, index) {
+                            final item = snapshot.data![index];
+                            return Column(
+                              children: [
+                                ListTile(
+                                  leading: Icon(
+                                    _iconPemasukan(item.kategoriPemasukan),
+                                  ),
+                                  title: Text(
+                                    item.notesPemasukan,
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Color(0xff2E5077),
+                                    ),
+                                  ),
+                                  subtitle: Text(
+                                    item.tanggalMasuk,
+                                    style: TextStyle(fontSize: 12),
+                                  ),
+                                  trailing: Text(
+                                    "Rp ${item.jumlahPemasukan.toStringAsFixed(0)}",
+                                    style: TextStyle(
+                                      color: Colors.green,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                                Divider(thickness: 0.3),
+                              ],
+                            );
+                          },
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
+      ),
+    );
+  }
+
+  // ICON PENGELUARAN
+  IconData _iconPengeluaran(String kategori) {
+    switch (kategori) {
+      case "Makan & Minum":
+        return Icons.fastfood;
+      case "Transportasi":
+        return Icons.motorcycle;
+      case "Hiburan":
+        return Icons.sports_esports;
+      case "Tagihan":
+        return Icons.receipt_long;
+      case "Belanja":
+        return Icons.shopping_bag;
+      default:
+        return Icons.menu;
+    }
+  }
+
+  // ICON PEMASUKAN
+  IconData _iconPemasukan(String kategori) {
+    switch (kategori) {
+      case "Gaji":
+        return Icons.attach_money;
+      case "Bonus":
+        return Icons.money_rounded;
+      case "Hadiah":
+        return Icons.card_giftcard_rounded;
+      default:
+        return Icons.more_horiz;
+    }
+  }
+
+  // EMPTY STATE
+  Widget _emptyState() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Image.asset("assets/images/EmptyNotes.png", height: 150),
+          SizedBox(height: 12),
+          Text("Catatan belum ada"),
+        ],
       ),
     );
   }
