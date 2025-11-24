@@ -5,7 +5,6 @@ import 'package:flutter_application_finote/views/register_page.dart';
 import 'package:flutter_application_finote/widgets/buttom_navbar.dart';
 import 'package:flutter_application_finote/widgets/login_button.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 //Bahas Shared Preference
 class LoginScreenDay18 extends StatefulWidget {

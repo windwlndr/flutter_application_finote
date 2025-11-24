@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "295581692898",
+    "project_id": "ppkd-finote",
+    "storage_bucket": "ppkd-finote.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:295581692898:android:ece295ef2922961654bfbb",
+        "android_client_info": {
+          "package_name": "com.ppkd.flutter_application_finote"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC0e9faTzKLAzI7C1rzGbJPfH2KVKmzHOg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
