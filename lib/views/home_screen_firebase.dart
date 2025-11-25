@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter_application_finote/database/db_helper.dart';
+import 'package:flutter_application_finote/models/user_firebase_model.dart';
 import 'package:flutter_application_finote/models/user_model.dart';
 import 'package:flutter_application_finote/preferences/preferences_handler.dart';
+import 'package:flutter_application_finote/service/firebase.dart';
 import 'package:flutter_application_finote/views/weekly_plan.dart';
 import 'package:flutter_application_finote/views/monthly_plan.dart';
 import 'package:flutter_application_finote/views/register_page.dart';
@@ -11,15 +13,15 @@ import 'package:flutter_application_finote/widgets/app_bar.dart';
 import 'package:flutter_application_finote/widgets/budget_section_widget.dart';
 import 'package:flutter_application_finote/widgets/chart_section.dart';
 
-class HomePageFinote extends StatefulWidget {
-  const HomePageFinote({super.key});
+class HomeFirebaseFinote extends StatefulWidget {
+  const HomeFirebaseFinote({super.key});
 
   @override
-  State<HomePageFinote> createState() => _HomePageFinoteState();
+  State<HomeFirebaseFinote> createState() => _HomeFirebaseFinoteState();
 }
 
-class _HomePageFinoteState extends State<HomePageFinote> {
-  UserModel? user;
+class _HomeFirebaseFinoteState extends State<HomeFirebaseFinote> {
+  UserFirebaseModel? user;
 
   Map<String, List<FlSpot>> lineData = {};
   List<Map<String, dynamic>> pieData = [
@@ -60,20 +62,13 @@ class _HomePageFinoteState extends State<HomePageFinote> {
   }
 
   Future<void> loadUser() async {
-    final userEmail = await PreferenceHandler.getEmail();
-    // print(userEmail);
-
-    if (userEmail != null) {
-      final userData = await DbHelper.getUserByEmail(userEmail);
-      setState(() {
-        user = userData;
-      });
-    }
+    final result = await FirebaseService.getCurrentUser();
+    setState(() {
+      user = result;
+    });
   }
 
   Future<void> _loadChartData() async {
-    // Ambil total pengeluaran per tanggal dari database
-    final db = DbHelper();
     final totalPerTanggal = await DbHelper.getTotalPengeluaranPerTanggal();
     final totalPerKategori = await DbHelper.getTotalPengeluaranPerKategori();
     final Map<String, Color> warnaKategori = {
@@ -219,7 +214,7 @@ class _HomePageFinoteState extends State<HomePageFinote> {
                               "assets/images/ProfPicture.png",
                             ),
                             title: Text(
-                              "Halo ${user?.name ?? "User"}! Sisa saldo kamu saat ini:",
+                              "Halo ${user?.username ?? "User"}! Sisa saldo kamu saat ini:",
                               style: TextStyle(fontSize: 12),
                             ),
                             subtitle: Text(

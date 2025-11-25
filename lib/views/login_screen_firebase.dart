@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_finote/database/db_helper.dart';
+import 'package:flutter_application_finote/models/user_firebase_model.dart';
 import 'package:flutter_application_finote/preferences/preferences_handler.dart';
+import 'package:flutter_application_finote/service/firebase.dart';
+import 'package:flutter_application_finote/views/home_page.dart';
 import 'package:flutter_application_finote/views/register_page.dart';
 import 'package:flutter_application_finote/views/register_screen_firebase.dart';
 import 'package:flutter_application_finote/widgets/buttom_navbar.dart';
@@ -8,16 +11,19 @@ import 'package:flutter_application_finote/widgets/login_button.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 //Bahas Shared Preference
-class LoginScreenDay18 extends StatefulWidget {
-  const LoginScreenDay18({super.key});
+class LoginScreenFirebase extends StatefulWidget {
+  const LoginScreenFirebase({super.key});
   @override
-  State<LoginScreenDay18> createState() => _LoginScreenDay18State();
+  State<LoginScreenFirebase> createState() => _LoginScreenFirebaseState();
 }
 
-class _LoginScreenDay18State extends State<LoginScreenDay18> {
+class _LoginScreenFirebaseState extends State<LoginScreenFirebase> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+
   bool isVisibility = false;
+  bool isLoading = false;
+  UserFirebaseModel user = UserFirebaseModel();
 
   @override
   Widget build(BuildContext context) {
@@ -102,23 +108,38 @@ class _LoginScreenDay18State extends State<LoginScreenDay18> {
                   text: "Login",
                   onPressed: () async {
                     if (_formKey.currentState!.validate()) {
-                      print(emailController.text);
-                      PreferenceHandler.saveLogin(true);
-                      final data = await DbHelper.loginUser(
-                        email: emailController.text,
-                        password: passwordController.text,
-                      );
-                      if (data != null) {
-                        PreferenceHandler.saveEmail(data.email!);
-                        // PreferenceHandler.saveUserData(data.id!, data.name!);
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ButtomNavbarWidgets(),
-                          ),
-                        );
-                      } else {
-                        Fluttertoast.showToast(msg: "Akun belum terdaftar");
+                      if (_formKey.currentState!.validate()) {
+                        setState(() {
+                          isLoading = true;
+                        });
+                        try {
+                          final result = await FirebaseService.loginUser(
+                            email: emailController.text.trim(),
+                            password: passwordController.text,
+                          );
+
+                          setState(() {
+                            isLoading = false;
+                            //user = result;
+                          });
+
+                          // contoh: simpan token kalau ada
+                          if (user.uid != null) {
+                            await PreferenceHandler.saveToken(user.uid!);
+                          }
+
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ButtomNavbarWidgets(),
+                            ),
+                          );
+                        } catch (e) {
+                          Fluttertoast.showToast(msg: e.toString());
+                          setState(() {
+                            isLoading = false;
+                          });
+                        }
                       }
                     } else {
                       showDialog(

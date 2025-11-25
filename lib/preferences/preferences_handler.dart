@@ -5,11 +5,17 @@ class PreferenceHandler {
   static const String keyId = 'keyId';
   static const String keyUsername = 'keyUsername';
   static const String keyEmail = 'keyEmail';
+  static const String isToken = "isToken";
 
   //Save data login pada saat login
   static saveLogin(bool value) async {
     final prefs = await SharedPreferences.getInstance();
     prefs.setBool(isLogin, value);
+  }
+
+  static saveToken(String value) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString(isToken, value);
   }
 
   static Future<void> saveEmail(String email) async {

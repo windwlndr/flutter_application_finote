@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_finote/preferences/preferences_handler.dart';
 import 'package:flutter_application_finote/views/login_page.dart';
+import 'package:flutter_application_finote/views/login_screen_firebase.dart';
 import 'package:flutter_application_finote/widgets/buttom_navbar.dart';
 
 class SplashScreenDay18 extends StatefulWidget {
@@ -30,7 +31,7 @@ class _SplashScreenDay18State extends State<SplashScreenDay18> {
       } else {
         Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (context) => LoginScreenDay18()),
+          MaterialPageRoute(builder: (context) => LoginScreenFirebase()),
           (route) => false,
         );
       }

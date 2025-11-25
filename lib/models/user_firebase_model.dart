@@ -17,7 +17,7 @@ class UserFirebaseModel {
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
-      'id': uid,
+      'uid': uid,
       'username': username,
       'email': email,
       'createdAt': createdAt,
@@ -27,7 +27,7 @@ class UserFirebaseModel {
 
   factory UserFirebaseModel.fromMap(Map<String, dynamic> map) {
     return UserFirebaseModel(
-      uid: map['id'] != null ? map['id'] as String : null,
+      uid: map['uid'] != null ? map['uid'] as String : null,
       username: map['username'] != null ? map['username'] as String : null,
       email: map['email'] != null ? map['email'] as String : null,
       createdAt: map['createdAt'] != null ? map['createdAt'] as String : null,
