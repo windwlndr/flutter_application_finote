@@ -28,11 +28,16 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  cloud_firestore: ^6.1.0
   cupertino_icons: ^1.0.8
+  firebase_auth: ^6.1.2
+  firebase_core: ^4.2.1
   fl_chart: ^1.1.1
   flutter:
     sdk: flutter
+  flutter_launcher_icons: ^0.14.4
   fluttertoast: ^9.0.0
+  http: ^1.6.0
   intl: ^0.20.2
   shared_preferences: ^2.5.3
   sqflite: ^2.4.2
@@ -43,6 +48,11 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/images/Logo.png"
+  min_sdk_android: 21
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 # The following section is specific to Flutter packages.

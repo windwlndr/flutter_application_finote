@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter_application_finote/database/db_helper.dart';
+import 'package:flutter_application_finote/models/user_firebase_model.dart';
 import 'package:flutter_application_finote/models/user_model.dart';
 import 'package:flutter_application_finote/preferences/preferences_handler.dart';
+import 'package:flutter_application_finote/service/firebase.dart';
 import 'package:flutter_application_finote/views/weekly_plan.dart';
 import 'package:flutter_application_finote/views/monthly_plan.dart';
 import 'package:flutter_application_finote/views/register_page.dart';
@@ -11,15 +13,15 @@ import 'package:flutter_application_finote/widgets/app_bar.dart';
 import 'package:flutter_application_finote/widgets/budget_section_widget.dart';
 import 'package:flutter_application_finote/widgets/chart_section.dart';
 
-class HomePageFinote extends StatefulWidget {
-  const HomePageFinote({super.key});
+class HomeFirebaseFinote extends StatefulWidget {
+  const HomeFirebaseFinote({super.key});
 
   @override
-  State<HomePageFinote> createState() => _HomePageFinoteState();
+  State<HomeFirebaseFinote> createState() => _HomeFirebaseFinoteState();
 }
 
-class _HomePageFinoteState extends State<HomePageFinote> {
-  UserModel? user;
+class _HomeFirebaseFinoteState extends State<HomeFirebaseFinote> {
+  UserFirebaseModel? user;
 
   Map<String, List<FlSpot>> lineData = {};
   List<Map<String, dynamic>> pieData = [
@@ -60,22 +62,34 @@ class _HomePageFinoteState extends State<HomePageFinote> {
   }
 
   Future<void> loadUser() async {
-    final userEmail = await PreferenceHandler.getEmail();
-    // print(userEmail);
-
-    if (userEmail != null) {
-      final userData = await DbHelper.getUserByEmail(userEmail);
-      setState(() {
-        user = userData;
-      });
-    }
+    final result = await FirebaseService.getCurrentUser();
+    setState(() {
+      user = result;
+    });
   }
 
   Future<void> _loadChartData() async {
-    // Ambil total pengeluaran per tanggal dari database
-    final db = DbHelper();
-    final totalPerTanggal = await DbHelper.getTotalPengeluaranPerTanggal();
-    final totalPerKategori = await DbHelper.getTotalPengeluaranPerKategori();
+    final uid = FirebaseService.auth.currentUser!.uid;
+    //AMBIL DATA DARI FIREBASE
+    final pengeluaranList = await FirebaseService.getAllPengeluaran(uid);
+    final pemasukanList = await FirebaseService.getAllPemasukan(uid);
+
+    //HITUNG TOTAL PENGELUARAN PER TANGGAL
+    Map<String, double> totalPerTanggal = {};
+    for (var item in pengeluaranList) {
+      final tgl = item.tanggalKeluar;
+      totalPerTanggal[tgl] =
+          (totalPerTanggal[tgl] ?? 0) + item.jumlahPengeluaran.toDouble();
+    }
+
+    //HITUNG TOTAL PENGELUARAN PER KATEGORI
+    Map<String, double> totalPerKategori = {};
+    for (var item in pengeluaranList) {
+      final kategori = item.kategoriPengeluaran;
+      totalPerKategori[kategori] =
+          (totalPerKategori[kategori] ?? 0) + item.jumlahPengeluaran.toDouble();
+    }
+
     final Map<String, Color> warnaKategori = {
       'Makan & Minum': Colors.orange,
       'Transportasi': Colors.blue,
@@ -85,10 +99,23 @@ class _HomePageFinoteState extends State<HomePageFinote> {
       'Lainnya': Colors.green,
     };
 
-    final totalPemasukanPerTanggal =
-        await DbHelper.getTotalPemasukanPerTanggal();
-    final totalPemasukanPerKategori =
-        await DbHelper.getTotalPemasukanPerKategori();
+    //HITUNG TOTAL PEMASUKAN PER TANGGAL
+    Map<String, double> totalPemasukanPerTanggal = {};
+    for (var item in pemasukanList) {
+      final tgl = item.tanggalMasuk;
+      totalPemasukanPerTanggal[tgl] =
+          (totalPemasukanPerTanggal[tgl] ?? 0) +
+          item.jumlahPemasukan.toDouble();
+    }
+
+    //HITUNG TOTAL PEMASUKAN PER KATEGORI
+    Map<String, double> totalPemasukanPerKategori = {};
+    for (var item in pemasukanList) {
+      final kategori = item.kategoriPemasukan;
+      totalPemasukanPerKategori[kategori] =
+          (totalPemasukanPerKategori[kategori] ?? 0) +
+          item.jumlahPemasukan.toDouble();
+    }
     final Map<String, Color> warnaKategoriPemasukan = {
       'Gaji': Colors.orange,
       'Bonus': Colors.blue,
@@ -104,6 +131,7 @@ class _HomePageFinoteState extends State<HomePageFinote> {
       return spot;
     }).toList();
 
+    index = 0; //reset index
     final dailySpotsPemasukan = totalPemasukanPerTanggal.entries.map((e) {
       final spot = FlSpot(index.toDouble(), e.value);
       index++;
@@ -126,8 +154,6 @@ class _HomePageFinoteState extends State<HomePageFinote> {
       }).toList();
 
       pieDataPemasukan = totalPemasukanPerKategori.entries.map((e) {
-        // final kategori = e.key ?? 'Tidak diketahui';
-        // final persen = e.value ?? 0.0;
         return {
           'kategori': e.key,
           'persen': e.value,
@@ -142,8 +168,7 @@ class _HomePageFinoteState extends State<HomePageFinote> {
       );
       if (totalAllPengeluaran > 0) {
         for (var item in pieData) {
-          final persen = (item['persen'] ?? 0);
-          item['persen'] = ((persen / totalAllPengeluaran) * 100)
+          item['persen'] = ((item['persen'] / totalAllPengeluaran) * 100)
               .roundToDouble();
         }
       } else {
@@ -159,8 +184,8 @@ class _HomePageFinoteState extends State<HomePageFinote> {
       );
       if (totalAllPemasukan > 0) {
         for (var item in pieDataPemasukan) {
-          final persen = (item['persen'] ?? 0);
-          item['persen'] = ((persen / totalAllPemasukan) * 100).roundToDouble();
+          item['persen'] = ((item['persen'] / totalAllPemasukan) * 100)
+              .roundToDouble();
         }
       } else {
         for (var item in pieDataPemasukan) {
@@ -169,10 +194,8 @@ class _HomePageFinoteState extends State<HomePageFinote> {
       }
     });
 
-    final dataKategori = await DbHelper.getTotalPengeluaranPerKategori();
-    setState(() {
-      totalPengeluaranPerKategori = dataKategori;
-    });
+    // Menyimpan total kategori (pengeluaran) untuk tampilan lain
+    totalPengeluaranPerKategori = totalPerKategori;
   }
 
   @override
@@ -219,7 +242,7 @@ class _HomePageFinoteState extends State<HomePageFinote> {
                               "assets/images/ProfPicture.png",
                             ),
                             title: Text(
-                              "Halo ${user?.name ?? "User"}! Sisa saldo kamu saat ini:",
+                              "Halo ${user?.username ?? "User"}! Sisa saldo kamu saat ini:",
                               style: TextStyle(fontSize: 12),
                             ),
                             subtitle: Text(

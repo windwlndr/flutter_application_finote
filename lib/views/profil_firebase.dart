@@ -1,7 +1,10 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_finote/database/db_helper.dart';
+import 'package:flutter_application_finote/models/user_firebase_model.dart';
 import 'package:flutter_application_finote/models/user_model.dart';
 import 'package:flutter_application_finote/preferences/preferences_handler.dart';
+import 'package:flutter_application_finote/service/firebase.dart';
 import 'package:flutter_application_finote/views/date_tracking_page.dart';
 import 'package:flutter_application_finote/views/login_page.dart';
 import 'package:flutter_application_finote/views/register_page.dart';
@@ -11,15 +14,15 @@ import 'package:flutter_application_finote/widgets/login_button.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class ProfilUserPage extends StatefulWidget {
-  const ProfilUserPage({super.key});
+class ProfilUserFirebase extends StatefulWidget {
+  const ProfilUserFirebase({super.key});
 
   @override
-  State<ProfilUserPage> createState() => _ProfilUserPageState();
+  State<ProfilUserFirebase> createState() => _ProfilUserFirebaseState();
 }
 
-class _ProfilUserPageState extends State<ProfilUserPage> {
-  UserModel? user;
+class _ProfilUserFirebaseState extends State<ProfilUserFirebase> {
+  UserFirebaseModel? user;
   final nameC = TextEditingController();
   final emailC = TextEditingController();
 
@@ -30,19 +33,14 @@ class _ProfilUserPageState extends State<ProfilUserPage> {
   }
 
   Future<void> loadUser() async {
-    final userEmail = await PreferenceHandler.getEmail();
-    print(userEmail);
-
-    if (userEmail != null) {
-      final userData = await DbHelper.getUserByEmail(userEmail);
-      setState(() {
-        user = userData;
-      });
-    }
+    final result = await FirebaseService.getCurrentUser();
+    setState(() {
+      user = result;
+    });
   }
 
-  Future<void> _onEdit(UserModel user) async {
-    final editNameC = TextEditingController(text: user.name);
+  Future<void> _onEdit(UserFirebaseModel user) async {
+    final editNameC = TextEditingController(text: user.username);
     final editEmailC = TextEditingController(text: user.email);
     final res = await showDialog(
       context: context,
@@ -75,13 +73,11 @@ class _ProfilUserPageState extends State<ProfilUserPage> {
       },
     );
     if (res == true) {
-      final updated = UserModel(
-        id: user.id,
-        name: editNameC.text,
+      await FirebaseService.updateUser(
+        uid: user.uid!,
+        username: editNameC.text,
         email: editEmailC.text,
-        password: user.password,
       );
-      await DbHelper.updateUser(updated);
       await loadUser();
       Fluttertoast.showToast(msg: "Data berhasil di update");
     }
@@ -93,7 +89,7 @@ class _ProfilUserPageState extends State<ProfilUserPage> {
     Navigator.pushReplacementNamed(context, '/login');
   }
 
-  Future<void> _onDelete(UserModel user) async {
+  Future<void> _onDelete(UserFirebaseModel user) async {
     final res = await showDialog(
       context: context,
       builder: (context) {
@@ -104,7 +100,7 @@ class _ProfilUserPageState extends State<ProfilUserPage> {
             spacing: 12,
             children: [
               Text(
-                "Apakah anda yakin ingin menghapus data ${user.name}?",
+                "Apakah anda yakin ingin menghapus data ${user.username}?",
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
             ],
@@ -128,7 +124,7 @@ class _ProfilUserPageState extends State<ProfilUserPage> {
     );
 
     if (res == true) {
-      DbHelper.deleteUser(user.id!);
+      //DbHelper.deleteUser(user.id!);
       loadUser();
       Fluttertoast.showToast(msg: "Data berhasil di hapus");
     }
@@ -173,23 +169,24 @@ class _ProfilUserPageState extends State<ProfilUserPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    user?.name ?? "User",
+                    user?.username ?? "User",
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
                       color: Color(0xff2E5077),
                     ),
                   ),
+
                   IconButton(
                     onPressed: user != null ? () => _onEdit(user!) : null,
                     icon: Icon(Icons.edit, size: 20, color: Color(0xff2E5077)),
                   ),
                 ],
               ),
-              SizedBox(height: 8),
+              SizedBox(height: 4),
               Text(
-                "Akun personal",
-                style: TextStyle(fontSize: 14, color: Color(0xff2E5077)),
+                user?.email ?? "",
+                style: TextStyle(fontSize: 14, color: Colors.black54),
               ),
               SizedBox(height: 24),
               Column(
