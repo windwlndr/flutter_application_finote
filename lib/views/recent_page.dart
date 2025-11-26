@@ -40,11 +40,7 @@ class _HistoryPageState extends State<HistoryPage> {
     return DefaultTabController(
       length: 2,
       child: Scaffold(
-        appBar: CustomAppBar(
-          title: 'Finote',
-          onSearchTap: () {},
-          onNotificationTap: () {},
-        ),
+        appBar: CustomAppBar(title: 'Finote', onNotificationTap: () {}),
         body: Container(
           padding: const EdgeInsets.all(16),
           decoration: const BoxDecoration(

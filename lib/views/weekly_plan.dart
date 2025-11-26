@@ -15,9 +15,6 @@ class _RencanaMingguanPageState extends State<RencanaMingguanPage> {
     return Scaffold(
       appBar: CustomAppBar(
         title: 'Finote',
-        onSearchTap: () {
-          print('Search tapped');
-        },
         onNotificationTap: () {
           print('Notification tapped');
         },

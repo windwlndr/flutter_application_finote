@@ -1,11 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_application_finote/database/db_helper.dart';
-import 'package:flutter_application_finote/models/pemasukan_firebase_model.dart';
-import 'package:flutter_application_finote/models/pemasukan_model.dart';
-import 'package:flutter_application_finote/models/pengeluaran.dart';
-import 'package:flutter_application_finote/models/pengeluaran_firebase_model.dart';
-import 'package:flutter_application_finote/service/firebase.dart';
+import 'package:flutter_application_finote/firebase_version/models/pemasukan_firebase_model.dart';
+import 'package:flutter_application_finote/firebase_version/models/pengeluaran_firebase_model.dart';
+import 'package:flutter_application_finote/firebase_version/service/firebase.dart';
 import 'package:flutter_application_finote/views/register_page.dart';
 import 'package:flutter_application_finote/widgets/app_bar.dart';
 import 'package:flutter_application_finote/widgets/login_button.dart';
@@ -541,9 +538,6 @@ class _CalendarPageFirebaseState extends State<CalendarPageFirebase> {
       child: Scaffold(
         appBar: CustomAppBar(
           title: 'Finote',
-          onSearchTap: () {
-            print('Search tapped');
-          },
           onNotificationTap: () {
             print('Notification tapped');
           },
@@ -795,7 +789,7 @@ class _CalendarPageFirebaseState extends State<CalendarPageFirebase> {
                                                   );
 
                                               await FirebaseService.insertPengeluaran(
-                                                uid!,
+                                                uid,
                                                 dataPengeluaran,
                                               ).then((value) {
                                                 Fluttertoast.showToast(
@@ -822,7 +816,7 @@ class _CalendarPageFirebaseState extends State<CalendarPageFirebase> {
                                                   );
 
                                               await FirebaseService.insertPemasukan(
-                                                uid!,
+                                                uid,
                                                 dataPemasukan,
                                               ).then((value) {
                                                 Fluttertoast.showToast(
@@ -865,8 +859,12 @@ class _CalendarPageFirebaseState extends State<CalendarPageFirebase> {
                   pinned: true,
                   delegate: _TabBarDelegate(
                     TabBar(
-                      labelColor: Color(0xff2E5077),
-                      indicatorColor: Color(0xff2E5077),
+                      indicator: BoxDecoration(
+                        color: Color(0xff2E5077),
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      unselectedLabelColor: Colors.grey,
+                      labelColor: Colors.white,
                       tabs: [
                         Tab(
                           child: Row(
@@ -1112,7 +1110,14 @@ class _TabBarDelegate extends SliverPersistentHeaderDelegate {
 
   @override
   Widget build(context, double shrinkOffset, bool overlapsContent) {
-    return Container(color: Colors.white, child: tabBar);
+    return Container(
+      padding: EdgeInsets.all(4),
+      decoration: BoxDecoration(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: tabBar,
+    );
   }
 
   @override

@@ -1,10 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter_application_finote/models/pemasukan_firebase_model.dart';
-import 'package:flutter_application_finote/models/pemasukan_model.dart';
-import 'package:flutter_application_finote/models/pengeluaran.dart';
-import 'package:flutter_application_finote/models/pengeluaran_firebase_model.dart';
-import 'package:flutter_application_finote/models/user_firebase_model.dart';
+import 'package:flutter_application_finote/firebase_version/models/pemasukan_firebase_model.dart';
+import 'package:flutter_application_finote/firebase_version/models/pengeluaran_firebase_model.dart';
+import 'package:flutter_application_finote/firebase_version/models/user_firebase_model.dart';
+import 'package:flutter_application_finote/firebase_version/models/weekly_model_firebase.dart';
 
 class FirebaseService {
   static final FirebaseAuth auth = FirebaseAuth.instance;
@@ -178,5 +177,51 @@ class FirebaseService {
         .get();
 
     return snap.docs.map((doc) => PemasukanModelFirebase.fromDoc(doc)).toList();
+  }
+
+  static Future<void> tambahRencanaMingguan({
+    required String rencana,
+    required int harga,
+  }) async {
+    final user = auth.currentUser!;
+    final doc = firestore.collection('rencana_mingguan').doc();
+
+    await doc.set({
+      'uid': user.uid,
+      'rencana': rencana,
+      'harga': harga,
+      'selesai': false,
+      'createdAt': DateTime.now().toIso8601String(),
+    });
+  }
+
+  static Stream<List<RencanaMingguanModelFirebase>> getRencanaMingguan() {
+    final user = auth.currentUser!;
+    return firestore
+        .collection('rencana_mingguan')
+        .where('uid', isEqualTo: user.uid)
+        .orderBy('createdAt', descending: true)
+        .snapshots()
+        .map(
+          (snap) => snap.docs
+              .map(
+                (doc) =>
+                    RencanaMingguanModelFirebase.fromMap(doc.id, doc.data()),
+              )
+              .toList(),
+        );
+  }
+
+  static Future<void> updateChecklist({
+    required String id,
+    required bool status,
+  }) async {
+    await firestore.collection('rencana_mingguan').doc(id).update({
+      'selesai': status,
+    });
+  }
+
+  static Future<void> hapusRencana(String id) async {
+    await firestore.collection('rencana_mingguan').doc(id).delete();
   }
 }

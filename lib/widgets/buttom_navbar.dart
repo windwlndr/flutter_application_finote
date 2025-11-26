@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_finote/views/date_tracking_firebase.dart';
-import 'package:flutter_application_finote/views/date_tracking_page.dart';
-import 'package:flutter_application_finote/views/home_page.dart';
-import 'package:flutter_application_finote/views/home_screen_firebase.dart';
-import 'package:flutter_application_finote/views/profil_firebase.dart';
-import 'package:flutter_application_finote/views/profile_page.dart';
-import 'package:flutter_application_finote/views/recent_page.dart';
+import 'package:flutter_application_finote/firebase_version/views/date_tracking_firebase.dart';
+import 'package:flutter_application_finote/firebase_version/views/history_screen.dart';
+import 'package:flutter_application_finote/firebase_version/views/home_screen_firebase.dart';
+import 'package:flutter_application_finote/firebase_version/views/profil_firebase.dart';
 
 class ButtomNavbarWidgets extends StatefulWidget {
   const ButtomNavbarWidgets({super.key});
@@ -19,7 +16,8 @@ class _ButtomNavbarWidgetsState extends State<ButtomNavbarWidgets> {
   static const List<Widget> _widgetOptions = [
     //HomePageFinote(),
     HomeFirebaseFinote(),
-    HistoryPage(),
+    HistoryScreenFirebase(),
+    // HistoryPage(),
     CalendarPageFirebase(),
     // CalendarPage(),
     // ProfilUserPage(),

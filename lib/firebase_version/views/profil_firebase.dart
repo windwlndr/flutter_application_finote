@@ -1,10 +1,7 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_application_finote/database/db_helper.dart';
-import 'package:flutter_application_finote/models/user_firebase_model.dart';
-import 'package:flutter_application_finote/models/user_model.dart';
+import 'package:flutter_application_finote/firebase_version/models/user_firebase_model.dart';
 import 'package:flutter_application_finote/preferences/preferences_handler.dart';
-import 'package:flutter_application_finote/service/firebase.dart';
+import 'package:flutter_application_finote/firebase_version/service/firebase.dart';
 import 'package:flutter_application_finote/views/date_tracking_page.dart';
 import 'package:flutter_application_finote/views/login_page.dart';
 import 'package:flutter_application_finote/views/register_page.dart';
@@ -138,9 +135,6 @@ class _ProfilUserFirebaseState extends State<ProfilUserFirebase> {
     return Scaffold(
       appBar: CustomAppBar(
         title: 'Finote',
-        onSearchTap: () {
-          print('Search tapped');
-        },
         onNotificationTap: () {
           print('Notification tapped');
         },

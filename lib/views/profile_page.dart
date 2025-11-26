@@ -142,9 +142,6 @@ class _ProfilUserPageState extends State<ProfilUserPage> {
     return Scaffold(
       appBar: CustomAppBar(
         title: 'Finote',
-        onSearchTap: () {
-          print('Search tapped');
-        },
         onNotificationTap: () {
           print('Notification tapped');
         },

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:flutter_application_finote/database/db_helper.dart';
-import 'package:flutter_application_finote/models/user_firebase_model.dart';
-import 'package:flutter_application_finote/models/user_model.dart';
-import 'package:flutter_application_finote/preferences/preferences_handler.dart';
-import 'package:flutter_application_finote/service/firebase.dart';
+import 'package:flutter_application_finote/firebase_version/views/weekly_plan_firebase.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:intl/intl.dart';
+import 'package:flutter_application_finote/firebase_version/models/user_firebase_model.dart';
+import 'package:flutter_application_finote/firebase_version/service/firebase.dart';
 import 'package:flutter_application_finote/views/weekly_plan.dart';
 import 'package:flutter_application_finote/views/monthly_plan.dart';
 import 'package:flutter_application_finote/views/register_page.dart';
@@ -22,6 +22,16 @@ class HomeFirebaseFinote extends StatefulWidget {
 
 class _HomeFirebaseFinoteState extends State<HomeFirebaseFinote> {
   UserFirebaseModel? user;
+  double sisaSaldo = 0;
+
+  String formatRupiah(double number) {
+    final format = NumberFormat.currency(
+      locale: 'id_ID',
+      symbol: 'Rp ',
+      decimalDigits: 0,
+    );
+    return format.format(number);
+  }
 
   Map<String, List<FlSpot>> lineData = {};
   List<Map<String, dynamic>> pieData = [
@@ -59,6 +69,7 @@ class _HomeFirebaseFinoteState extends State<HomeFirebaseFinote> {
     super.initState();
     _loadChartData();
     loadUser();
+    initializeDateFormatting('id_ID', null);
   }
 
   Future<void> loadUser() async {
@@ -74,20 +85,22 @@ class _HomeFirebaseFinoteState extends State<HomeFirebaseFinote> {
     final pengeluaranList = await FirebaseService.getAllPengeluaran(uid);
     final pemasukanList = await FirebaseService.getAllPemasukan(uid);
 
+    double totalPengeluaran = 0;
+
     //HITUNG TOTAL PENGELUARAN PER TANGGAL
     Map<String, double> totalPerTanggal = {};
-    for (var item in pengeluaranList) {
-      final tgl = item.tanggalKeluar;
-      totalPerTanggal[tgl] =
-          (totalPerTanggal[tgl] ?? 0) + item.jumlahPengeluaran.toDouble();
-    }
-
     //HITUNG TOTAL PENGELUARAN PER KATEGORI
     Map<String, double> totalPerKategori = {};
     for (var item in pengeluaranList) {
-      final kategori = item.kategoriPengeluaran;
-      totalPerKategori[kategori] =
-          (totalPerKategori[kategori] ?? 0) + item.jumlahPengeluaran.toDouble();
+      totalPengeluaran += item.jumlahPengeluaran.toDouble();
+
+      totalPerTanggal[item.tanggalKeluar] =
+          (totalPerTanggal[item.tanggalKeluar] ?? 0) +
+          item.jumlahPengeluaran.toDouble();
+
+      totalPerKategori[item.kategoriPengeluaran] =
+          (totalPerKategori[item.kategoriPengeluaran] ?? 0) +
+          item.jumlahPengeluaran.toDouble();
     }
 
     final Map<String, Color> warnaKategori = {
@@ -99,21 +112,21 @@ class _HomeFirebaseFinoteState extends State<HomeFirebaseFinote> {
       'Lainnya': Colors.green,
     };
 
+    double totalPemasukan = 0;
+
     //HITUNG TOTAL PEMASUKAN PER TANGGAL
     Map<String, double> totalPemasukanPerTanggal = {};
-    for (var item in pemasukanList) {
-      final tgl = item.tanggalMasuk;
-      totalPemasukanPerTanggal[tgl] =
-          (totalPemasukanPerTanggal[tgl] ?? 0) +
-          item.jumlahPemasukan.toDouble();
-    }
-
     //HITUNG TOTAL PEMASUKAN PER KATEGORI
     Map<String, double> totalPemasukanPerKategori = {};
     for (var item in pemasukanList) {
-      final kategori = item.kategoriPemasukan;
-      totalPemasukanPerKategori[kategori] =
-          (totalPemasukanPerKategori[kategori] ?? 0) +
+      totalPemasukan += item.jumlahPemasukan.toDouble();
+
+      totalPemasukanPerTanggal[item.tanggalMasuk] =
+          (totalPemasukanPerTanggal[item.tanggalMasuk] ?? 0) +
+          item.jumlahPemasukan.toDouble();
+
+      totalPemasukanPerKategori[item.kategoriPemasukan] =
+          (totalPemasukanPerKategori[item.kategoriPemasukan] ?? 0) +
           item.jumlahPemasukan.toDouble();
     }
     final Map<String, Color> warnaKategoriPemasukan = {
@@ -122,6 +135,9 @@ class _HomeFirebaseFinoteState extends State<HomeFirebaseFinote> {
       'Hadiah': Colors.purple,
       'Lainnya': Colors.green,
     };
+
+    //hitung sisa saldo
+    sisaSaldo = totalPemasukan - totalPengeluaran;
 
     // Ubah data tanggal -> FlSpot
     int index = 0;
@@ -205,9 +221,6 @@ class _HomeFirebaseFinoteState extends State<HomeFirebaseFinote> {
       child: Scaffold(
         appBar: CustomAppBar(
           title: 'Finote',
-          onSearchTap: () {
-            print('Search tapped');
-          },
           onNotificationTap: () {
             print('Notification tapped');
           },
@@ -246,7 +259,7 @@ class _HomeFirebaseFinoteState extends State<HomeFirebaseFinote> {
                               style: TextStyle(fontSize: 12),
                             ),
                             subtitle: Text(
-                              "Rp. 3.850.000",
+                              formatRupiah(sisaSaldo),
                               style: TextStyle(
                                 fontSize: 24,
                                 fontWeight: FontWeight.bold,
@@ -264,7 +277,8 @@ class _HomeFirebaseFinoteState extends State<HomeFirebaseFinote> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => RencanaMingguanPage(),
+                                  builder: (context) =>
+                                      RencanaMingguanFirebase(),
                                 ),
                               );
                             },
@@ -340,32 +354,43 @@ class _HomeFirebaseFinoteState extends State<HomeFirebaseFinote> {
                         ],
                       ),
                       height(20),
-                      TabBar(
-                        labelColor: Color(0xff2E5077),
-                        indicatorColor: Color(0xff2E5077),
-                        tabs: [
-                          Tab(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(Icons.arrow_upward),
-
-                                Text("Pengeluaran"),
-                              ],
-                            ),
+                      Container(
+                        padding: EdgeInsets.all(4),
+                        decoration: BoxDecoration(
+                          color: Colors.transparent,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: TabBar(
+                          indicator: BoxDecoration(
+                            color: Color(0xff2E5077),
+                            borderRadius: BorderRadius.circular(16),
                           ),
-                          Tab(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
+                          unselectedLabelColor: Colors.grey,
+                          labelColor: Colors.white,
+                          tabs: [
+                            Tab(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(Icons.arrow_upward),
 
-                              children: [
-                                Icon(Icons.arrow_downward),
-
-                                Text("Pemasukan"),
-                              ],
+                                  Text("Pengeluaran"),
+                                ],
+                              ),
                             ),
-                          ),
-                        ],
+                            Tab(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+
+                                children: [
+                                  Icon(Icons.arrow_downward),
+
+                                  Text("Pemasukan"),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),

@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_finote/database/db_helper.dart';
 import 'package:flutter_application_finote/preferences/preferences_handler.dart';
-import 'package:flutter_application_finote/views/register_page.dart';
-import 'package:flutter_application_finote/views/register_screen_firebase.dart';
+import 'package:flutter_application_finote/firebase_version/views/register_screen_firebase.dart';
 import 'package:flutter_application_finote/widgets/buttom_navbar.dart';
 import 'package:flutter_application_finote/widgets/login_button.dart';
 import 'package:fluttertoast/fluttertoast.dart';

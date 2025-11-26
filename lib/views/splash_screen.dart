@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_finote/preferences/preferences_handler.dart';
-import 'package:flutter_application_finote/views/login_page.dart';
-import 'package:flutter_application_finote/views/login_screen_firebase.dart';
+import 'package:flutter_application_finote/firebase_version/views/login_screen_firebase.dart';
 import 'package:flutter_application_finote/widgets/buttom_navbar.dart';
 
 class SplashScreenDay18 extends StatefulWidget {
@@ -54,28 +53,31 @@ class _SplashScreenDay18State extends State<SplashScreenDay18> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Center(
-              child: Image.asset("assets/images/Finote Logo.png", scale: 3),
-            ),
-
-            SizedBox(height: 20),
-            Text(
-              "Finote",
-              style: TextStyle(
-                fontSize: 32,
-                fontWeight: FontWeight.bold,
-                color: Color(0xff2f59ab),
+              child: Image.asset(
+                "assets/images/Logo_Finote_updated.png",
+                scale: 1,
               ),
             ),
 
-            SizedBox(height: 10),
-            Text(
-              "Your Financial Notes App",
-              style: TextStyle(
-                fontSize: 16,
-                fontStyle: FontStyle.italic,
-                color: Color(0xff2f59ab),
-              ),
-            ),
+            // SizedBox(height: 20),
+            // Text(
+            //   "Finote",
+            //   style: TextStyle(
+            //     fontSize: 32,
+            //     fontWeight: FontWeight.bold,
+            //     color: Color(0xff2f59ab),
+            //   ),
+            // ),
+
+            // SizedBox(height: 10),
+            // Text(
+            //   "Your Financial Notes App",
+            //   style: TextStyle(
+            //     fontSize: 16,
+            //     fontStyle: FontStyle.italic,
+            //     color: Color(0xff2f59ab),
+            //   ),
+            // ),
           ],
         ),
       ),
