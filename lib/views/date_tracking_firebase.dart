@@ -13,14 +13,14 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 
-class CalendarPage extends StatefulWidget {
-  const CalendarPage({super.key});
+class CalendarPageFirebase extends StatefulWidget {
+  const CalendarPageFirebase({super.key});
 
   @override
-  State<CalendarPage> createState() => _CalendarPageState();
+  State<CalendarPageFirebase> createState() => _CalendarPageFirebaseState();
 }
 
-class _CalendarPageState extends State<CalendarPage> {
+class _CalendarPageFirebaseState extends State<CalendarPageFirebase> {
   late Future<List<PengeluaranModelFirebase>> _listPengeluaran;
   final NotesPengeluaranC = TextEditingController();
   final TanggalKeluarC = TextEditingController();
@@ -93,16 +93,25 @@ class _CalendarPageState extends State<CalendarPage> {
     final editJumlahPengeluaranC = TextEditingController(
       text: PengeluaranData.jumlahPengeluaran.toString(),
     );
-    String? dropDownJenis;
-    DateTime selectedDate = selectedPicked ?? DateTime.now();
 
-    String formatedDate = DateFormat(
-      'dd MMMM yyyy',
-      'id_ID',
-    ).format(selectedDate);
+    // String? dropDownJenis;
+    // DateTime selectedDate = selectedPicked ?? DateTime.now();
 
-    String selectedKategori = PengeluaranData.kategoriPengeluaran;
-    String selectedCatatan = PengeluaranData.kategoriCatatan;
+    // String formatedDate = DateFormat(
+    //   'dd MMMM yyyy',
+    //   'id_ID',
+    // ).format(selectedDate);
+
+    // String selectedKategori = PengeluaranData.kategoriPengeluaran;
+    // String selectedCatatan = PengeluaranData.kategoriCatatan;
+
+    String dropDownJenis = PengeluaranData.kategoriCatatan;
+    String dropDownKategori = PengeluaranData.kategoriPengeluaran;
+
+    DateTime selectedDate = DateFormat(
+      "dd MMMM yyyy",
+      "id_ID",
+    ).parse(PengeluaranData.tanggalKeluar);
 
     final res = await showDialog(
       context: context,
@@ -142,8 +151,8 @@ class _CalendarPageState extends State<CalendarPage> {
                     }).toList(),
                     onChanged: (value) {
                       setState(() {
-                        dropDownJenis = value;
-                        dropDownKategori = null;
+                        dropDownJenis = value!;
+                        dropDownKategori = ""; //reset kategori
                       });
                     },
                   ),
@@ -174,7 +183,7 @@ class _CalendarPageState extends State<CalendarPage> {
                             .toList(),
                     onChanged: (value) {
                       setState(() {
-                        dropDownKategori = value;
+                        dropDownKategori = value!;
                       });
                     },
                   ),
@@ -188,7 +197,10 @@ class _CalendarPageState extends State<CalendarPage> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Text(
-                        formatedDate,
+                        DateFormat(
+                          'dd MMMM yyyy',
+                          'id_ID',
+                        ).format(selectedDate),
                         style: TextStyle(
                           fontSize: 16,
                           overflow: TextOverflow.ellipsis,
@@ -220,28 +232,28 @@ class _CalendarPageState extends State<CalendarPage> {
       },
     );
     if (res == true) {
-      DateTime selectedDate = selectedPicked ?? DateTime.now();
+      //DateTime selectedDate = selectedPicked ?? DateTime.now();
 
-      String formatedDate = DateFormat(
-        'dd MMMM yyyy',
-        'id_ID',
-      ).format(selectedDate);
-      int jumlah = 0;
-      try {
-        jumlah = int.parse(editJumlahPengeluaranC.text);
-      } catch (e) {
-        Fluttertoast.showToast(msg: "Jumlah tidak valid");
-        return;
-      }
+      // String formatedDate = DateFormat(
+      //   'dd MMMM yyyy',
+      //   'id_ID',
+      // ).format(selectedDate);
+      // int jumlah = 0;
+      // try {
+      //   jumlah = int.parse(editJumlahPengeluaranC.text);
+      // } catch (e) {
+      //   Fluttertoast.showToast(msg: "Jumlah tidak valid");
+      //   return;
+      // }
       final updated = PengeluaranModelFirebase(
         id: PengeluaranData.id,
         notesPengeluaran: editNotesPengeluaranC.text,
-        jumlahPengeluaran: jumlah,
-        tanggalKeluar: formatedDate,
-        kategoriCatatan: dropDownJenis ?? selectedCatatan,
-
-        kategoriPengeluaran: dropDownKategori ?? selectedKategori,
+        jumlahPengeluaran: int.parse(editJumlahPengeluaranC.text),
+        tanggalKeluar: DateFormat('dd MMMM yyyy', 'id_ID').format(selectedDate),
+        kategoriCatatan: dropDownJenis,
+        kategoriPengeluaran: dropDownKategori,
       );
+      await FirebaseService.updatePengeluaran(uid, updated);
       getDataPengeluaran();
       Fluttertoast.showToast(msg: "Pengeluaran berhasil di update");
     }
@@ -285,6 +297,15 @@ class _CalendarPageState extends State<CalendarPage> {
     );
 
     if (res == true) {
+      //hapus data dari firebase
+      if (PengeluaranData.id == null) {
+        Fluttertoast.showToast(msg: "Gagal menghapus: ID null");
+        return;
+      }
+
+      await FirebaseService.deletePengeluaran(uid, PengeluaranData.id!);
+
+      //refresh data
       getDataPengeluaran();
       Fluttertoast.showToast(msg: "Data berhasil di hapus");
     }
@@ -298,13 +319,21 @@ class _CalendarPageState extends State<CalendarPage> {
     final editJumlahPemasukanC = TextEditingController(
       text: pemasukanData.jumlahPemasukan.toString(),
     );
-    String? dropDownJenis;
-    DateTime selectedDate = selectedPicked ?? DateTime.now();
+    // String? dropDownJenis;
+    // DateTime selectedDate = selectedPicked ?? DateTime.now();
 
-    String formatedDate = DateFormat('dd', 'id_ID').format(selectedDate);
+    // String formatedDate = DateFormat('dd', 'id_ID').format(selectedDate);
 
-    String selectedKategori = pemasukanData.kategoriPemasukan;
-    String selectedCatatan = pemasukanData.kategoriCatatan;
+    // String selectedKategori = pemasukanData.kategoriPemasukan;
+    // String selectedCatatan = pemasukanData.kategoriCatatan;
+
+    String dropDownJenis = pemasukanData.kategoriCatatan;
+    String dropDownKategori = pemasukanData.kategoriPemasukan;
+
+    DateTime selectedDate = DateFormat(
+      "dd MMMM yyyy",
+      "id_ID",
+    ).parse(pemasukanData.tanggalMasuk);
 
     final res = await showDialog(
       context: context,
@@ -343,8 +372,8 @@ class _CalendarPageState extends State<CalendarPage> {
                     }).toList(),
                     onChanged: (value) {
                       setState(() {
-                        dropDownJenis = value;
-                        dropDownKategori = null;
+                        dropDownJenis = value!;
+                        dropDownKategori = "";
                       });
                     },
                   ),
@@ -375,7 +404,7 @@ class _CalendarPageState extends State<CalendarPage> {
                             .toList(),
                     onChanged: (value) {
                       setState(() {
-                        dropDownKategori = value;
+                        dropDownKategori = value!;
                       });
                     },
                   ),
@@ -389,7 +418,10 @@ class _CalendarPageState extends State<CalendarPage> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Text(
-                        formatedDate,
+                        DateFormat(
+                          'dd MMMM yyyy',
+                          'id_ID',
+                        ).format(selectedDate),
                         style: TextStyle(
                           fontSize: 16,
                           overflow: TextOverflow.ellipsis,
@@ -421,28 +453,29 @@ class _CalendarPageState extends State<CalendarPage> {
       },
     );
     if (res == true) {
-      DateTime selectedDate = selectedPicked ?? DateTime.now();
+      // DateTime selectedDate = selectedPicked ?? DateTime.now();
 
-      String formatedDate = DateFormat(
-        'dd MMMM yyyy',
-        'id_ID',
-      ).format(selectedDate);
-      int jumlah = 0;
-      try {
-        jumlah = int.parse(editJumlahPemasukanC.text);
-      } catch (e) {
-        Fluttertoast.showToast(msg: "Jumlah tidak valid");
-        return;
-      }
+      // String formatedDate = DateFormat(
+      //   'dd MMMM yyyy',
+      //   'id_ID',
+      // ).format(selectedDate);
+      // int jumlah = 0;
+      // try {
+      //   jumlah = int.parse(editJumlahPemasukanC.text);
+      // } catch (e) {
+      //   Fluttertoast.showToast(msg: "Jumlah tidak valid");
+      //   return;
+      // }
       final updated = PemasukanModelFirebase(
         id: pemasukanData.id,
         notesPemasukan: editNotesPemasukanC.text,
-        jumlahPemasukan: jumlah,
-        tanggalMasuk: formatedDate,
-        kategoriCatatan: dropDownJenis ?? selectedCatatan,
-
-        kategoriPemasukan: dropDownKategori ?? selectedKategori,
+        jumlahPemasukan: int.parse(editJumlahPemasukanC.text),
+        tanggalMasuk: DateFormat('dd MMMM yyyy', 'id_ID').format(selectedDate),
+        kategoriCatatan: dropDownJenis,
+        kategoriPemasukan: dropDownKategori,
       );
+
+      await FirebaseService.updatePemasukan(uid, updated);
       getDataPemasukan();
       Fluttertoast.showToast(msg: "Pemasukan berhasil di update");
     }
@@ -486,6 +519,15 @@ class _CalendarPageState extends State<CalendarPage> {
     );
 
     if (res == true) {
+      //hapus data dari firebase
+      if (pemasukanData.id == null) {
+        Fluttertoast.showToast(msg: "Gagal menghapus: ID null");
+        return;
+      }
+
+      await FirebaseService.deletePemasukan(uid, pemasukanData.id!);
+
+      //refresh data
       getDataPemasukan();
       Fluttertoast.showToast(msg: "Data berhasil di hapus");
     }
@@ -514,540 +556,573 @@ class _CalendarPageState extends State<CalendarPage> {
               end: AlignmentGeometry.center,
             ),
           ),
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(12),
-            child: SizedBox(
-              height: 3000,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Text(
-                    "Tambahkan Catatan",
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xff2E5077),
-                    ),
-                  ),
-                  SizedBox(height: 20),
+          child: NestedScrollView(
+            headerSliverBuilder: (context, innerBoxIsScrolled) {
+              return [
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "Tambahkan Catatan",
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xff2E5077),
+                          ),
+                        ),
+                        SizedBox(height: 20),
 
-                  TableCalendar(
-                    locale: 'id_ID',
-                    firstDay: DateTime.utc(2000, 1, 1),
-                    lastDay: DateTime.utc(2100, 12, 31),
-                    focusedDay: _focusedDay,
-                    selectedDayPredicate: (day) =>
-                        isSameDay(selectedPicked, day),
-                    onDaySelected: (selectedDay, focusedDay) {
-                      setState(() {
-                        selectedPicked = selectedDay;
-                        _focusedDay = focusedDay;
-                      });
-                    },
-                    calendarStyle: CalendarStyle(
-                      todayDecoration: BoxDecoration(
-                        color: Colors.blue,
-                        shape: BoxShape.circle,
-                      ),
-                      selectedDecoration: BoxDecoration(
-                        color: Colors.orange,
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-                    headerStyle: HeaderStyle(
-                      formatButtonVisible: false,
-                      titleCentered: true,
-                    ),
-                  ),
-                  SizedBox(height: 20),
+                        TableCalendar(
+                          locale: 'id_ID',
+                          firstDay: DateTime.utc(2000, 1, 1),
+                          lastDay: DateTime.utc(2100, 12, 31),
+                          focusedDay: _focusedDay,
+                          selectedDayPredicate: (day) =>
+                              isSameDay(selectedPicked, day),
+                          onDaySelected: (selectedDay, focusedDay) {
+                            setState(() {
+                              selectedPicked = selectedDay;
+                              _focusedDay = focusedDay;
+                            });
+                          },
+                          calendarStyle: CalendarStyle(
+                            todayDecoration: BoxDecoration(
+                              color: Colors.blue,
+                              shape: BoxShape.circle,
+                            ),
+                            selectedDecoration: BoxDecoration(
+                              color: Colors.orange,
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                          headerStyle: HeaderStyle(
+                            formatButtonVisible: false,
+                            titleCentered: true,
+                          ),
+                        ),
+                        SizedBox(height: 20),
 
-                  LoginButton(
-                    text: "Tambah Catatan",
-                    onPressed: () async {
-                      String? dropDownJenis;
-                      String? dropDownKategori;
-                      TextEditingController catatanC = TextEditingController();
-                      TextEditingController jumlahC = TextEditingController();
-                      DateTime selectedDate = selectedPicked ?? DateTime.now();
-                      String formattedDate = DateFormat(
-                        'dd MMMM yyyy',
-                        'id_ID',
-                      ).format(selectedDate);
+                        LoginButton(
+                          text: "Tambah Catatan",
+                          onPressed: () async {
+                            String? dropDownJenis;
+                            String? dropDownKategori;
+                            TextEditingController catatanC =
+                                TextEditingController();
+                            TextEditingController jumlahC =
+                                TextEditingController();
+                            DateTime selectedDate =
+                                selectedPicked ?? DateTime.now();
+                            String formattedDate = DateFormat(
+                              'dd MMMM yyyy',
+                              'id_ID',
+                            ).format(selectedDate);
 
-                      final bool? result = await showDialog(
-                        context: context,
-                        builder: (context) {
-                          return StatefulBuilder(
-                            builder: (context, setState) {
-                              final kategoriList = dropDownJenis == "Pemasukan"
-                                  ? listKategoriPemasukan
-                                  : listKategori;
+                            final bool? result = await showDialog(
+                              context: context,
+                              builder: (context) {
+                                return StatefulBuilder(
+                                  builder: (context, setState) {
+                                    final kategoriList =
+                                        dropDownJenis == "Pemasukan"
+                                        ? listKategoriPemasukan
+                                        : listKategori;
 
-                              final jumlahColor = dropDownJenis == "Pemasukan"
-                                  ? Colors.green
-                                  : dropDownJenis == "Pengeluaran"
-                                  ? Colors.red
-                                  : Colors.black;
+                                    final jumlahColor =
+                                        dropDownJenis == "Pemasukan"
+                                        ? Colors.green
+                                        : dropDownJenis == "Pengeluaran"
+                                        ? Colors.red
+                                        : Colors.black;
 
-                              return AlertDialog(
-                                backgroundColor: Color.fromARGB(
-                                  255,
-                                  218,
-                                  235,
-                                  255,
-                                ),
-                                title: const Text("Tambah Catatan"),
-                                content: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    TextField(
-                                      controller: catatanC,
-                                      decoration: const InputDecoration(
-                                        labelText: "Catatan",
+                                    return AlertDialog(
+                                      backgroundColor: Color.fromARGB(
+                                        255,
+                                        218,
+                                        235,
+                                        255,
                                       ),
-                                    ),
-
-                                    //Dropdown Jenis
-                                    DropdownButton<String>(
-                                      hint: const Text(
-                                        "Pilih Jenis Catatan",
-                                        style: TextStyle(
-                                          color: Color(0xff2E5077),
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      value: dropDownJenis,
-                                      isExpanded: true,
-                                      items: listTransaksi.map((String val) {
-                                        return DropdownMenuItem(
-                                          value: val,
-                                          child: Text(
-                                            val,
-                                            style: const TextStyle(
-                                              color: Colors.black,
+                                      title: const Text("Tambah Catatan"),
+                                      content: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          TextField(
+                                            controller: catatanC,
+                                            decoration: const InputDecoration(
+                                              labelText: "Catatan",
                                             ),
                                           ),
-                                        );
-                                      }).toList(),
-                                      onChanged: (value) {
-                                        setState(() {
-                                          dropDownJenis = value;
-                                          dropDownKategori = null;
-                                        });
-                                      },
-                                    ),
 
-                                    //Dropdown Kategori
-                                    DropdownButton<String>(
-                                      isExpanded: true,
-                                      hint: const Text(
-                                        "Pilih Kategori",
-                                        style: TextStyle(
-                                          color: Color(0xff2E5077),
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      value: dropDownKategori,
-                                      items:
-                                          (dropDownJenis == "Pengeluaran"
-                                                  ? listKategori
-                                                  : listKategoriPemasukan)
-                                              .map((String val) {
-                                                return DropdownMenuItem(
-                                                  value: val,
-                                                  child: Text(
-                                                    val,
-                                                    style: const TextStyle(
-                                                      color: Colors.black,
-                                                    ),
+                                          //Dropdown Jenis
+                                          DropdownButton<String>(
+                                            hint: const Text(
+                                              "Pilih Jenis Catatan",
+                                              style: TextStyle(
+                                                color: Color(0xff2E5077),
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                            value: dropDownJenis,
+                                            isExpanded: true,
+                                            items: listTransaksi.map((
+                                              String val,
+                                            ) {
+                                              return DropdownMenuItem(
+                                                value: val,
+                                                child: Text(
+                                                  val,
+                                                  style: const TextStyle(
+                                                    color: Colors.black,
                                                   ),
-                                                );
-                                              })
-                                              .toList(),
-                                      onChanged: (value) {
-                                        setState(() {
-                                          dropDownKategori = value;
-                                        });
-                                      },
-                                    ),
+                                                ),
+                                              );
+                                            }).toList(),
+                                            onChanged: (value) {
+                                              setState(() {
+                                                dropDownJenis = value;
+                                                dropDownKategori = null;
+                                              });
+                                            },
+                                          ),
 
-                                    //Input jumlah
-                                    TextField(
-                                      controller: jumlahC,
-                                      decoration: const InputDecoration(
-                                        labelText: "Jumlah",
+                                          //Dropdown Kategori
+                                          DropdownButton<String>(
+                                            isExpanded: true,
+                                            hint: const Text(
+                                              "Pilih Kategori",
+                                              style: TextStyle(
+                                                color: Color(0xff2E5077),
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                            value: dropDownKategori,
+                                            items:
+                                                (dropDownJenis == "Pengeluaran"
+                                                        ? listKategori
+                                                        : listKategoriPemasukan)
+                                                    .map((String val) {
+                                                      return DropdownMenuItem(
+                                                        value: val,
+                                                        child: Text(
+                                                          val,
+                                                          style:
+                                                              const TextStyle(
+                                                                color: Colors
+                                                                    .black,
+                                                              ),
+                                                        ),
+                                                      );
+                                                    })
+                                                    .toList(),
+                                            onChanged: (value) {
+                                              setState(() {
+                                                dropDownKategori = value;
+                                              });
+                                            },
+                                          ),
+
+                                          //Input jumlah
+                                          TextField(
+                                            controller: jumlahC,
+                                            decoration: const InputDecoration(
+                                              labelText: "Jumlah",
+                                            ),
+                                            keyboardType: TextInputType.number,
+                                          ),
+                                          height(8),
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                formattedDate,
+                                                style: TextStyle(fontSize: 16),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
                                       ),
-                                      keyboardType: TextInputType.number,
-                                    ),
-                                    height(8),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          formattedDate,
-                                          style: TextStyle(fontSize: 16),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () => Navigator.pop(context),
-                                    child: const Text(
-                                      "Batal",
-                                      style: TextStyle(color: Colors.red),
-                                    ),
-                                  ),
-                                  TextButton(
-                                    onPressed: () async {
-                                      if (dropDownJenis == null ||
-                                          dropDownKategori == null ||
-                                          jumlahC.text.isEmpty) {
-                                        Fluttertoast.showToast(
-                                          msg:
-                                              "Data belum lengkap. Mohon lengkapi data!",
-                                        );
-                                        return;
-                                      }
-                                      // tampilkan item baru
-                                      ScaffoldMessenger.of(
-                                        context,
-                                      ).showSnackBar(
-                                        SnackBar(
-                                          content: Text(
-                                            'Catatan: ${catatanC.text}\nKategori: $dropDownKategori\nTanggal: $formattedDate',
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () =>
+                                              Navigator.pop(context),
+                                          child: const Text(
+                                            "Batal",
+                                            style: TextStyle(color: Colors.red),
                                           ),
                                         ),
-                                      );
-
-                                      if (dropDownJenis == "Pengeluaran") {
-                                        final PengeluaranModelFirebase
-                                        dataPengeluaran =
-                                            PengeluaranModelFirebase(
-                                              notesPengeluaran: catatanC.text,
-                                              tanggalKeluar: formattedDate,
-                                              jumlahPengeluaran: int.parse(
-                                                jumlahC.text,
+                                        TextButton(
+                                          onPressed: () async {
+                                            if (dropDownJenis == null ||
+                                                dropDownKategori == null ||
+                                                jumlahC.text.isEmpty) {
+                                              Fluttertoast.showToast(
+                                                msg:
+                                                    "Data belum lengkap. Mohon lengkapi data!",
+                                              );
+                                              return;
+                                            }
+                                            // tampilkan item baru
+                                            ScaffoldMessenger.of(
+                                              context,
+                                            ).showSnackBar(
+                                              SnackBar(
+                                                content: Text(
+                                                  'Catatan: ${catatanC.text}\nKategori: $dropDownKategori\nTanggal: $formattedDate',
+                                                ),
                                               ),
-                                              kategoriCatatan: dropDownJenis!,
-
-                                              kategoriPengeluaran:
-                                                  dropDownKategori!,
                                             );
 
-                                        await FirebaseService.insertPengeluaran(
-                                          uid!,
-                                          dataPengeluaran,
-                                        ).then((value) {
-                                          Fluttertoast.showToast(
-                                            msg: "Data berhasil ditambahkan",
-                                          );
-                                        });
-                                      } else if (dropDownJenis == "Pemasukan") {
-                                        final PemasukanModelFirebase
-                                        dataPemasukan = PemasukanModelFirebase(
-                                          notesPemasukan: catatanC.text,
-                                          tanggalMasuk: formattedDate,
-                                          jumlahPemasukan: int.parse(
-                                            jumlahC.text,
-                                          ),
-                                          kategoriCatatan: dropDownJenis!,
+                                            if (dropDownJenis ==
+                                                "Pengeluaran") {
+                                              final PengeluaranModelFirebase
+                                              dataPengeluaran =
+                                                  PengeluaranModelFirebase(
+                                                    notesPengeluaran:
+                                                        catatanC.text,
+                                                    tanggalKeluar:
+                                                        formattedDate,
+                                                    jumlahPengeluaran:
+                                                        int.parse(jumlahC.text),
+                                                    kategoriCatatan:
+                                                        dropDownJenis!,
 
-                                          kategoriPemasukan: dropDownKategori!,
-                                        );
+                                                    kategoriPengeluaran:
+                                                        dropDownKategori!,
+                                                  );
 
-                                        await FirebaseService.insertPemasukan(
-                                          uid!,
-                                          dataPemasukan,
-                                        ).then((value) {
-                                          Fluttertoast.showToast(
-                                            msg: "Data berhasil ditambahkan",
-                                          );
-                                        });
-                                      }
+                                              await FirebaseService.insertPengeluaran(
+                                                uid!,
+                                                dataPengeluaran,
+                                              ).then((value) {
+                                                Fluttertoast.showToast(
+                                                  msg:
+                                                      "Data berhasil ditambahkan",
+                                                );
+                                              });
+                                            } else if (dropDownJenis ==
+                                                "Pemasukan") {
+                                              final PemasukanModelFirebase
+                                              dataPemasukan =
+                                                  PemasukanModelFirebase(
+                                                    notesPemasukan:
+                                                        catatanC.text,
+                                                    tanggalMasuk: formattedDate,
+                                                    jumlahPemasukan: int.parse(
+                                                      jumlahC.text,
+                                                    ),
+                                                    kategoriCatatan:
+                                                        dropDownJenis!,
 
-                                      Navigator.pop(context, true);
-                                    },
-                                    child: const Text(
-                                      "Simpan",
-                                      style: TextStyle(color: Colors.green),
-                                    ),
-                                  ),
-                                ],
-                              );
-                            },
-                          );
-                        },
-                      );
-                      if (result == true) {
-                        setState(() {
-                          getDataPengeluaran();
-                          getDataPemasukan();
-                        });
-                      }
-                    },
-                  ),
-                  height(8),
+                                                    kategoriPemasukan:
+                                                        dropDownKategori!,
+                                                  );
 
-                  TabBar(
-                    labelColor: Color(0xff2E5077),
-                    indicatorColor: Color(0xff2E5077),
-                    tabs: [
-                      Tab(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.arrow_upward),
+                                              await FirebaseService.insertPemasukan(
+                                                uid!,
+                                                dataPemasukan,
+                                              ).then((value) {
+                                                Fluttertoast.showToast(
+                                                  msg:
+                                                      "Data berhasil ditambahkan",
+                                                );
+                                              });
+                                            }
 
-                            Text("Pengeluaran"),
-                          ],
-                        ),
-                      ),
-                      Tab(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-
-                          children: [
-                            Icon(Icons.arrow_downward),
-
-                            Text("Pemasukan"),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  Expanded(
-                    child: TabBarView(
-                      children: [
-                        //Pengeluaran
-                        FutureBuilder(
-                          future: _listPengeluaran,
-                          builder: (BuildContext context, AsyncSnapshot snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.waiting) {
-                              return CircularProgressIndicator();
-                            } else if (snapshot.data == null ||
-                                snapshot.data.isEmpty) {
-                              return Column(
-                                children: [
-                                  Image.asset(
-                                    "assets/images/EmptyNotes.png",
-                                    height: 150,
-                                  ),
-                                  Text("Catatan belum ada"),
-                                ],
-                              );
-                            } else {
-                              final data =
-                                  snapshot.data
-                                      as List<PengeluaranModelFirebase>;
-                              return Container(
-                                height: 75,
-                                decoration: BoxDecoration(
-                                  color: Colors.transparent,
-                                  borderRadius: BorderRadius.circular(16),
-                                ),
-                                child: ListView.builder(
-                                  itemCount: data.length,
-                                  itemBuilder: (BuildContext context, int index) {
-                                    String? dropDownJenis;
-                                    String? dropDownKategori;
-                                    final items = data[index];
-                                    return Column(
-                                      children: [
-                                        ListTile(
-                                          leading: Icon(
-                                            items.kategoriPengeluaran ==
-                                                    "Makan & Minum"
-                                                ? Icons.fastfood
-                                                : items.kategoriPengeluaran ==
-                                                      "Transportasi"
-                                                ? Icons.motorcycle
-                                                : items.kategoriPengeluaran ==
-                                                      "Hiburan"
-                                                ? Icons.sports_esports
-                                                : items.kategoriPengeluaran ==
-                                                      "Tagihan"
-                                                ? Icons.receipt_long
-                                                : items.kategoriPengeluaran ==
-                                                      "Belanja"
-                                                ? Icons.trolley
-                                                : Icons.menu,
-                                          ),
-                                          title: Text(
-                                            items.notesPengeluaran,
+                                            Navigator.pop(context, true);
+                                          },
+                                          child: const Text(
+                                            "Simpan",
                                             style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              color: Color(0xff2E5077),
+                                              color: Colors.green,
                                             ),
                                           ),
-                                          subtitle: Row(
-                                            children: [
-                                              Text(
-                                                "Rp ${items.jumlahPengeluaran.toStringAsFixed(0)}",
-                                                style: TextStyle(
-                                                  color: Colors.red,
-                                                  fontSize: 9,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                              width(8),
-                                              Text(
-                                                items.tanggalKeluar,
-                                                style: TextStyle(fontSize: 9),
-                                              ),
-                                            ],
-                                          ),
-                                          trailing: Row(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              IconButton(
-                                                onPressed: () {
-                                                  _onEdit(items);
-                                                },
-                                                icon: Icon(Icons.edit),
-                                              ),
-                                              IconButton(
-                                                onPressed: () {
-                                                  _onDelete(items);
-                                                },
-                                                icon: Icon(
-                                                  Icons.delete,
-                                                  color: Colors.red,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        Divider(
-                                          thickness: 0.1,
-                                          color: Colors.black,
                                         ),
                                       ],
                                     );
                                   },
-                                ),
-                              );
+                                );
+                              },
+                            );
+                            if (result == true) {
+                              setState(() {
+                                getDataPengeluaran();
+                                getDataPemasukan();
+                              });
                             }
                           },
                         ),
+                        height(8),
+                      ],
+                    ),
+                  ),
+                ),
 
-                        //Pemasukan
-                        FutureBuilder(
-                          future: _listPemasukan,
-                          builder: (BuildContext context, AsyncSnapshot snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.waiting) {
-                              return CircularProgressIndicator();
-                            } else if (snapshot.data == null ||
-                                snapshot.data.isEmpty) {
-                              return Column(
-                                children: [
-                                  Image.asset(
-                                    "assets/images/EmptyNotes.png",
-                                    height: 150,
-                                  ),
-                                  Text("Catatan belum ada"),
-                                ],
-                              );
-                            } else {
-                              final data =
-                                  snapshot.data as List<PemasukanModelFirebase>;
-                              return Container(
-                                height: 75,
-                                decoration: BoxDecoration(
-                                  color: Colors.transparent,
-                                  borderRadius: BorderRadius.circular(16),
-                                ),
-                                child: ListView.builder(
-                                  itemCount: data.length,
-                                  itemBuilder: (BuildContext context, int index) {
-                                    final items = data[index];
-                                    return Column(
-                                      children: [
-                                        ListTile(
-                                          leading: Icon(
-                                            items.kategoriPemasukan == "Gaji"
-                                                ? Icons.attach_money
-                                                : items.kategoriPemasukan ==
-                                                      "Bonus"
-                                                ? Icons.money_rounded
-                                                : items.kategoriPemasukan ==
-                                                      "Hadiah"
-                                                ? Icons.card_giftcard_rounded
-                                                : Icons.more_horiz,
-                                          ),
-                                          title: Text(
-                                            items.notesPemasukan,
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              color: Color(0xff2E5077),
-                                            ),
-                                          ),
-                                          subtitle: Row(
-                                            children: [
-                                              Text(
-                                                "Rp ${items.jumlahPemasukan.toStringAsFixed(0)}",
-                                                style: TextStyle(
-                                                  color: Colors.green,
-                                                  fontSize: 9,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                              width(8),
-                                              Text(
-                                                items.tanggalMasuk,
-                                                style: TextStyle(fontSize: 9),
-                                              ),
-                                            ],
-                                          ),
-                                          trailing: Row(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              IconButton(
-                                                onPressed: () {
-                                                  _onEditPemasukan(items);
-                                                },
-                                                icon: Icon(Icons.edit),
-                                              ),
-                                              IconButton(
-                                                onPressed: () {
-                                                  _onDeletePemasukan(items);
-                                                },
-                                                icon: Icon(
-                                                  Icons.delete,
-                                                  color: Colors.red,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        Divider(
-                                          thickness: 0.1,
-                                          color: Colors.black,
-                                        ),
-                                      ],
-                                    );
-                                  },
-                                ),
-                              );
-                            }
-                          },
+                SliverPersistentHeader(
+                  pinned: true,
+                  delegate: _TabBarDelegate(
+                    TabBar(
+                      labelColor: Color(0xff2E5077),
+                      indicatorColor: Color(0xff2E5077),
+                      tabs: [
+                        Tab(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.arrow_upward),
+
+                              Text("Pengeluaran"),
+                            ],
+                          ),
+                        ),
+                        Tab(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+
+                            children: [
+                              Icon(Icons.arrow_downward),
+
+                              Text("Pemasukan"),
+                            ],
+                          ),
                         ),
                       ],
                     ),
                   ),
-                ],
-              ),
+                ),
+              ];
+            },
+
+            body: TabBarView(
+              children: [
+                //Pengeluaran
+                FutureBuilder(
+                  future: _listPengeluaran,
+                  builder: (BuildContext context, AsyncSnapshot snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return CircularProgressIndicator();
+                    } else if (snapshot.data == null || snapshot.data.isEmpty) {
+                      return Column(
+                        children: [
+                          Image.asset(
+                            "assets/images/EmptyNotes.png",
+                            height: 150,
+                          ),
+                          Text("Catatan belum ada"),
+                        ],
+                      );
+                    } else {
+                      final data =
+                          snapshot.data as List<PengeluaranModelFirebase>;
+                      return Container(
+                        height: 75,
+                        decoration: BoxDecoration(
+                          color: Colors.transparent,
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: ListView.builder(
+                          itemCount: data.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            String? dropDownJenis;
+                            String? dropDownKategori;
+                            final items = data[index];
+                            return Column(
+                              children: [
+                                ListTile(
+                                  leading: Icon(
+                                    items.kategoriPengeluaran == "Makan & Minum"
+                                        ? Icons.fastfood
+                                        : items.kategoriPengeluaran ==
+                                              "Transportasi"
+                                        ? Icons.motorcycle
+                                        : items.kategoriPengeluaran == "Hiburan"
+                                        ? Icons.sports_esports
+                                        : items.kategoriPengeluaran == "Tagihan"
+                                        ? Icons.receipt_long
+                                        : items.kategoriPengeluaran == "Belanja"
+                                        ? Icons.trolley
+                                        : Icons.menu,
+                                  ),
+                                  title: Text(
+                                    items.notesPengeluaran,
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Color(0xff2E5077),
+                                    ),
+                                  ),
+                                  subtitle: Row(
+                                    children: [
+                                      Text(
+                                        "Rp ${items.jumlahPengeluaran.toStringAsFixed(0)}",
+                                        style: TextStyle(
+                                          color: Colors.red,
+                                          fontSize: 9,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      width(8),
+                                      Text(
+                                        items.tanggalKeluar,
+                                        style: TextStyle(fontSize: 9),
+                                      ),
+                                    ],
+                                  ),
+                                  trailing: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      IconButton(
+                                        onPressed: () {
+                                          _onEdit(items);
+                                        },
+                                        icon: Icon(Icons.edit),
+                                      ),
+                                      IconButton(
+                                        onPressed: () {
+                                          _onDelete(items);
+                                        },
+                                        icon: Icon(
+                                          Icons.delete,
+                                          color: Colors.red,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Divider(thickness: 0.1, color: Colors.black),
+                              ],
+                            );
+                          },
+                        ),
+                      );
+                    }
+                  },
+                ),
+
+                //Pemasukan
+                FutureBuilder(
+                  future: _listPemasukan,
+                  builder: (BuildContext context, AsyncSnapshot snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return CircularProgressIndicator();
+                    } else if (snapshot.data == null || snapshot.data.isEmpty) {
+                      return Column(
+                        children: [
+                          Image.asset(
+                            "assets/images/EmptyNotes.png",
+                            height: 150,
+                          ),
+                          Text("Catatan belum ada"),
+                        ],
+                      );
+                    } else {
+                      final data =
+                          snapshot.data as List<PemasukanModelFirebase>;
+                      return Container(
+                        height: 75,
+                        decoration: BoxDecoration(
+                          color: Colors.transparent,
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: ListView.builder(
+                          itemCount: data.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            final items = data[index];
+                            return Column(
+                              children: [
+                                ListTile(
+                                  leading: Icon(
+                                    items.kategoriPemasukan == "Gaji"
+                                        ? Icons.attach_money
+                                        : items.kategoriPemasukan == "Bonus"
+                                        ? Icons.money_rounded
+                                        : items.kategoriPemasukan == "Hadiah"
+                                        ? Icons.card_giftcard_rounded
+                                        : Icons.more_horiz,
+                                  ),
+                                  title: Text(
+                                    items.notesPemasukan,
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Color(0xff2E5077),
+                                    ),
+                                  ),
+                                  subtitle: Row(
+                                    children: [
+                                      Text(
+                                        "Rp ${items.jumlahPemasukan.toStringAsFixed(0)}",
+                                        style: TextStyle(
+                                          color: Colors.green,
+                                          fontSize: 9,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      width(8),
+                                      Text(
+                                        items.tanggalMasuk,
+                                        style: TextStyle(fontSize: 9),
+                                      ),
+                                    ],
+                                  ),
+                                  trailing: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      IconButton(
+                                        onPressed: () {
+                                          _onEditPemasukan(items);
+                                        },
+                                        icon: Icon(Icons.edit),
+                                      ),
+                                      IconButton(
+                                        onPressed: () {
+                                          _onDeletePemasukan(items);
+                                        },
+                                        icon: Icon(
+                                          Icons.delete,
+                                          color: Colors.red,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Divider(thickness: 0.1, color: Colors.black),
+                              ],
+                            );
+                          },
+                        ),
+                      );
+                    }
+                  },
+                ),
+              ],
             ),
           ),
         ),
       ),
     );
   }
+}
+
+class _TabBarDelegate extends SliverPersistentHeaderDelegate {
+  final TabBar tabBar;
+
+  _TabBarDelegate(this.tabBar);
+
+  @override
+  Widget build(context, double shrinkOffset, bool overlapsContent) {
+    return Container(color: Colors.white, child: tabBar);
+  }
+
+  @override
+  double get maxExtent => tabBar.preferredSize.height;
+
+  @override
+  double get minExtent => tabBar.preferredSize.height;
+
+  @override
+  bool shouldRebuild(oldDelegate) => false;
 }
 
 TextFormField buildTextField({

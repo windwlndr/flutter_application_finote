@@ -1,5 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class PemasukanModelFirebase {
   final String? id;
   final String notesPemasukan;
@@ -30,14 +32,17 @@ class PemasukanModelFirebase {
   }
 
   // Convert dari Map (saat ambil data dari database)
-  factory PemasukanModelFirebase.fromMap(Map<String, dynamic> map) {
+  factory PemasukanModelFirebase.fromDoc(DocumentSnapshot doc) {
+    final data = doc.data() as Map<String, dynamic>? ?? {};
     return PemasukanModelFirebase(
-      id: map['id'] as String?,
-      notesPemasukan: map['notesPemasukan'] as String,
-      tanggalMasuk: (map['tanggalMasuk'] as String),
-      jumlahPemasukan: (map['jumlahPemasukan'] as int),
-      kategoriCatatan: map['kategoriCatatan'] as String,
-      kategoriPemasukan: map['kategoriPemasukan'] as String,
+      id: doc.id,
+      notesPemasukan: data["notesPemasukan"] ?? '',
+      jumlahPemasukan: (data["jumlahPemasukan"] is int)
+          ? data["jumlahPemasukan"]
+          : int.tryParse((data["jumlahPemasukan"] ?? '0').toString()) ?? 0,
+      tanggalMasuk: data["tanggalMasuk"] ?? '',
+      kategoriCatatan: data["kategoriCatatan"] ?? '',
+      kategoriPemasukan: data["kategoriPemasukan"] ?? '',
     );
   }
 }

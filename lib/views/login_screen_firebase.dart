@@ -169,56 +169,56 @@ class _LoginScreenFirebaseState extends State<LoginScreenFirebase> {
                   },
                 ),
                 height(16),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Expanded(
-                      child: Container(
-                        margin: EdgeInsets.only(right: 8),
-                        height: 1,
-                        color: Colors.white,
-                      ),
-                    ),
-                    Text(
-                      "Or Sign In With",
-                      // style: TextStyle(fontSize: 12, color: AppColor.gray88),
-                    ),
-                    Expanded(
-                      child: Container(
-                        margin: EdgeInsets.only(left: 8),
+                // Row(
+                //   mainAxisAlignment: MainAxisAlignment.center,
+                //   children: [
+                //     Expanded(
+                //       child: Container(
+                //         margin: EdgeInsets.only(right: 8),
+                //         height: 1,
+                //         color: Colors.white,
+                //       ),
+                //     ),
+                //     Text(
+                //       "Or Sign In With",
+                //       // style: TextStyle(fontSize: 12, color: AppColor.gray88),
+                //     ),
+                //     Expanded(
+                //       child: Container(
+                //         margin: EdgeInsets.only(left: 8),
 
-                        height: 1,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ],
-                ),
+                //         height: 1,
+                //         color: Colors.white,
+                //       ),
+                //     ),
+                //   ],
+                // ),
 
-                height(16),
-                SizedBox(
-                  height: 48,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                    ),
-                    onPressed: () {
-                      // Navigate to MeetLima screen menggunakan pushnamed
-                      Navigator.pushNamed(context, "/meet_2");
-                    },
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Image.asset(
-                          "assets/images/Google.png",
-                          height: 16,
-                          width: 16,
-                        ),
-                        width(4),
-                        Text("Google"),
-                      ],
-                    ),
-                  ),
-                ),
+                // height(16),
+                // SizedBox(
+                //   height: 48,
+                //   child: ElevatedButton(
+                //     style: ElevatedButton.styleFrom(
+                //       backgroundColor: Colors.white,
+                //     ),
+                //     onPressed: () {
+                //       // Navigate to MeetLima screen menggunakan pushnamed
+                //       Navigator.pushNamed(context, "/meet_2");
+                //     },
+                //     child: Row(
+                //       mainAxisAlignment: MainAxisAlignment.center,
+                //       children: [
+                //         Image.asset(
+                //           "assets/images/Google.png",
+                //           height: 16,
+                //           width: 16,
+                //         ),
+                //         width(4),
+                //         Text("Google"),
+                //       ],
+                //     ),
+                //   ),
+                // ),
                 height(16),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
