@@ -8,7 +8,19 @@ class ManageBudgetPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Manage Budget")),
+      appBar: AppBar(
+        title: Text(
+          "Manage Budget Pengeluaran",
+          style: TextStyle(color: Colors.white),
+        ),
+        backgroundColor: Color(0xff2F59AB),
+        leading: IconButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          icon: Icon(Icons.arrow_back, color: Colors.white),
+        ),
+      ),
       body: StreamBuilder<List<BudgetModelFirebase>>(
         stream: BudgetService().getBudgets(),
         builder: (context, snapshot) {
@@ -36,12 +48,69 @@ class ManageBudgetPage extends StatelessWidget {
           print("Budget snapshot: ${snapshot.data}");
 
           return ListView(
+            padding: const EdgeInsets.all(16),
             children: budgets.map((b) {
-              return Card(
+              return Container(
+                margin: const EdgeInsets.only(bottom: 16),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [Colors.blue.shade50, Colors.blue.shade100],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.08),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
                 child: ListTile(
-                  title: Text(b.kategori),
-                  subtitle: Text("Target Budget: Rp ${b.targetValue.toInt()}"),
-                  trailing: Icon(Icons.edit),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 14,
+                  ),
+                  leading: Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black12,
+                          blurRadius: 4,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: Icon(
+                      _iconPengeluaran(b.kategori),
+                      color: Colors.blue.shade700,
+                      size: 26,
+                    ),
+                  ),
+
+                  title: Text(
+                    b.kategori,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 16,
+                      color: Color(0xff1A3C57),
+                    ),
+                  ),
+
+                  subtitle: Text(
+                    "Target Budget: Rp ${b.targetValue.toInt()}",
+                    style: TextStyle(fontSize: 13, color: Colors.grey.shade800),
+                  ),
+
+                  trailing: IconButton(
+                    icon: Icon(Icons.edit, color: Colors.blue.shade700),
+                    onPressed: () => showEditDialog(context, b),
+                  ),
+
                   onTap: () => showEditDialog(context, b),
                 ),
               );
@@ -85,5 +154,22 @@ class ManageBudgetPage extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+IconData _iconPengeluaran(String kategori) {
+  switch (kategori) {
+    case "Makan & Minum":
+      return Icons.fastfood;
+    case "Transportasi":
+      return Icons.motorcycle;
+    case "Hiburan":
+      return Icons.sports_esports;
+    case "Tagihan":
+      return Icons.receipt_long;
+    case "Belanja":
+      return Icons.shopping_bag;
+    default:
+      return Icons.menu;
   }
 }

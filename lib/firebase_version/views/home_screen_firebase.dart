@@ -4,14 +4,12 @@ import 'package:flutter_application_finote/firebase_version/models/budget_model_
 import 'package:flutter_application_finote/firebase_version/views/manage_budget.dart';
 import 'package:flutter_application_finote/firebase_version/views/monthly_plan_firebase.dart';
 import 'package:flutter_application_finote/firebase_version/views/weekly_plan_firebase.dart';
-import 'package:flutter_application_finote/firebase_version/views/yearly_plan.dart';
+import 'package:flutter_application_finote/firebase_version/views/yearly_plan_firebase.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_application_finote/firebase_version/models/user_firebase_model.dart';
 import 'package:flutter_application_finote/firebase_version/service/firebase.dart';
-import 'package:flutter_application_finote/views/monthly_plan.dart';
 import 'package:flutter_application_finote/views/register_page.dart';
-import 'package:flutter_application_finote/views/yearly_plan.dart';
 import 'package:flutter_application_finote/widgets/app_bar.dart';
 import 'package:flutter_application_finote/widgets/budget_section_widget.dart';
 import 'package:flutter_application_finote/widgets/chart_section.dart';
@@ -222,11 +220,12 @@ class _HomeFirebaseFinoteState extends State<HomeFirebaseFinote> {
     return DefaultTabController(
       length: 2,
       child: Scaffold(
-        appBar: CustomAppBar(
-          title: 'Finote',
-          onSearchTap: () {
-            print('Search tapped');
-          },
+        appBar: AppBar(
+          title: Text('Finote', style: TextStyle(color: Colors.white)),
+          backgroundColor: const Color(0xff2F59AB),
+          // onSearchTap: () {
+          //   print('Search tapped');
+          // },
         ),
         body: Container(
           decoration: const BoxDecoration(
@@ -497,24 +496,24 @@ class _HomeFirebaseFinoteState extends State<HomeFirebaseFinote> {
                                 },
                               ),
                             ],
-                            // children: totalPengeluaranPerKategori.entries.map((
-                            //   entry,
-                            // ) {
-                            //   final kategori = entry.key;
-                            //   final currentValue = entry.value;
-                            //   final targetValue =
-                            //       targetPengeluaranPerKategori[kategori] ??
-                            //       1000000; // default target
-                            //   final progress = (currentValue / targetValue)
-                            //       .clamp(0.0, 1.0);
+                            //       children: totalPengeluaranPerKategori.entries.map((
+                            //         entry,
+                            //       ) {
+                            //         final kategori = entry.key;
+                            //         final currentValue = entry.value;
+                            //         final targetValue =
+                            //             targetPengeluaranPerKategori[kategori] ??
+                            //             1000000; // default target
+                            //         final progress = (currentValue / targetValue)
+                            //             .clamp(0.0, 1.0);
 
-                            //   return BudgetSectionWIdget(
-                            //     kategori: kategori,
-                            //     currentValue: currentValue / 1000,
-                            //     targetValue: targetValue / 1000,
-                            //     progress: progress,
-                            //   );
-                            // }).toList(),
+                            //         return BudgetSectionWIdget(
+                            //           kategori: kategori,
+                            //           currentValue: currentValue / 1000,
+                            //           targetValue: targetValue / 1000,
+                            //           progress: progress,
+                            //         );
+                            //       }).toList(),
                           ),
                       ],
                     ),

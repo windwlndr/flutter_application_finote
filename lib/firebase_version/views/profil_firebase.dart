@@ -133,11 +133,9 @@ class _ProfilUserFirebaseState extends State<ProfilUserFirebase> {
     //   return const Center(child: CircularProgressIndicator());
     // }
     return Scaffold(
-      appBar: CustomAppBar(
-        title: 'Profil',
-        onSearchTap: () {
-          print('Search tapped');
-        },
+      appBar: AppBar(
+        title: Text('Profil', style: TextStyle(color: Colors.white)),
+        backgroundColor: Color(0xff2F59AB),
       ),
       body: Container(
         decoration: const BoxDecoration(

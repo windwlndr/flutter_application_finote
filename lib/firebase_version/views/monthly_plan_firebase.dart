@@ -152,9 +152,9 @@ class _RencanaBulananFirebaseState extends State<RencanaBulananFirebase> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(
-        title: 'Finote',
-        onSearchTap: () {},
+      appBar: AppBar(
+        title: Text('Rencana Bulanan', style: TextStyle(color: Colors.white)),
+        backgroundColor: const Color(0xff2F59AB),
         leading: IconButton(
           onPressed: () {
             Navigator.pop(context);

@@ -559,26 +559,18 @@ class _CalendarPageFirebaseState extends State<CalendarPageFirebase> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        // Text(
-                        //   "Tambahkan Catatan",
-                        //   style: TextStyle(
-                        //     fontSize: 24,
-                        //     fontWeight: FontWeight.bold,
-                        //     color: Color(0xff2E5077),
-                        //   ),
-                        // ),
-
                         //menampilkan kalender hari ini
                         Container(
                           height: 400,
                           width: 500,
                           decoration: BoxDecoration(
-                            color: Color(0xffB4D4FF),
+                            color: Color.fromARGB(255, 216, 228, 243),
                             borderRadius: BorderRadius.circular(20),
                             boxShadow: [
                               BoxShadow(
                                 color: Colors.grey,
                                 blurRadius: 4,
+                                spreadRadius: 4,
                                 offset: Offset(0, 8),
                               ),
                             ],
@@ -598,7 +590,7 @@ class _CalendarPageFirebaseState extends State<CalendarPageFirebase> {
                             },
                             calendarStyle: CalendarStyle(
                               todayDecoration: BoxDecoration(
-                                color: Colors.blue,
+                                color: const Color.fromARGB(255, 128, 188, 237),
                                 shape: BoxShape.circle,
                               ),
                               selectedDecoration: BoxDecoration(
@@ -942,48 +934,95 @@ class _CalendarPageFirebaseState extends State<CalendarPageFirebase> {
                             String? dropDownJenis;
                             String? dropDownKategori;
                             final items = data[index];
-                            return Column(
-                              children: [
-                                ListTile(
-                                  leading: Icon(
-                                    items.kategoriPengeluaran == "Makan & Minum"
-                                        ? Icons.fastfood
-                                        : items.kategoriPengeluaran ==
-                                              "Transportasi"
-                                        ? Icons.motorcycle
-                                        : items.kategoriPengeluaran == "Hiburan"
-                                        ? Icons.sports_esports
-                                        : items.kategoriPengeluaran == "Tagihan"
-                                        ? Icons.receipt_long
-                                        : items.kategoriPengeluaran == "Belanja"
-                                        ? Icons.trolley
-                                        : Icons.menu,
+                            // return Column(
+                            //   children: [
+                            return Container(
+                              margin: const EdgeInsets.all(14),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 16,
+                              ),
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: [
+                                    Colors.blue.shade50,
+                                    Colors.blue.shade100,
+                                  ],
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                ),
+                                borderRadius: BorderRadius.circular(18),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black12,
+                                    blurRadius: 6,
+                                    offset: const Offset(0, 3),
                                   ),
-                                  title: Text(
-                                    items.notesPengeluaran,
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: Color(0xff2E5077),
+                                ],
+                              ),
+                              child: Row(
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.all(10),
+                                    decoration: BoxDecoration(
+                                      color: Colors.red[100],
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: Icon(
+                                      items.kategoriPengeluaran ==
+                                              "Makan & Minum"
+                                          ? Icons.fastfood
+                                          : items.kategoriPengeluaran ==
+                                                "Transportasi"
+                                          ? Icons.motorcycle
+                                          : items.kategoriPengeluaran ==
+                                                "Hiburan"
+                                          ? Icons.sports_esports
+                                          : items.kategoriPengeluaran ==
+                                                "Tagihan"
+                                          ? Icons.receipt_long
+                                          : items.kategoriPengeluaran ==
+                                                "Belanja"
+                                          ? Icons.trolley
+                                          : Icons.menu,
+                                      color: Colors.red,
                                     ),
                                   ),
-                                  subtitle: Row(
-                                    children: [
-                                      Text(
-                                        "Rp ${items.jumlahPengeluaran.toStringAsFixed(0)}",
-                                        style: TextStyle(
-                                          color: Colors.red,
-                                          fontSize: 9,
-                                          fontWeight: FontWeight.bold,
+                                  const SizedBox(width: 14),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          items.notesPengeluaran,
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: Color(0xff2E5077),
+                                          ),
                                         ),
-                                      ),
-                                      width(8),
-                                      Text(
-                                        items.tanggalKeluar,
-                                        style: TextStyle(fontSize: 9),
-                                      ),
-                                    ],
+                                        SizedBox(height: 4),
+                                        Row(
+                                          children: [
+                                            Text(
+                                              "Rp ${items.jumlahPengeluaran.toStringAsFixed(0)}",
+                                              style: TextStyle(
+                                                color: Colors.red,
+                                                fontSize: 9,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                            width(8),
+                                            Text(
+                                              items.tanggalKeluar,
+                                              style: TextStyle(fontSize: 9),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                  trailing: Row(
+                                  Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
                                       IconButton(
@@ -1003,10 +1042,72 @@ class _CalendarPageFirebaseState extends State<CalendarPageFirebase> {
                                       ),
                                     ],
                                   ),
-                                ),
-                                Divider(thickness: 0.1, color: Colors.black),
-                              ],
+                                ],
+                              ),
                             );
+                            // ListTile(
+                            //   leading: Icon(
+                            //     items.kategoriPengeluaran == "Makan & Minum"
+                            //         ? Icons.fastfood
+                            //         : items.kategoriPengeluaran ==
+                            //               "Transportasi"
+                            //         ? Icons.motorcycle
+                            //         : items.kategoriPengeluaran == "Hiburan"
+                            //         ? Icons.sports_esports
+                            //         : items.kategoriPengeluaran == "Tagihan"
+                            //         ? Icons.receipt_long
+                            //         : items.kategoriPengeluaran == "Belanja"
+                            //         ? Icons.trolley
+                            //         : Icons.menu,
+                            //   ),
+                            //   title: Text(
+                            //     items.notesPengeluaran,
+                            //     style: TextStyle(
+                            //       fontWeight: FontWeight.bold,
+                            //       color: Color(0xff2E5077),
+                            //     ),
+                            //   ),
+                            //   subtitle: Row(
+                            //     children: [
+                            //       Text(
+                            //         "Rp ${items.jumlahPengeluaran.toStringAsFixed(0)}",
+                            //         style: TextStyle(
+                            //           color: Colors.red,
+                            //           fontSize: 9,
+                            //           fontWeight: FontWeight.bold,
+                            //         ),
+                            //       ),
+                            //       width(8),
+                            //       Text(
+                            //         items.tanggalKeluar,
+                            //         style: TextStyle(fontSize: 9),
+                            //       ),
+                            //     ],
+                            //   ),
+                            //   trailing: Row(
+                            //     mainAxisSize: MainAxisSize.min,
+                            //     children: [
+                            //       IconButton(
+                            //         onPressed: () {
+                            //           _onEdit(items);
+                            //         },
+                            //         icon: Icon(Icons.edit),
+                            //       ),
+                            //       IconButton(
+                            //         onPressed: () {
+                            //           _onDelete(items);
+                            //         },
+                            //         icon: Icon(
+                            //           Icons.delete,
+                            //           color: Colors.red,
+                            //         ),
+                            //       ),
+                            //     ],
+                            //   ),
+                            // ),
+                            //     // Divider(thickness: 0.1, color: Colors.black),
+                            //   ],
+                            // );
                           },
                         ),
                       );
@@ -1043,43 +1144,84 @@ class _CalendarPageFirebaseState extends State<CalendarPageFirebase> {
                           itemCount: data.length,
                           itemBuilder: (BuildContext context, int index) {
                             final items = data[index];
-                            return Column(
-                              children: [
-                                ListTile(
-                                  leading: Icon(
-                                    items.kategoriPemasukan == "Gaji"
-                                        ? Icons.attach_money
-                                        : items.kategoriPemasukan == "Bonus"
-                                        ? Icons.money_rounded
-                                        : items.kategoriPemasukan == "Hadiah"
-                                        ? Icons.card_giftcard_rounded
-                                        : Icons.more_horiz,
+                            return Container(
+                              margin: const EdgeInsets.all(14),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 16,
+                              ),
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: [
+                                    Colors.blue.shade50,
+                                    Colors.blue.shade100,
+                                  ],
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                ),
+                                borderRadius: BorderRadius.circular(18),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black12,
+                                    blurRadius: 6,
+                                    offset: const Offset(0, 3),
                                   ),
-                                  title: Text(
-                                    items.notesPemasukan,
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: Color(0xff2E5077),
+                                ],
+                              ),
+                              child: Row(
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.all(10),
+                                    decoration: BoxDecoration(
+                                      color: Colors.green[100],
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: Icon(
+                                      items.kategoriPemasukan == "Gaji"
+                                          ? Icons.attach_money
+                                          : items.kategoriPemasukan == "Bonus"
+                                          ? Icons.money_rounded
+                                          : items.kategoriPemasukan == "Hadiah"
+                                          ? Icons.card_giftcard_rounded
+                                          : Icons.more_horiz,
+                                      color: Colors.green,
                                     ),
                                   ),
-                                  subtitle: Row(
-                                    children: [
-                                      Text(
-                                        "Rp ${items.jumlahPemasukan.toStringAsFixed(0)}",
-                                        style: TextStyle(
-                                          color: Colors.green,
-                                          fontSize: 9,
-                                          fontWeight: FontWeight.bold,
+                                  const SizedBox(width: 14),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          items.notesPemasukan,
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: Color(0xff2E5077),
+                                          ),
                                         ),
-                                      ),
-                                      width(8),
-                                      Text(
-                                        items.tanggalMasuk,
-                                        style: TextStyle(fontSize: 9),
-                                      ),
-                                    ],
+                                        SizedBox(height: 4),
+                                        Row(
+                                          children: [
+                                            Text(
+                                              "Rp ${items.jumlahPemasukan.toStringAsFixed(0)}",
+                                              style: TextStyle(
+                                                color: Colors.green,
+                                                fontSize: 9,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                            width(8),
+                                            Text(
+                                              items.tanggalMasuk,
+                                              style: TextStyle(fontSize: 9),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                  trailing: Row(
+                                  Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
                                       IconButton(
@@ -1099,10 +1241,69 @@ class _CalendarPageFirebaseState extends State<CalendarPageFirebase> {
                                       ),
                                     ],
                                   ),
-                                ),
-                                Divider(thickness: 0.1, color: Colors.black),
-                              ],
+                                ],
+                              ),
                             );
+                            // return Column(
+                            //   children: [
+                            //     ListTile(
+                            //       leading: Icon(
+                            //         items.kategoriPemasukan == "Gaji"
+                            //             ? Icons.attach_money
+                            //             : items.kategoriPemasukan == "Bonus"
+                            //             ? Icons.money_rounded
+                            //             : items.kategoriPemasukan == "Hadiah"
+                            //             ? Icons.card_giftcard_rounded
+                            //             : Icons.more_horiz,
+                            //       ),
+                            //       title: Text(
+                            //         items.notesPemasukan,
+                            //         style: TextStyle(
+                            //           fontWeight: FontWeight.bold,
+                            //           color: Color(0xff2E5077),
+                            //         ),
+                            //       ),
+                            //       subtitle: Row(
+                            //         children: [
+                            //           Text(
+                            //             "Rp ${items.jumlahPemasukan.toStringAsFixed(0)}",
+                            //             style: TextStyle(
+                            //               color: Colors.green,
+                            //               fontSize: 9,
+                            //               fontWeight: FontWeight.bold,
+                            //             ),
+                            //           ),
+                            //           width(8),
+                            //           Text(
+                            //             items.tanggalMasuk,
+                            //             style: TextStyle(fontSize: 9),
+                            //           ),
+                            //         ],
+                            //       ),
+                            //       trailing: Row(
+                            //         mainAxisSize: MainAxisSize.min,
+                            //         children: [
+                            //           IconButton(
+                            //             onPressed: () {
+                            //               _onEditPemasukan(items);
+                            //             },
+                            //             icon: Icon(Icons.edit),
+                            //           ),
+                            //           IconButton(
+                            //             onPressed: () {
+                            //               _onDeletePemasukan(items);
+                            //             },
+                            //             icon: Icon(
+                            //               Icons.delete,
+                            //               color: Colors.red,
+                            //             ),
+                            //           ),
+                            //         ],
+                            //       ),
+                            //     ),
+                            //     Divider(thickness: 0.1, color: Colors.black),
+                            //   ],
+                            // );
                           },
                         ),
                       );

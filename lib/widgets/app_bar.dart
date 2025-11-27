@@ -21,13 +21,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       automaticallyImplyLeading: false,
       leading: leading,
 
-      title: Text(
-        title,
-        style: const TextStyle(
-          fontWeight: FontWeight.bold,
-          color: Colors.white,
-        ),
-      ),
+      title: Text(title, style: const TextStyle(color: Colors.white)),
       backgroundColor: backgroundColor,
       actions: [
         IconButton(

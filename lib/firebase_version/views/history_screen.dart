@@ -16,110 +16,176 @@ class HistoryScreenFirebase extends StatefulWidget {
 class _HistoryScreenFirebaseState extends State<HistoryScreenFirebase> {
   String uid = FirebaseService.auth.currentUser!.uid;
 
-  String? dropDownValue;
-  final List<String> listKategori = ["Hari Ini", "Bulan Ini", "Tahun Ini"];
-
   List<PengeluaranModelFirebase> allPengeluaran = [];
-  List<PengeluaranModelFirebase> filteredPengeluaran = [];
-
   List<PemasukanModelFirebase> allPemasukan = [];
-  List<PemasukanModelFirebase> filteredPemasukan = [];
 
   DateTime parseTanggal(String raw) {
     try {
       return DateFormat("d MMMM yyyy", "id_ID").parse(raw);
     } catch (e) {
-      print("ERROR PARSING TANGGAL: $raw");
       return DateTime(1900);
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    initializeDateFormatting("id_ID", null);
+    loadData();
   }
 
   Future<void> loadData() async {
     allPengeluaran = await FirebaseService.getAllPengeluaran(uid);
     allPemasukan = await FirebaseService.getAllPemasukan(uid);
-
-    // default: tampilkan semua
-    filteredPengeluaran = List.from(allPengeluaran);
-    filteredPemasukan = List.from(allPemasukan);
-
     setState(() {});
   }
 
-  void filterData() {
+  List<Map<String, dynamic>> gabungDanFilter(String mode) {
     DateTime now = DateTime.now();
 
-    bool isSameDay(DateTime d1, DateTime d2) =>
-        d1.year == d2.year && d1.month == d2.month && d1.day == d2.day;
+    bool isToday(DateTime d) =>
+        d.year == now.year && d.month == now.month && d.day == now.day;
 
-    bool isSameMonth(DateTime d1, DateTime d2) =>
-        d1.year == d2.year && d1.month == d2.month;
+    bool isThisWeek(DateTime d) {
+      DateTime start = now.subtract(Duration(days: now.weekday - 1));
+      DateTime end = start.add(const Duration(days: 6));
+      return d.isAfter(start.subtract(const Duration(days: 1))) &&
+          d.isBefore(end.add(const Duration(days: 1)));
+    }
 
-    bool isSameYear(DateTime d1, DateTime d2) => d1.year == d2.year;
+    bool isThisYear(DateTime d) => d.year == now.year;
 
-    filteredPengeluaran = allPengeluaran.where((item) {
-      DateTime date = parseTanggal(item.tanggalKeluar);
+    List<Map<String, dynamic>> all = [];
 
-      switch (dropDownValue) {
-        case "Hari Ini":
-          return isSameDay(date, now);
-        case "Bulan Ini":
-          return isSameMonth(date, now);
-        case "Tahun Ini":
-          return isSameYear(date, now);
+    for (var p in allPengeluaran) {
+      all.add({
+        "jenis": "pengeluaran",
+        "tanggal": parseTanggal(p.tanggalKeluar),
+        "judul": p.notesPengeluaran,
+        "jumlah": p.jumlahPengeluaran,
+        "kategori": p.kategoriPengeluaran,
+      });
+    }
+
+    for (var m in allPemasukan) {
+      all.add({
+        "jenis": "pemasukan",
+        "tanggal": parseTanggal(m.tanggalMasuk),
+        "judul": m.notesPemasukan,
+        "jumlah": m.jumlahPemasukan,
+        "kategori": m.kategoriPemasukan,
+      });
+    }
+
+    return all.where((item) {
+      DateTime date = item["tanggal"];
+      switch (mode) {
+        case "today":
+          return isToday(date);
+        case "week":
+          return isThisWeek(date);
+        case "year":
+          return isThisYear(date);
         default:
           return true;
       }
-    }).toList();
-
-    filteredPemasukan = allPemasukan.where((item) {
-      DateTime date = parseTanggal(item.tanggalMasuk);
-
-      switch (dropDownValue) {
-        case "Hari Ini":
-          return isSameDay(date, now);
-        case "Bulan Ini":
-          return isSameMonth(date, now);
-        case "Tahun Ini":
-          return isSameYear(date, now);
-        default:
-          return true;
-      }
-    }).toList();
-
-    setState(() {});
+    }).toList()..sort((a, b) => b["tanggal"].compareTo(a["tanggal"]));
   }
 
-  // getDataPengeluaran() async {
-  //   _listPengeluaran = FirebaseService.getAllPengeluaran(uid);
-  //   final data = await _listPengeluaran;
-  //   print("DEBUG: Jumlah pengeluaran: ${data.length}");
-  //   setState(() {});
-  // }
+  Widget buildList(String mode) {
+    final items = gabungDanFilter(mode);
 
-  // getDataPemasukan() async {
-  //   _listPemasukan = FirebaseService.getAllPemasukan(uid);
-  //   final data = await _listPemasukan;
-  //   print("DEBUG: Jumlah pemasukan: ${data.length}");
-  //   setState(() {});
-  // }
+    if (items.isEmpty) {
+      return _emptyState();
+    }
 
-  @override
-  void initState() {
-    super.initState();
-    initializeDateFormatting('id_ID', null);
-    loadData();
-    // getDataPengeluaran();
-    // getDataPemasukan();
+    return ListView.builder(
+      padding: const EdgeInsets.all(12),
+      itemCount: items.length,
+      itemBuilder: (context, index) {
+        final item = items[index];
+        bool isIncome = item["jenis"] == "pemasukan";
+
+        return Container(
+          margin: const EdgeInsets.only(bottom: 14),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Colors.blue.shade50, Colors.blue.shade100],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.circular(18),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black12,
+                blurRadius: 6,
+                offset: const Offset(0, 3),
+              ),
+            ],
+          ),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: isIncome ? Colors.green[100] : Colors.red[100],
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  isIncome
+                      ? _iconPemasukan(item["kategori"])
+                      : _iconPengeluaran(item["kategori"]),
+                  color: isIncome ? Colors.green : Colors.red,
+                ),
+              ),
+
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      item["judul"],
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                        color: Color(0xff2E5077),
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      DateFormat("d MMM yyyy", "id_ID").format(item["tanggal"]),
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: Colors.black54,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Text(
+                (isIncome ? "+ " : "- ") + item["jumlah"].toString(),
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: isIncome ? Colors.green : Colors.red,
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 2,
+      length: 3,
       child: Scaffold(
-        appBar: CustomAppBar(title: 'Transaksi Terkini', onSearchTap: () {}),
+        appBar: CustomAppBar(title: "Transaksi Terkini", onSearchTap: () {}),
         body: Container(
-          padding: const EdgeInsets.all(16),
           decoration: const BoxDecoration(
             gradient: LinearGradient(
               colors: [Color(0x352F59AB), Color(0x102F59AB)],
@@ -128,189 +194,49 @@ class _HistoryScreenFirebaseState extends State<HistoryScreenFirebase> {
             ),
           ),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // JUDUL
-              // Center(
-              //   child: Text(
-              //     "Transaksi Terkini",
-              //     style: TextStyle(
-              //       fontSize: 24,
-              //       fontWeight: FontWeight.bold,
-              //       color: Color(0xff2E5077),
-              //     ),
-              //   ),
-              // ),
-
-              // SizedBox(height: 16),
-
-              // DROPDOWN
-              Center(
-                child: DropdownButton(
-                  hint: Text(
-                    "Pilih Periode",
-                    style: TextStyle(
+              const SizedBox(height: 12),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.4),
+                    borderRadius: BorderRadius.circular(32),
+                  ),
+                  //padding: const EdgeInsets.all(5),
+                  child: TabBar(
+                    indicator: BoxDecoration(
                       color: Color(0xff2E5077),
-                      fontWeight: FontWeight.bold,
+                      borderRadius: BorderRadius.circular(24),
                     ),
+                    labelColor: Colors.white,
+                    unselectedLabelColor: Color(0xff2E5077),
+                    tabs: const [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [Tab(text: "Hari Ini", height: 50)],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [Tab(text: "Minggu Ini", height: 50)],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [Tab(text: "Tahun Ini", height: 50)],
+                      ),
+                    ],
                   ),
-                  value: dropDownValue,
-                  items: listKategori.map((String val) {
-                    return DropdownMenuItem(value: val, child: Text(val));
-                  }).toList(),
-                  onChanged: (value) {
-                    setState(() {
-                      dropDownValue = value;
-                    });
-                    filterData();
-                  },
                 ),
               ),
 
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
 
-              // TAB BAR
-              Container(
-                padding: EdgeInsets.all(4),
-                decoration: BoxDecoration(
-                  color: Colors.transparent,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: TabBar(
-                  indicator: BoxDecoration(
-                    color: Color(0xff2E5077),
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  unselectedLabelColor: Colors.grey,
-                  labelColor: Colors.white,
-                  tabs: [
-                    Tab(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.arrow_upward),
-                          Text("Pengeluaran"),
-                        ],
-                      ),
-                    ),
-                    Tab(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.arrow_downward),
-                          Text("Pemasukan"),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              // TAB VIEW (HARUS FLEXIBLE HEIGHT)
               Expanded(
                 child: TabBarView(
                   children: [
-                    //PENGELUARAN
-                    // FutureBuilder<List<PengeluaranModelFirebase>>(
-                    //   future: _listPengeluaran,
-                    //   builder: (context, snapshot) {
-                    //     if (snapshot.connectionState ==
-                    //         ConnectionState.waiting) {
-                    //       return Center(child: CircularProgressIndicator());
-                    //     }
-                    //     if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    //       return _emptyState();
-                    //     }
-                    filteredPengeluaran.isEmpty
-                        ? _emptyState()
-                        : ListView.builder(
-                            padding: const EdgeInsets.only(top: 12),
-                            itemCount: filteredPengeluaran.length,
-                            itemBuilder: (context, index) {
-                              final item = filteredPengeluaran[index];
-                              return Column(
-                                children: [
-                                  ListTile(
-                                    leading: Icon(
-                                      _iconPengeluaran(
-                                        item.kategoriPengeluaran,
-                                      ),
-                                    ),
-                                    title: Text(
-                                      item.notesPengeluaran,
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: Color(0xff2E5077),
-                                      ),
-                                    ),
-                                    subtitle: Text(
-                                      item.tanggalKeluar,
-                                      style: TextStyle(fontSize: 12),
-                                    ),
-                                    trailing: Text(
-                                      "Rp ${item.jumlahPengeluaran.toStringAsFixed(0)}",
-                                      style: TextStyle(
-                                        color: Colors.red,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                  Divider(thickness: 0.3),
-                                ],
-                              );
-                            },
-                          ),
-
-                    //PEMASUKAN
-                    // FutureBuilder<List<PemasukanModelFirebase>>(
-                    //   future: _listPemasukan,
-                    //   builder: (context, snapshot) {
-                    //     if (snapshot.connectionState ==
-                    //         ConnectionState.waiting) {
-                    //       return Center(child: CircularProgressIndicator());
-                    //     }
-                    //     if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    //       return _emptyState();
-                    //     }
-                    filteredPemasukan.isEmpty
-                        ? _emptyState()
-                        : ListView.builder(
-                            padding: const EdgeInsets.only(top: 12),
-                            itemCount: filteredPemasukan.length,
-                            itemBuilder: (context, index) {
-                              final item = filteredPemasukan[index];
-                              return Column(
-                                children: [
-                                  ListTile(
-                                    leading: Icon(
-                                      _iconPemasukan(item.kategoriPemasukan),
-                                    ),
-                                    title: Text(
-                                      item.notesPemasukan,
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: Color(0xff2E5077),
-                                      ),
-                                    ),
-                                    subtitle: Text(
-                                      item.tanggalMasuk,
-                                      style: TextStyle(fontSize: 12),
-                                    ),
-                                    trailing: Text(
-                                      "Rp ${item.jumlahPemasukan.toStringAsFixed(0)}",
-                                      style: TextStyle(
-                                        color: Colors.green,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                  Divider(thickness: 0.3),
-                                ],
-                              );
-                            },
-                          ),
+                    buildList("today"),
+                    buildList("week"),
+                    buildList("year"),
                   ],
                 ),
               ),
@@ -320,50 +246,52 @@ class _HistoryScreenFirebaseState extends State<HistoryScreenFirebase> {
       ),
     );
   }
+}
 
-  // ICON PENGELUARAN
-  IconData _iconPengeluaran(String kategori) {
-    switch (kategori) {
-      case "Makan & Minum":
-        return Icons.fastfood;
-      case "Transportasi":
-        return Icons.motorcycle;
-      case "Hiburan":
-        return Icons.sports_esports;
-      case "Tagihan":
-        return Icons.receipt_long;
-      case "Belanja":
-        return Icons.shopping_bag;
-      default:
-        return Icons.menu;
-    }
-  }
-
-  // ICON PEMASUKAN
-  IconData _iconPemasukan(String kategori) {
-    switch (kategori) {
-      case "Gaji":
-        return Icons.attach_money;
-      case "Bonus":
-        return Icons.money_rounded;
-      case "Hadiah":
-        return Icons.card_giftcard_rounded;
-      default:
-        return Icons.more_horiz;
-    }
-  }
-
-  // EMPTY STATE
-  Widget _emptyState() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Image.asset("assets/images/EmptyNotes.png", height: 150),
-          SizedBox(height: 12),
-          Text("Catatan belum ada"),
-        ],
-      ),
-    );
+// ICON PENGELUARAN
+IconData _iconPengeluaran(String kategori) {
+  switch (kategori) {
+    case "Makan & Minum":
+      return Icons.fastfood;
+    case "Transportasi":
+      return Icons.motorcycle;
+    case "Hiburan":
+      return Icons.sports_esports;
+    case "Tagihan":
+      return Icons.receipt_long;
+    case "Belanja":
+      return Icons.shopping_bag;
+    default:
+      return Icons.menu;
   }
 }
+
+// ICON PEMASUKAN
+IconData _iconPemasukan(String kategori) {
+  switch (kategori) {
+    case "Gaji":
+      return Icons.attach_money;
+    case "Bonus":
+      return Icons.money_rounded;
+    case "Hadiah":
+      return Icons.card_giftcard_rounded;
+    default:
+      return Icons.more_horiz;
+  }
+}
+
+// EMPTY STATE
+Widget _emptyState() {
+  return Center(
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Image.asset("assets/images/EmptyNotes.png", height: 150),
+        SizedBox(height: 12),
+        Text("Catatan belum ada"),
+      ],
+    ),
+  );
+}
+
+// }
