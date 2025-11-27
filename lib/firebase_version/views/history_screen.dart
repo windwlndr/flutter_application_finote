@@ -117,7 +117,7 @@ class _HistoryScreenFirebaseState extends State<HistoryScreenFirebase> {
     return DefaultTabController(
       length: 2,
       child: Scaffold(
-        appBar: CustomAppBar(title: 'Finote', onNotificationTap: () {}),
+        appBar: CustomAppBar(title: 'Transaksi Terkini', onSearchTap: () {}),
         body: Container(
           padding: const EdgeInsets.all(16),
           decoration: const BoxDecoration(
@@ -131,38 +131,40 @@ class _HistoryScreenFirebaseState extends State<HistoryScreenFirebase> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // JUDUL
-              Center(
-                child: Text(
-                  "Transaksi Terkini",
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xff2E5077),
-                  ),
-                ),
-              ),
+              // Center(
+              //   child: Text(
+              //     "Transaksi Terkini",
+              //     style: TextStyle(
+              //       fontSize: 24,
+              //       fontWeight: FontWeight.bold,
+              //       color: Color(0xff2E5077),
+              //     ),
+              //   ),
+              // ),
 
-              SizedBox(height: 16),
+              // SizedBox(height: 16),
 
               // DROPDOWN
-              DropdownButton(
-                hint: Text(
-                  "Pilih Periode",
-                  style: TextStyle(
-                    color: Color(0xff2E5077),
-                    fontWeight: FontWeight.bold,
+              Center(
+                child: DropdownButton(
+                  hint: Text(
+                    "Pilih Periode",
+                    style: TextStyle(
+                      color: Color(0xff2E5077),
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
+                  value: dropDownValue,
+                  items: listKategori.map((String val) {
+                    return DropdownMenuItem(value: val, child: Text(val));
+                  }).toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      dropDownValue = value;
+                    });
+                    filterData();
+                  },
                 ),
-                value: dropDownValue,
-                items: listKategori.map((String val) {
-                  return DropdownMenuItem(value: val, child: Text(val));
-                }).toList(),
-                onChanged: (value) {
-                  setState(() {
-                    dropDownValue = value;
-                  });
-                  filterData();
-                },
               ),
 
               SizedBox(height: 8),

@@ -274,7 +274,7 @@ class _LoginScreenFirebaseState extends State<LoginScreenFirebase> {
     return TextFormField(
       validator: validator,
       controller: controller,
-      obscureText: isPassword ? isVisibility : false,
+      obscureText: isPassword ? !isVisibility : false,
       decoration: InputDecoration(
         hintText: hintText,
         border: OutlineInputBorder(
@@ -303,7 +303,7 @@ class _LoginScreenFirebaseState extends State<LoginScreenFirebase> {
                   });
                 },
                 icon: Icon(
-                  isVisibility ? Icons.visibility_off : Icons.visibility,
+                  isVisibility ? Icons.visibility : Icons.visibility_off,
                   // color: AppColor.gray88,
                 ),
               )

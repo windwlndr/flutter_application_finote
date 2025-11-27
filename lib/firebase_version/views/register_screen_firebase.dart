@@ -321,7 +321,7 @@ class _RegisterScreenFirebaseState extends State<RegisterScreenFirebase> {
     return TextFormField(
       validator: validator,
       controller: controller,
-      obscureText: isPassword ? isVisibility : false,
+      obscureText: isPassword ? !isVisibility : false,
       decoration: InputDecoration(
         hintText: hintText,
         border: OutlineInputBorder(
@@ -350,7 +350,7 @@ class _RegisterScreenFirebaseState extends State<RegisterScreenFirebase> {
                   });
                 },
                 icon: Icon(
-                  isVisibility ? Icons.visibility_off : Icons.visibility,
+                  isVisibility ? Icons.visibility : Icons.visibility_off,
                 ),
               )
             : null,

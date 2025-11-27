@@ -15,8 +15,8 @@ class _RencanaTahunanPageState extends State<RencanaTahunanPage> {
     return Scaffold(
       appBar: CustomAppBar(
         title: 'Finote',
-        onNotificationTap: () {
-          print('Notification tapped');
+        onSearchTap: () {
+          print('Search tapped');
         },
       ),
       body: Container(

@@ -495,8 +495,8 @@ class _CalendarPageState extends State<CalendarPage> {
       child: Scaffold(
         appBar: CustomAppBar(
           title: 'Finote',
-          onNotificationTap: () {
-            print('Notification tapped');
+          onSearchTap: () {
+            print('Search tapped');
           },
         ),
         body: Container(

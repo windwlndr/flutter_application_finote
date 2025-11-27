@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:flutter_application_finote/firebase_version/models/budget_model_firebase.dart';
+import 'package:flutter_application_finote/firebase_version/views/manage_budget.dart';
+import 'package:flutter_application_finote/firebase_version/views/monthly_plan_firebase.dart';
 import 'package:flutter_application_finote/firebase_version/views/weekly_plan_firebase.dart';
+import 'package:flutter_application_finote/firebase_version/views/yearly_plan.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_application_finote/firebase_version/models/user_firebase_model.dart';
 import 'package:flutter_application_finote/firebase_version/service/firebase.dart';
-import 'package:flutter_application_finote/views/weekly_plan.dart';
 import 'package:flutter_application_finote/views/monthly_plan.dart';
 import 'package:flutter_application_finote/views/register_page.dart';
 import 'package:flutter_application_finote/views/yearly_plan.dart';
@@ -221,8 +224,8 @@ class _HomeFirebaseFinoteState extends State<HomeFirebaseFinote> {
       child: Scaffold(
         appBar: CustomAppBar(
           title: 'Finote',
-          onNotificationTap: () {
-            print('Notification tapped');
+          onSearchTap: () {
+            print('Search tapped');
           },
         ),
         body: Container(
@@ -304,7 +307,8 @@ class _HomeFirebaseFinoteState extends State<HomeFirebaseFinote> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => RencanaBulananPage(),
+                                  builder: (context) =>
+                                      RencanaBulananFirebase(),
                                 ),
                               );
                             },
@@ -330,7 +334,8 @@ class _HomeFirebaseFinoteState extends State<HomeFirebaseFinote> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => RencanaTahunanPage(),
+                                  builder: (context) =>
+                                      RencanaTahunanFirebase(),
                                 ),
                               );
                             },
@@ -431,7 +436,14 @@ class _HomeFirebaseFinoteState extends State<HomeFirebaseFinote> {
                                 style: TextStyle(color: Color(0xff2E5077)),
                               ),
                               TextButton(
-                                onPressed: () {},
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => ManageBudgetPage(),
+                                    ),
+                                  );
+                                },
                                 child: const Text(
                                   "Manage",
                                   style: TextStyle(color: Colors.blue),
@@ -446,24 +458,63 @@ class _HomeFirebaseFinoteState extends State<HomeFirebaseFinote> {
                           const Text("Belum ada data budget.")
                         else
                           Column(
-                            children: totalPengeluaranPerKategori.entries.map((
-                              entry,
-                            ) {
-                              final kategori = entry.key;
-                              final currentValue = entry.value;
-                              final targetValue =
-                                  targetPengeluaranPerKategori[kategori] ??
-                                  1000000; // default target
-                              final progress = (currentValue / targetValue)
-                                  .clamp(0.0, 1.0);
+                            children: [
+                              StreamBuilder<List<BudgetModelFirebase>>(
+                                stream: BudgetService().getBudgets(),
+                                builder: (context, snapshot) {
+                                  if (!snapshot.hasData)
+                                    return CircularProgressIndicator();
 
-                              return BudgetSectionWIdget(
-                                kategori: kategori,
-                                currentValue: currentValue / 1000,
-                                targetValue: targetValue / 1000,
-                                progress: progress,
-                              );
-                            }).toList(),
+                                  final budgets = snapshot.data!;
+                                  final budgetMap = {
+                                    for (var b in budgets)
+                                      b.kategori: b.targetValue,
+                                  };
+
+                                  return Column(
+                                    children: totalPengeluaranPerKategori
+                                        .entries
+                                        .map((entry) {
+                                          final kategori = entry.key;
+                                          final currentValue = entry.value;
+
+                                          final targetValue =
+                                              budgetMap[kategori] ?? 1000000;
+
+                                          final progress =
+                                              (currentValue / targetValue)
+                                                  .clamp(0.0, 1.0);
+
+                                          return BudgetSectionWIdget(
+                                            kategori: kategori,
+                                            currentValue: currentValue / 1000,
+                                            targetValue: targetValue / 1000,
+                                            progress: progress,
+                                          );
+                                        })
+                                        .toList(),
+                                  );
+                                },
+                              ),
+                            ],
+                            // children: totalPengeluaranPerKategori.entries.map((
+                            //   entry,
+                            // ) {
+                            //   final kategori = entry.key;
+                            //   final currentValue = entry.value;
+                            //   final targetValue =
+                            //       targetPengeluaranPerKategori[kategori] ??
+                            //       1000000; // default target
+                            //   final progress = (currentValue / targetValue)
+                            //       .clamp(0.0, 1.0);
+
+                            //   return BudgetSectionWIdget(
+                            //     kategori: kategori,
+                            //     currentValue: currentValue / 1000,
+                            //     targetValue: targetValue / 1000,
+                            //     progress: progress,
+                            //   );
+                            // }).toList(),
                           ),
                       ],
                     ),

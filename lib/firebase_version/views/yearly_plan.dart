@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_finote/firebase_version/models/monthly_model_firebase.dart';
 import 'package:flutter_application_finote/firebase_version/models/weekly_model_firebase.dart';
+import 'package:flutter_application_finote/firebase_version/models/yearly_model_firebase.dart';
 import 'package:flutter_application_finote/firebase_version/service/firebase.dart';
 import 'package:flutter_application_finote/widgets/app_bar.dart';
 
-class RencanaMingguanFirebase extends StatefulWidget {
-  const RencanaMingguanFirebase({super.key});
+class RencanaTahunanFirebase extends StatefulWidget {
+  const RencanaTahunanFirebase({super.key});
 
   @override
-  State<RencanaMingguanFirebase> createState() =>
-      _RencanaMingguanFirebaseState();
+  State<RencanaTahunanFirebase> createState() => _RencanaTahunanFirebaseState();
 }
 
-class _RencanaMingguanFirebaseState extends State<RencanaMingguanFirebase> {
+class _RencanaTahunanFirebaseState extends State<RencanaTahunanFirebase> {
   final TextEditingController rencanaController = TextEditingController();
   final TextEditingController hargaController = TextEditingController();
 
@@ -21,7 +22,7 @@ class _RencanaMingguanFirebaseState extends State<RencanaMingguanFirebase> {
       builder: (context) {
         return AlertDialog(
           backgroundColor: Color.fromARGB(255, 218, 235, 255),
-          title: const Text("Tambah Rencana Mingguan"),
+          title: const Text("Tambah Rencana Tahunan"),
           content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -53,7 +54,7 @@ class _RencanaMingguanFirebaseState extends State<RencanaMingguanFirebase> {
                 final harga = int.tryParse(hargaController.text.trim()) ?? 0;
 
                 if (rencana.isNotEmpty && harga > 0) {
-                  await FirebaseService.tambahRencanaMingguan(
+                  await FirebaseService.tambahRencanaTahunan(
                     rencana: rencana,
                     harga: harga,
                   );
@@ -91,7 +92,7 @@ class _RencanaMingguanFirebaseState extends State<RencanaMingguanFirebase> {
 
             TextButton(
               onPressed: () async {
-                await FirebaseService.hapusRencanaMingguan(id);
+                await FirebaseService.hapusRencanaTahunan(id);
                 Navigator.pop(context);
               },
               child: Text("Hapus", style: TextStyle(color: Colors.red)),
@@ -102,7 +103,7 @@ class _RencanaMingguanFirebaseState extends State<RencanaMingguanFirebase> {
     );
   }
 
-  Widget buildItem(RencanaMingguanModelFirebase item) {
+  Widget buildItem(RencanaTahunanModelFirebase item) {
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 6),
       child: ListTile(
@@ -130,7 +131,7 @@ class _RencanaMingguanFirebaseState extends State<RencanaMingguanFirebase> {
                 color: Colors.green,
               ),
               onPressed: () {
-                FirebaseService.updateChecklist(
+                FirebaseService.updateYearChecklist(
                   id: item.id,
                   status: !item.selesai,
                 );
@@ -179,7 +180,7 @@ class _RencanaMingguanFirebaseState extends State<RencanaMingguanFirebase> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const Text(
-                "Daftar Rencana Mingguan",
+                "Daftar Rencana Tahunan",
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
@@ -188,10 +189,10 @@ class _RencanaMingguanFirebaseState extends State<RencanaMingguanFirebase> {
               ),
               const SizedBox(height: 20),
 
-              //Realtime Data
+              // STREAM BUILDER - Realtime Data
               Expanded(
-                child: StreamBuilder<List<RencanaMingguanModelFirebase>>(
-                  stream: FirebaseService.getRencanaMingguan(),
+                child: StreamBuilder<List<RencanaTahunanModelFirebase>>(
+                  stream: FirebaseService.getRencanaTahunan(),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const Center(child: CircularProgressIndicator());
@@ -199,7 +200,7 @@ class _RencanaMingguanFirebaseState extends State<RencanaMingguanFirebase> {
 
                     if (!snapshot.hasData || snapshot.data!.isEmpty) {
                       return const Center(
-                        child: Text("Belum ada rencana mingguan"),
+                        child: Text("Belum ada rencana tahunan"),
                       );
                     }
 

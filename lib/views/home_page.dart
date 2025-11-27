@@ -182,8 +182,8 @@ class _HomePageFinoteState extends State<HomePageFinote> {
       child: Scaffold(
         appBar: CustomAppBar(
           title: 'Finote',
-          onNotificationTap: () {
-            print('Notification tapped');
+          onSearchTap: () {
+            print('Search tapped');
           },
         ),
         body: Container(

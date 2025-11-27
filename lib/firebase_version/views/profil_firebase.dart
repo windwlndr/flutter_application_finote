@@ -134,9 +134,9 @@ class _ProfilUserFirebaseState extends State<ProfilUserFirebase> {
     // }
     return Scaffold(
       appBar: CustomAppBar(
-        title: 'Finote',
-        onNotificationTap: () {
-          print('Notification tapped');
+        title: 'Profil',
+        onSearchTap: () {
+          print('Search tapped');
         },
       ),
       body: Container(

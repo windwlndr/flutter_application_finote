@@ -1,8 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_finote/database/db_helper.dart';
 import 'package:flutter_application_finote/firebase_version/models/pemasukan_firebase_model.dart';
 import 'package:flutter_application_finote/firebase_version/models/pengeluaran_firebase_model.dart';
 import 'package:flutter_application_finote/firebase_version/service/firebase.dart';
+import 'package:flutter_application_finote/models/pemasukan_model.dart';
+import 'package:flutter_application_finote/models/pengeluaran.dart';
 import 'package:flutter_application_finote/views/register_page.dart';
 import 'package:flutter_application_finote/widgets/app_bar.dart';
 import 'package:flutter_application_finote/widgets/login_button.dart';
@@ -132,7 +135,7 @@ class _CalendarPageFirebaseState extends State<CalendarPageFirebase> {
                       "Pilih Jenis Catatan",
                       style: TextStyle(
                         color: Color(0xff2E5077),
-                        // fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                     value: dropDownJenis,
@@ -537,7 +540,7 @@ class _CalendarPageFirebaseState extends State<CalendarPageFirebase> {
 
       child: Scaffold(
         appBar: CustomAppBar(
-          title: 'Tambahkan Catatan',
+          title: 'Finote',
           onSearchTap: () {
             print('Search tapped');
           },
@@ -559,57 +562,42 @@ class _CalendarPageFirebaseState extends State<CalendarPageFirebase> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        // Text(
-                        //   "Tambahkan Catatan",
-                        //   style: TextStyle(
-                        //     fontSize: 24,
-                        //     fontWeight: FontWeight.bold,
-                        //     color: Color(0xff2E5077),
-                        //   ),
-                        // ),
-
-                        //menampilkan kalender hari ini
-                        Container(
-                          height: 400,
-                          width: 500,
-                          decoration: BoxDecoration(
-                            color: Color(0xffB4D4FF),
-                            borderRadius: BorderRadius.circular(20),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey,
-                                blurRadius: 4,
-                                offset: Offset(0, 8),
-                              ),
-                            ],
+                        Text(
+                          "Tambahkan Catatan",
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xff2E5077),
                           ),
-                          child: TableCalendar(
-                            locale: 'id_ID',
-                            firstDay: DateTime.utc(2000, 1, 1),
-                            lastDay: DateTime.utc(2100, 12, 31),
-                            focusedDay: _focusedDay,
-                            selectedDayPredicate: (day) =>
-                                isSameDay(selectedPicked, day),
-                            onDaySelected: (selectedDay, focusedDay) {
-                              setState(() {
-                                selectedPicked = selectedDay;
-                                _focusedDay = focusedDay;
-                              });
-                            },
-                            calendarStyle: CalendarStyle(
-                              todayDecoration: BoxDecoration(
-                                color: Colors.blue,
-                                shape: BoxShape.circle,
-                              ),
-                              selectedDecoration: BoxDecoration(
-                                color: Colors.orange,
-                                shape: BoxShape.circle,
-                              ),
+                        ),
+                        SizedBox(height: 20),
+
+                        TableCalendar(
+                          locale: 'id_ID',
+                          firstDay: DateTime.utc(2000, 1, 1),
+                          lastDay: DateTime.utc(2100, 12, 31),
+                          focusedDay: _focusedDay,
+                          selectedDayPredicate: (day) =>
+                              isSameDay(selectedPicked, day),
+                          onDaySelected: (selectedDay, focusedDay) {
+                            setState(() {
+                              selectedPicked = selectedDay;
+                              _focusedDay = focusedDay;
+                            });
+                          },
+                          calendarStyle: CalendarStyle(
+                            todayDecoration: BoxDecoration(
+                              color: Colors.blue,
+                              shape: BoxShape.circle,
                             ),
-                            headerStyle: HeaderStyle(
-                              formatButtonVisible: false,
-                              titleCentered: true,
+                            selectedDecoration: BoxDecoration(
+                              color: Colors.orange,
+                              shape: BoxShape.circle,
                             ),
+                          ),
+                          headerStyle: HeaderStyle(
+                            formatButtonVisible: false,
+                            titleCentered: true,
                           ),
                         ),
                         SizedBox(height: 20),
@@ -874,12 +862,8 @@ class _CalendarPageFirebaseState extends State<CalendarPageFirebase> {
                   pinned: true,
                   delegate: _TabBarDelegate(
                     TabBar(
-                      indicator: BoxDecoration(
-                        color: Color(0xff2E5077),
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      unselectedLabelColor: Colors.grey,
-                      labelColor: Colors.white,
+                      labelColor: Color(0xff2E5077),
+                      indicatorColor: Color(0xff2E5077),
                       tabs: [
                         Tab(
                           child: Row(
@@ -1125,14 +1109,7 @@ class _TabBarDelegate extends SliverPersistentHeaderDelegate {
 
   @override
   Widget build(context, double shrinkOffset, bool overlapsContent) {
-    return Container(
-      padding: EdgeInsets.all(4),
-      decoration: BoxDecoration(
-        color: Colors.transparent,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: tabBar,
-    );
+    return Container(color: Colors.white, child: tabBar);
   }
 
   @override
