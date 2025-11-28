@@ -27,6 +27,10 @@ class _HistoryScreenFirebaseState extends State<HistoryScreenFirebase> {
     }
   }
 
+  bool isSearching = false;
+  TextEditingController searchC = TextEditingController();
+  String keyword = "";
+
   @override
   void initState() {
     super.initState();
@@ -79,21 +83,42 @@ class _HistoryScreenFirebaseState extends State<HistoryScreenFirebase> {
 
     return all.where((item) {
       DateTime date = item["tanggal"];
+
+      // filter berdasarkan mode
       switch (mode) {
         case "today":
-          return isToday(date);
+          if (!isToday(date)) return false;
+          break;
         case "week":
-          return isThisWeek(date);
+          if (!isThisWeek(date)) return false;
+          break;
         case "year":
-          return isThisYear(date);
-        default:
-          return true;
+          if (!isThisYear(date)) return false;
+          break;
       }
+
+      // FILTER BERDASARKAN PENCARIAN
+      if (keyword.isNotEmpty) {
+        String judul = item["judul"].toString().toLowerCase();
+        String kategori = item["kategori"].toString().toLowerCase();
+        String jumlah = item["jumlah"].toString().toLowerCase();
+
+        return judul.contains(keyword) ||
+            kategori.contains(keyword) ||
+            jumlah.contains(keyword);
+      }
+
+      return true;
     }).toList()..sort((a, b) => b["tanggal"].compareTo(a["tanggal"]));
   }
 
   Widget buildList(String mode) {
     final items = gabungDanFilter(mode);
+
+    // jika pencarian > 0 tapi hasil kosong
+    if (items.isEmpty && keyword.isNotEmpty) {
+      return _notFound();
+    }
 
     if (items.isEmpty) {
       return _emptyState();
@@ -184,7 +209,40 @@ class _HistoryScreenFirebaseState extends State<HistoryScreenFirebase> {
     return DefaultTabController(
       length: 3,
       child: Scaffold(
-        appBar: CustomAppBar(title: "Transaksi Terkini", onSearchTap: () {}),
+        //appBar: CustomAppBar(title: "Transaksi Terkini", onSearchTap: () {}),
+        appBar: CustomAppBar(
+          title: "Transaksi Terkini",
+          isSearching: isSearching,
+          searchField: TextField(
+            controller: searchC,
+            autofocus: true,
+            style: const TextStyle(color: Colors.white),
+            decoration: const InputDecoration(
+              hintText: "Cari transaksi...",
+              hintStyle: TextStyle(color: Colors.white70),
+              border: InputBorder.none,
+            ),
+            onChanged: (value) {
+              setState(() {
+                keyword = value.toLowerCase();
+              });
+            },
+          ),
+          onSearchTap: () {
+            setState(() {
+              if (isSearching) {
+                // keluar dari mode search
+                isSearching = false;
+                keyword = "";
+                searchC.clear();
+              } else {
+                // masuk mode search
+                isSearching = true;
+              }
+            });
+          },
+        ),
+
         body: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
@@ -294,4 +352,16 @@ Widget _emptyState() {
   );
 }
 
-// }
+Widget _notFound() {
+  return Center(
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(Icons.search_off, size: 100, color: Colors.black45),
+        //Image.asset("assets/images/search_not_found.png", height: 150),
+        const SizedBox(height: 12),
+        const Text("Hasil pencarian tidak ditemukan"),
+      ],
+    ),
+  );
+}

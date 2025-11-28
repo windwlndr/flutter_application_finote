@@ -3,36 +3,44 @@ import 'package:flutter/material.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
+  final bool isSearching;
+  final Widget? searchField;
   final VoidCallback? onSearchTap;
   final Color backgroundColor;
   final Widget? leading;
 
   const CustomAppBar({
-    Key? key,
+    super.key,
     required this.title,
+    this.isSearching = false,
+    this.searchField,
     this.onSearchTap,
     this.backgroundColor = const Color(0xff2F59AB),
     this.leading,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
     return AppBar(
       automaticallyImplyLeading: false,
       leading: leading,
-
-      title: Text(title, style: const TextStyle(color: Colors.white)),
       backgroundColor: backgroundColor,
+      title: isSearching
+          ? searchField
+          : Text(title, style: const TextStyle(color: Colors.white)),
       actions: [
         IconButton(
           onPressed: onSearchTap,
-          icon: const Icon(Icons.search, size: 30, color: Colors.white),
+          icon: Icon(
+            isSearching ? Icons.close : Icons.search,
+            size: 30,
+            color: Colors.white,
+          ),
         ),
       ],
     );
   }
 
-  //gar bisa dipakai di Scaffold
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 }

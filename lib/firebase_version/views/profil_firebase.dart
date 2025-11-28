@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_finote/firebase_version/models/user_firebase_model.dart';
+import 'package:flutter_application_finote/firebase_version/views/login_screen_firebase.dart';
+import 'package:flutter_application_finote/firebase_version/views/manage_budget.dart';
+import 'package:flutter_application_finote/firebase_version/views/monthly_plan_firebase.dart';
+import 'package:flutter_application_finote/firebase_version/views/weekly_plan_firebase.dart';
+import 'package:flutter_application_finote/firebase_version/views/yearly_plan_firebase.dart';
 import 'package:flutter_application_finote/preferences/preferences_handler.dart';
 import 'package:flutter_application_finote/firebase_version/service/firebase.dart';
 import 'package:flutter_application_finote/views/date_tracking_page.dart';
 import 'package:flutter_application_finote/views/login_page.dart';
 import 'package:flutter_application_finote/views/register_page.dart';
 import 'package:flutter_application_finote/widgets/app_bar.dart';
+import 'package:flutter_application_finote/widgets/card_menu.dart';
 import 'package:flutter_application_finote/widgets/custom_list_tile.dart';
 import 'package:flutter_application_finote/widgets/login_button.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -134,6 +140,7 @@ class _ProfilUserFirebaseState extends State<ProfilUserFirebase> {
     // }
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: Text('Profil', style: TextStyle(color: Colors.white)),
         backgroundColor: Color(0xff2F59AB),
       ),
@@ -184,48 +191,64 @@ class _ProfilUserFirebaseState extends State<ProfilUserFirebase> {
               Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  ListTileWidget(
-                    title: "Pemasukan & Pengeluaran",
+                  CardMenu(
+                    title: "Manage Pengeluaran",
                     subtitle:
                         "Atur budget berdasarkan kategori (makan, transport, belanja, dll.)",
-                    leadingIcon: Icons.account_balance_wallet,
-                    iconColor: Color(0xff2E5077),
-                    textColor: Color(0xff2E5077),
-                    onTap: () {},
+                    icon: Icons.account_balance_wallet,
+                    color: Color(0xff2E5077),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ManageBudgetPage(),
+                        ),
+                      );
+                    },
                   ),
-                  ListTileWidget(
-                    title: "Tujuan Keuangan",
-                    subtitle: "Atur target tabungan dan batas pengeluaran.",
-                    leadingIcon: Icons.calculate,
-                    iconColor: Color(0xff2E5077),
-                    textColor: Color(0xff2E5077),
-                    onTap: () {},
+                  CardMenu(
+                    title: "Kelola rencana mingguan",
+                    subtitle: "Tambahkan rencana keuangan mingguan Anda",
+                    icon: Icons.edit_calendar_outlined,
+                    color: Color(0xff2E5077),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => RencanaMingguanFirebase(),
+                        ),
+                      );
+                    },
                   ),
-                  ListTileWidget(
-                    title: "Notifikasi Pengingat",
-                    subtitle:
-                        "Atur notifikasi harian/bulanan/tahunan dan tagihan.",
-                    leadingIcon: Icons.notification_add,
-                    iconColor: Color(0xff2E5077),
-                    textColor: Color(0xff2E5077),
-                    onTap: () {},
+                  CardMenu(
+                    title: "Kelola rencana bulanan",
+                    subtitle: "Tambahkan rencana keuangan bulanan Anda",
+                    icon: Icons.edit_calendar,
+                    color: Color(0xff2E5077),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => RencanaBulananFirebase(),
+                        ),
+                      );
+                    },
                   ),
-                  ListTileWidget(
-                    title: "Keamanan Akun",
-                    subtitle: "Ubah kata sandi, aktifkan PIN dan Biometrik.",
-                    leadingIcon: Icons.safety_check,
-                    iconColor: Color(0xff2E5077),
-                    textColor: Color(0xff2E5077),
-                    onTap: () {},
+                  CardMenu(
+                    title: "Kelola rencana tahunan",
+                    subtitle: "Tambahkan rencana keuangan tahunan Anda",
+                    icon: Icons.edit_calendar_sharp,
+                    color: Color(0xff2E5077),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => RencanaTahunanFirebase(),
+                        ),
+                      );
+                    },
                   ),
-                  ListTileWidget(
-                    title: "Pindah Akun",
-                    subtitle: "Ubah profil menjadi akun bisnis.",
-                    leadingIcon: Icons.switch_account,
-                    iconColor: Color(0xff2E5077),
-                    textColor: Color(0xff2E5077),
-                    onTap: () {},
-                  ),
+
                   height(20),
                   LoginButton(
                     text: 'Keluar',
@@ -236,30 +259,12 @@ class _ProfilUserFirebaseState extends State<ProfilUserFirebase> {
                         context,
                         MaterialPageRoute(
                           builder: (context) {
-                            return LoginScreenDay18();
+                            return LoginScreenFirebase();
                           },
                         ),
                       );
                     },
                   ),
-                  // ListTileWidget(
-                  //   title: "Logout",
-                  //   subtitle: "Keluar dari akun Finote Anda.",
-                  //   leadingIcon: Icons.logout,
-                  //   iconColor: Colors.red,
-                  //   textColor: Colors.red,
-
-                  //   onTap: () {
-                  //     Navigator.push(
-                  //       context,
-                  //       MaterialPageRoute(
-                  //         builder: (context) {
-                  //           return LoginScreenDay18();
-                  //         },
-                  //       ),
-                  //     );
-                  //   },
-                  // ),
                 ],
               ),
             ],

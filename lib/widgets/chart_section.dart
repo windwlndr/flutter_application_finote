@@ -59,12 +59,8 @@ class ChartSection extends StatelessWidget {
                           child: ChoiceChip(
                             label: Text(period),
                             selected: selectedPeriod == period,
-                            selectedColor: const Color.fromARGB(
-                              255,
-                              120,
-                              174,
-                              224,
-                            ),
+                            checkmarkColor: Colors.white,
+                            selectedColor: Color(0xff2f59ab),
                             labelStyle: TextStyle(
                               fontSize: 14,
                               color: selectedPeriod == period

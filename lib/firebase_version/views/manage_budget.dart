@@ -129,6 +129,7 @@ class ManageBudgetPage extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
+        backgroundColor: Color.fromARGB(255, 218, 235, 255),
         title: Text("Edit Budget ${b.kategori}"),
         content: TextField(
           controller: controller,
@@ -137,11 +138,11 @@ class ManageBudgetPage extends StatelessWidget {
         ),
         actions: [
           TextButton(
-            child: Text("Batal"),
+            child: Text("Batal", style: TextStyle(color: Colors.red)),
             onPressed: () => Navigator.pop(context),
           ),
-          ElevatedButton(
-            child: Text("Simpan"),
+          TextButton(
+            child: Text("Simpan", style: TextStyle(color: Colors.green)),
             onPressed: () async {
               final newValue =
                   double.tryParse(controller.text) ?? b.targetValue;

@@ -198,7 +198,18 @@ class _RencanaBulananFirebaseState extends State<RencanaBulananFirebase> {
 
                     if (!snapshot.hasData || snapshot.data!.isEmpty) {
                       return const Center(
-                        child: Text("Belum ada rencana bulanan"),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.calendar_month,
+                              size: 100,
+                              color: Colors.grey,
+                            ),
+                            SizedBox(height: 20),
+                            Text("Belum ada rencana bulanan"),
+                          ],
+                        ),
                       );
                     }
 

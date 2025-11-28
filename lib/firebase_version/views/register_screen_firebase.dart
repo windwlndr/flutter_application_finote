@@ -3,6 +3,7 @@ import 'package:flutter_application_finote/firebase_version/models/user_firebase
 import 'package:flutter_application_finote/preferences/preferences_handler.dart';
 import 'package:flutter_application_finote/firebase_version/service/firebase.dart';
 import 'package:flutter_application_finote/firebase_version/views/login_screen_firebase.dart';
+import 'package:flutter_application_finote/widgets/copyright_footer.dart';
 import 'package:flutter_application_finote/widgets/login_button.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
@@ -35,9 +36,9 @@ class _RegisterScreenFirebaseState extends State<RegisterScreenFirebase> {
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color(0x352F59AB), Color(0x102F59AB)],
-            begin: AlignmentGeometry.topCenter,
-            end: AlignmentGeometry.center,
+            colors: [Color(0x352F59AB), Color.fromARGB(255, 196, 228, 255)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
           ),
         ),
         child: Stack(children: [buildLayer()]),
@@ -52,259 +53,197 @@ class _RegisterScreenFirebaseState extends State<RegisterScreenFirebase> {
         child: Padding(
           padding: const EdgeInsets.all(20.0),
           child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  "Daftar",
-                  style: TextStyle(
-                    fontSize: 30,
-                    fontWeight: FontWeight.bold,
-                    color: Color.fromARGB(255, 80, 97, 119),
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-
-                height(20),
-                buildTitle("Nama Lengkap"),
-                height(10),
-                height(10),
-                buildTextField(
-                  hintText: "Masukkan Nama Lengkap Anda",
-                  controller: nameController,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return "Nama harus diisi";
-                    }
-                    return null;
-                  },
-                ),
-
-                height(15),
-                buildTitle("Email"),
-                height(10),
-                buildTextField(
-                  hintText: "Masukkan email Anda",
-                  controller: emailController,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return "Email harus diisi";
-                    } else if (!value.contains('@')) {
-                      return "Email tidak valid";
-                    } else if (!RegExp(
-                      r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$",
-                    ).hasMatch(value)) {
-                      return "Format Email tidak valid";
-                    }
-                    return null;
-                  },
-                ),
-
-                height(15),
-
-                buildTitle("Masukkan password"),
-                height(10),
-                buildTextField(
-                  isPassword: true,
-                  hintText: "Masukkan password Anda",
-                  controller: passwordController,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return "Password harus diisi";
-                    }
-                    return null;
-                  },
-                ),
-
-                height(15),
-                buildTitle("Konfirmasi password"),
-                height(10),
-                buildTextField(
-                  isPassword: true,
-                  hintText: "Masukkan kembali password Anda",
-                  controller: konfirmController,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return "Password harus diisi";
-                    } else if (value != passwordController.text) {
-                      return "Password tidak sama";
-                    }
-                    return null;
-                  },
-                ),
-
-                //Daftar
-                height(20),
-
-                LoginButton(
-                  text: "Daftar",
-                  onPressed: () async {
-                    if (_formKey.currentState!.validate()) {
-                      setState(() {
-                        isLoading = true;
-                      });
-                      try {
-                        final result = await FirebaseService.registerUser(
-                          email: emailController.text.trim(),
-                          username: nameController.text.trim(),
-                          password: passwordController.text,
-                        );
-
-                        setState(() {
-                          isLoading = false;
-                          user = result;
-                        });
-
-                        // contoh: simpan token kalau ada
-                        if (user.uid != null) {
-                          await PreferenceHandler.saveToken(user.uid!);
-                        }
-
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => LoginScreenFirebase(),
-                          ),
-                        );
-                      } catch (e) {
-                        Fluttertoast.showToast(msg: e.toString());
-                        setState(() {
-                          isLoading = false;
-                        });
-                      }
-                    } else {
-                      showDialog(
-                        context: context,
-                        builder: (context) {
-                          return AlertDialog(
-                            title: Text("Validation Error"),
-                            content: Text("Form tidak boleh kosong"),
-                            actions: [
-                              TextButton(
-                                child: Text("OK"),
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                              ),
-                              TextButton(
-                                child: Text("Cancel"),
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                              ),
-                            ],
-                          );
-                        },
-                      );
-                    }
-                  },
-                ),
-                Row(
+            child: Container(
+              height: 650,
+              width: 300,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                color: Colors.blue.shade50,
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text(
-                      "Sudah punya akun? ",
-                      style: TextStyle(color: Colors.black54),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => LoginScreenFirebase(),
-                          ),
-                        );
-                      },
-                      child: Text(
-                        'Sign in',
-                        style: TextStyle(color: Color(0xff2f59ab)),
+                    Center(
+                      child: CircleAvatar(
+                        radius: 60, // ukuran lingkaran
+                        backgroundImage: AssetImage(
+                          'assets/images/Logo_Finote_updated.png',
+                        ),
+                        backgroundColor: Colors.transparent,
                       ),
+                    ),
+                    Text(
+                      "Daftar",
+                      style: TextStyle(
+                        fontSize: 30,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xff2f59ab),
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+
+                    height(20),
+                    buildTitle("Nama Lengkap"),
+                    height(10),
+                    height(10),
+                    buildTextField(
+                      hintText: "Masukkan Nama Lengkap Anda",
+                      controller: nameController,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return "Nama harus diisi";
+                        }
+                        return null;
+                      },
+                    ),
+
+                    height(15),
+                    buildTitle("Email"),
+                    height(10),
+                    buildTextField(
+                      hintText: "Masukkan email Anda",
+                      controller: emailController,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return "Email harus diisi";
+                        } else if (!value.contains('@')) {
+                          return "Email tidak valid";
+                        } else if (!RegExp(
+                          r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$",
+                        ).hasMatch(value)) {
+                          return "Format Email tidak valid";
+                        }
+                        return null;
+                      },
+                    ),
+
+                    height(15),
+
+                    buildTitle("Masukkan password"),
+                    height(10),
+                    buildTextField(
+                      isPassword: true,
+                      hintText: "Masukkan password Anda",
+                      controller: passwordController,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return "Password harus diisi";
+                        }
+                        return null;
+                      },
+                    ),
+
+                    // height(15),
+                    // buildTitle("Konfirmasi password"),
+                    // height(10),
+                    // buildTextField(
+                    //   isPassword: true,
+                    //   hintText: "Masukkan kembali password Anda",
+                    //   controller: konfirmController,
+                    //   validator: (value) {
+                    //     if (value == null || value.isEmpty) {
+                    //       return "Password harus diisi";
+                    //     } else if (value != passwordController.text) {
+                    //       return "Password tidak sama";
+                    //     }
+                    //     return null;
+                    //   },
+                    // ),
+
+                    //Daftar
+                    height(20),
+
+                    LoginButton(
+                      text: "Daftar",
+                      onPressed: () async {
+                        if (_formKey.currentState!.validate()) {
+                          setState(() {
+                            isLoading = true;
+                          });
+                          try {
+                            final result = await FirebaseService.registerUser(
+                              email: emailController.text.trim(),
+                              username: nameController.text.trim(),
+                              password: passwordController.text,
+                            );
+
+                            setState(() {
+                              isLoading = false;
+                              user = result;
+                            });
+
+                            // contoh: simpan token kalau ada
+                            if (user.uid != null) {
+                              await PreferenceHandler.saveToken(user.uid!);
+                            }
+
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => LoginScreenFirebase(),
+                              ),
+                            );
+                          } catch (e) {
+                            Fluttertoast.showToast(msg: e.toString());
+                            setState(() {
+                              isLoading = false;
+                            });
+                          }
+                        } else {
+                          showDialog(
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
+                                title: Text("Validation Error"),
+                                content: Text("Form tidak boleh kosong"),
+                                actions: [
+                                  TextButton(
+                                    child: Text("OK"),
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                  ),
+                                  TextButton(
+                                    child: Text("Cancel"),
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        }
+                      },
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text(
+                          "Sudah punya akun? ",
+                          style: TextStyle(color: Colors.black54),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => LoginScreenFirebase(),
+                              ),
+                            );
+                          },
+                          child: Text(
+                            'Sign in',
+                            style: TextStyle(color: Color(0xff2f59ab)),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
-
-                // Container(
-                //   width: 417.21,
-                //   height: 48.14,
-                //   decoration: BoxDecoration(
-                //     color: Color(0xff2f59ab),
-                //     borderRadius: BorderRadius.circular(10.7),
-                //   ),
-                //   child: TextButton(
-                //     onPressed: () async {
-                //       if (_formKey.currentState!.validate()) {
-                //         setState(() {
-                //           isLoading = true;
-                //         });
-
-                // try {
-                //   final result = await FirebaseService.registerUser(
-                //     email: emailController.text.trim(),
-                //     username: nameController.text.trim(),
-                //     password: passwordController.text,
-                //   );
-
-                //   setState(() {
-                //     isLoading = false;
-                //     user = result;
-                //   });
-
-                //   // contoh: simpan token kalau ada
-                //   if (user.uid != null) {
-                //     await PreferenceHandler.saveToken(user.uid!);
-                //   }
-
-                //   Navigator.pushReplacement(
-                //     context,
-                //     MaterialPageRoute(
-                //       builder: (context) => LoginScreenDay18(),
-                //     ),
-                //   );
-                // } catch (e) {
-                //   Fluttertoast.showToast(msg: e.toString());
-                //   setState(() {
-                //     isLoading = false;
-                //   });
-                // }
-                //       } else {
-                //         showDialog(
-                //           context: context,
-                //           builder: (context) {
-                //             return AlertDialog(
-                //               title: Text("Form belum dilengkapi"),
-                //               content: Text(
-                //                 "Mohon isi Nama Lengkap, Email, dan Password",
-                //               ),
-                //               actions: [
-                //                 TextButton(
-                //                   child: Text("Yes"),
-                //                   onPressed: () {
-                //                     Navigator.pop(context);
-                //                   },
-                //                 ),
-                //                 TextButton(
-                //                   child: Text("No"),
-                //                   onPressed: () {
-                //                     Navigator.pop(context);
-                //                   },
-                //                 ),
-                //               ],
-                //             );
-                //           },
-                //         );
-                //       }
-                //     },
-                //     child: Text(
-                //       "Daftar",
-                //       style: TextStyle(
-                //         fontSize: 21.74,
-                //         color: Colors.white,
-                //         // fontWeight: FontWeight.bold,
-                //       ),
-                //     ),
-                //   ),
-                // ),
-              ],
+              ),
             ),
           ),
         ),

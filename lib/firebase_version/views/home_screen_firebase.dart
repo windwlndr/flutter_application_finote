@@ -221,6 +221,8 @@ class _HomeFirebaseFinoteState extends State<HomeFirebaseFinote> {
       length: 2,
       child: Scaffold(
         appBar: AppBar(
+          automaticallyImplyLeading: false,
+
           title: Text('Finote', style: TextStyle(color: Colors.white)),
           backgroundColor: const Color(0xff2F59AB),
           // onSearchTap: () {
