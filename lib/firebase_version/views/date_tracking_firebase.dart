@@ -537,11 +537,14 @@ class _CalendarPageFirebaseState extends State<CalendarPageFirebase> {
       length: 2,
 
       child: Scaffold(
-        appBar: CustomAppBar(
-          title: 'Tambahkan Catatan',
-          onSearchTap: () {
-            print('Search tapped');
-          },
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+
+          title: Text(
+            'Tambahkan Catatan',
+            style: TextStyle(color: Colors.white),
+          ),
+          backgroundColor: const Color(0xff2F59AB),
         ),
         body: Container(
           decoration: const BoxDecoration(
