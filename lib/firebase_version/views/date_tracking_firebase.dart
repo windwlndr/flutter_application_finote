@@ -338,6 +338,7 @@ class _CalendarPageFirebaseState extends State<CalendarPageFirebase> {
         return StatefulBuilder(
           builder: (context, setState) {
             return AlertDialog(
+              backgroundColor: Color.fromARGB(255, 218, 235, 255),
               title: Text("Edit data Pengeluaran"),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -663,7 +664,7 @@ class _CalendarPageFirebaseState extends State<CalendarPageFirebase> {
                                               "Pilih Jenis Catatan",
                                               style: TextStyle(
                                                 color: Color(0xff2E5077),
-                                                fontWeight: FontWeight.bold,
+                                                // fontWeight: FontWeight.bold,
                                               ),
                                             ),
                                             value: dropDownJenis,
@@ -696,7 +697,7 @@ class _CalendarPageFirebaseState extends State<CalendarPageFirebase> {
                                               "Pilih Kategori",
                                               style: TextStyle(
                                                 color: Color(0xff2E5077),
-                                                fontWeight: FontWeight.bold,
+                                                // fontWeight: FontWeight.bold,
                                               ),
                                             ),
                                             value: dropDownKategori,
@@ -767,6 +768,24 @@ class _CalendarPageFirebaseState extends State<CalendarPageFirebase> {
                                               return;
                                             }
                                             // tampilkan item baru
+                                            // ScaffoldMessenger.of(
+                                            //   context,
+                                            // ).showSnackBar(
+                                            //   SnackBar(
+                                            //     behavior:
+                                            //         SnackBarBehavior.floating,
+                                            //     margin: const EdgeInsets.only(
+                                            //       bottom: 600,
+                                            //       // top: 4,
+                                            //       // left: 16,
+                                            //       // right: 16,
+                                            //     ),
+                                            //     content: Text(
+                                            //       'Catatan: ${catatanC.text}\nKategori: $dropDownKategori\nTanggal: $formattedDate',
+                                            //     ),
+                                            //   ),
+                                            // );
+
                                             ScaffoldMessenger.of(
                                               context,
                                             ).showSnackBar(
@@ -802,7 +821,19 @@ class _CalendarPageFirebaseState extends State<CalendarPageFirebase> {
                                                 Fluttertoast.showToast(
                                                   msg:
                                                       "Data berhasil ditambahkan",
+                                                  toastLength:
+                                                      Toast.LENGTH_SHORT,
+                                                  gravity: ToastGravity.CENTER,
+                                                  backgroundColor:
+                                                      Colors.black87,
+                                                  textColor: Colors.white,
+                                                  fontSize: 16,
                                                 );
+
+                                                // Fluttertoast.showToast(
+                                                //   msg:
+                                                //       "Data berhasil ditambahkan",
+                                                // );
                                               });
                                             } else if (dropDownJenis ==
                                                 "Pemasukan") {
@@ -829,6 +860,13 @@ class _CalendarPageFirebaseState extends State<CalendarPageFirebase> {
                                                 Fluttertoast.showToast(
                                                   msg:
                                                       "Data berhasil ditambahkan",
+                                                  toastLength:
+                                                      Toast.LENGTH_SHORT,
+                                                  gravity: ToastGravity.CENTER,
+                                                  backgroundColor:
+                                                      Colors.black87,
+                                                  textColor: Colors.white,
+                                                  fontSize: 16,
                                                 );
                                               });
                                             }
@@ -914,7 +952,7 @@ class _CalendarPageFirebaseState extends State<CalendarPageFirebase> {
                         children: [
                           Image.asset(
                             "assets/images/EmptyNotes.png",
-                            height: 150,
+                            height: 50,
                           ),
                           Text("Catatan belum ada"),
                         ],
@@ -1045,69 +1083,6 @@ class _CalendarPageFirebaseState extends State<CalendarPageFirebase> {
                                 ],
                               ),
                             );
-                            // ListTile(
-                            //   leading: Icon(
-                            //     items.kategoriPengeluaran == "Makan & Minum"
-                            //         ? Icons.fastfood
-                            //         : items.kategoriPengeluaran ==
-                            //               "Transportasi"
-                            //         ? Icons.motorcycle
-                            //         : items.kategoriPengeluaran == "Hiburan"
-                            //         ? Icons.sports_esports
-                            //         : items.kategoriPengeluaran == "Tagihan"
-                            //         ? Icons.receipt_long
-                            //         : items.kategoriPengeluaran == "Belanja"
-                            //         ? Icons.trolley
-                            //         : Icons.menu,
-                            //   ),
-                            //   title: Text(
-                            //     items.notesPengeluaran,
-                            //     style: TextStyle(
-                            //       fontWeight: FontWeight.bold,
-                            //       color: Color(0xff2E5077),
-                            //     ),
-                            //   ),
-                            //   subtitle: Row(
-                            //     children: [
-                            //       Text(
-                            //         "Rp ${items.jumlahPengeluaran.toStringAsFixed(0)}",
-                            //         style: TextStyle(
-                            //           color: Colors.red,
-                            //           fontSize: 9,
-                            //           fontWeight: FontWeight.bold,
-                            //         ),
-                            //       ),
-                            //       width(8),
-                            //       Text(
-                            //         items.tanggalKeluar,
-                            //         style: TextStyle(fontSize: 9),
-                            //       ),
-                            //     ],
-                            //   ),
-                            //   trailing: Row(
-                            //     mainAxisSize: MainAxisSize.min,
-                            //     children: [
-                            //       IconButton(
-                            //         onPressed: () {
-                            //           _onEdit(items);
-                            //         },
-                            //         icon: Icon(Icons.edit),
-                            //       ),
-                            //       IconButton(
-                            //         onPressed: () {
-                            //           _onDelete(items);
-                            //         },
-                            //         icon: Icon(
-                            //           Icons.delete,
-                            //           color: Colors.red,
-                            //         ),
-                            //       ),
-                            //     ],
-                            //   ),
-                            // ),
-                            //     // Divider(thickness: 0.1, color: Colors.black),
-                            //   ],
-                            // );
                           },
                         ),
                       );
@@ -1126,7 +1101,7 @@ class _CalendarPageFirebaseState extends State<CalendarPageFirebase> {
                         children: [
                           Image.asset(
                             "assets/images/EmptyNotes.png",
-                            height: 150,
+                            height: 50,
                           ),
                           Text("Catatan belum ada"),
                         ],
@@ -1244,66 +1219,6 @@ class _CalendarPageFirebaseState extends State<CalendarPageFirebase> {
                                 ],
                               ),
                             );
-                            // return Column(
-                            //   children: [
-                            //     ListTile(
-                            //       leading: Icon(
-                            //         items.kategoriPemasukan == "Gaji"
-                            //             ? Icons.attach_money
-                            //             : items.kategoriPemasukan == "Bonus"
-                            //             ? Icons.money_rounded
-                            //             : items.kategoriPemasukan == "Hadiah"
-                            //             ? Icons.card_giftcard_rounded
-                            //             : Icons.more_horiz,
-                            //       ),
-                            //       title: Text(
-                            //         items.notesPemasukan,
-                            //         style: TextStyle(
-                            //           fontWeight: FontWeight.bold,
-                            //           color: Color(0xff2E5077),
-                            //         ),
-                            //       ),
-                            //       subtitle: Row(
-                            //         children: [
-                            //           Text(
-                            //             "Rp ${items.jumlahPemasukan.toStringAsFixed(0)}",
-                            //             style: TextStyle(
-                            //               color: Colors.green,
-                            //               fontSize: 9,
-                            //               fontWeight: FontWeight.bold,
-                            //             ),
-                            //           ),
-                            //           width(8),
-                            //           Text(
-                            //             items.tanggalMasuk,
-                            //             style: TextStyle(fontSize: 9),
-                            //           ),
-                            //         ],
-                            //       ),
-                            //       trailing: Row(
-                            //         mainAxisSize: MainAxisSize.min,
-                            //         children: [
-                            //           IconButton(
-                            //             onPressed: () {
-                            //               _onEditPemasukan(items);
-                            //             },
-                            //             icon: Icon(Icons.edit),
-                            //           ),
-                            //           IconButton(
-                            //             onPressed: () {
-                            //               _onDeletePemasukan(items);
-                            //             },
-                            //             icon: Icon(
-                            //               Icons.delete,
-                            //               color: Colors.red,
-                            //             ),
-                            //           ),
-                            //         ],
-                            //       ),
-                            //     ),
-                            //     Divider(thickness: 0.1, color: Colors.black),
-                            //   ],
-                            // );
                           },
                         ),
                       );

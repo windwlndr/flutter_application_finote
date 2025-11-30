@@ -49,6 +49,7 @@ class _ProfilUserFirebaseState extends State<ProfilUserFirebase> {
       context: context,
       builder: (context) {
         return AlertDialog(
+          backgroundColor: Color.fromARGB(255, 218, 235, 255),
           title: Text("Edit data user"),
           content: Column(
             mainAxisSize: MainAxisSize.min,
@@ -63,13 +64,13 @@ class _ProfilUserFirebaseState extends State<ProfilUserFirebase> {
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: Text("Batal"),
+              child: Text("Batal", style: TextStyle(color: Colors.red)),
             ),
             TextButton(
               onPressed: () {
                 Navigator.pop(context, true);
               },
-              child: Text("Simpan"),
+              child: Text("Simpan", style: TextStyle(color: Colors.green)),
             ),
           ],
         );
@@ -90,6 +91,44 @@ class _ProfilUserFirebaseState extends State<ProfilUserFirebase> {
     final prefs = await SharedPreferences.getInstance();
     await prefs.clear();
     Navigator.pushReplacementNamed(context, '/login');
+  }
+
+  Future<void> confirmLogout() async {
+    final res = await showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          backgroundColor: Color.fromARGB(255, 218, 235, 255),
+          title: const Text("Konfirmasi Logout"),
+          content: const Text("Apakah Anda yakin ingin logout?"),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("Batal", style: TextStyle(color: Colors.green)),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: const Text(
+                "Ya, Logout",
+                style: TextStyle(color: Colors.red),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (res == true) {
+      await FirebaseService.logoutUser(); // logout Firebase
+      Fluttertoast.showToast(msg: "Berhasil logout");
+
+      // Navigasi ke login, tanpa menghapus data pengguna
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (_) => const LoginScreenFirebase()),
+        (route) => false,
+      );
+    }
   }
 
   Future<void> _onDelete(UserFirebaseModel user) async {
@@ -253,16 +292,17 @@ class _ProfilUserFirebaseState extends State<ProfilUserFirebase> {
                   LoginButton(
                     text: 'Keluar',
                     onPressed: () {
-                      PreferenceHandler.removeLogin();
+                      confirmLogout();
+                      // PreferenceHandler.removeLogin();
 
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) {
-                            return LoginScreenFirebase();
-                          },
-                        ),
-                      );
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(
+                      //     builder: (context) {
+                      //       return LoginScreenFirebase();
+                      //     },
+                      //   ),
+                      // );
                     },
                   ),
                 ],

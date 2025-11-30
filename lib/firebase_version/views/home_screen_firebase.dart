@@ -463,8 +463,9 @@ class _HomeFirebaseFinoteState extends State<HomeFirebaseFinote> {
                               StreamBuilder<List<BudgetModelFirebase>>(
                                 stream: BudgetService().getBudgets(),
                                 builder: (context, snapshot) {
-                                  if (!snapshot.hasData)
+                                  if (!snapshot.hasData) {
                                     return CircularProgressIndicator();
+                                  }
 
                                   final budgets = snapshot.data!;
                                   final budgetMap = {

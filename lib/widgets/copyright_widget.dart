@@ -16,7 +16,7 @@ class CopyrightWidget extends StatelessWidget {
   final bool showCopyrightSymbol;
 
   const CopyrightWidget({
-    Key? key,
+    super.key,
     required this.companyName,
     this.startYear,
     this.textStyle,
@@ -25,7 +25,7 @@ class CopyrightWidget extends StatelessWidget {
     this.textAlign = TextAlign.center,
     this.padding = const EdgeInsets.symmetric(vertical: 8.0),
     this.showCopyrightSymbol = true,
-  }) : super(key: key);
+  });
 
   String _yearText() {
     final current = DateTime.now().year;
@@ -94,7 +94,7 @@ class CopyrightWidget extends StatelessWidget {
         child: RichText(
           textAlign: textAlign,
           text: textSpan,
-          textScaleFactor: MediaQuery.textScaleFactorOf(context),
+          textScaler: TextScaler.linear(MediaQuery.textScaleFactorOf(context)),
         ),
       ),
     );

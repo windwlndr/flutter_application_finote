@@ -83,6 +83,11 @@ class FirebaseService {
     }
   }
 
+  //Logout
+  static Future<void> logoutUser() async {
+    await auth.signOut();
+  }
+
   //PENGELUARAN
   static Future<void> insertPengeluaran(
     String uid,

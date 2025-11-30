@@ -3,7 +3,6 @@ import 'package:flutter_application_finote/firebase_version/models/user_firebase
 import 'package:flutter_application_finote/preferences/preferences_handler.dart';
 import 'package:flutter_application_finote/firebase_version/service/firebase.dart';
 import 'package:flutter_application_finote/firebase_version/views/login_screen_firebase.dart';
-import 'package:flutter_application_finote/widgets/copyright_footer.dart';
 import 'package:flutter_application_finote/widgets/login_button.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 

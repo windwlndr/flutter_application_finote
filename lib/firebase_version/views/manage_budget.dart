@@ -24,8 +24,9 @@ class ManageBudgetPage extends StatelessWidget {
       body: StreamBuilder<List<BudgetModelFirebase>>(
         stream: BudgetService().getBudgets(),
         builder: (context, snapshot) {
-          if (!snapshot.hasData)
+          if (!snapshot.hasData) {
             return Center(child: CircularProgressIndicator());
+          }
 
           final budgets = snapshot.data!;
 

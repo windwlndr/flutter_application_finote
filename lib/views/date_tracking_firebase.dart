@@ -1,11 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_application_finote/database/db_helper.dart';
 import 'package:flutter_application_finote/firebase_version/models/pemasukan_firebase_model.dart';
 import 'package:flutter_application_finote/firebase_version/models/pengeluaran_firebase_model.dart';
 import 'package:flutter_application_finote/firebase_version/service/firebase.dart';
-import 'package:flutter_application_finote/models/pemasukan_model.dart';
-import 'package:flutter_application_finote/models/pengeluaran.dart';
 import 'package:flutter_application_finote/views/register_page.dart';
 import 'package:flutter_application_finote/widgets/app_bar.dart';
 import 'package:flutter_application_finote/widgets/login_button.dart';

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_finote/firebase_version/models/weekly_model_firebase.dart';
 import 'package:flutter_application_finote/firebase_version/service/firebase.dart';
-import 'package:flutter_application_finote/widgets/app_bar.dart';
 
 class RencanaMingguanFirebase extends StatefulWidget {
   const RencanaMingguanFirebase({super.key});
